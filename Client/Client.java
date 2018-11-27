@@ -26,6 +26,7 @@ public class Client {
 	static String hostName = "localhost";
 	static Garage h;
 
+
 	private Client()
 	{
 		/*try {
@@ -48,10 +49,12 @@ public class Client {
 		} // end catch*/
 	}
 
+
 	public static void main (String args[])
 	{
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;
+		String state = "disconnected";
 
         try
 		{
@@ -63,8 +66,27 @@ public class Client {
 
 			while(true){
 
-                System.out.print("Function over server? (upload, search or download) \n");
+				if(state.equals("disconnected")){
+					System.out.print("Si voleu fer registrar-vos escriviu: registra. \n" +
+								     "Si voleu fer registrar-vos escriviu: logear.\n ");
+					String resposta = scanner.next();
+					if(resposta.equals("registrar")){
+						registrar();
+
+					}else if(resposta.equals("logear")){
+
+					}
+
+
+
+
+				}
+                System.out.print("Function over server? (Deslogear ,upload, search,download) \n");
                 String order = scanner.next();
+
+				if(order.equals("Deslogear")){
+					state = "disconnected";
+				}
 
                 //UPLOAD
                 if(order.equals("upload")){
@@ -81,6 +103,7 @@ public class Client {
 					String title = scanner.next();
 					System.out.println(h.searchFile(title));
 				}
+
                 //DOWLOAD
                 if(order.equals("download"))
                 {
@@ -103,6 +126,41 @@ public class Client {
 		catch (Exception e)
 		{
 		    System.out.println("Exception in SomeClient: " + e.toString());
+		}
+	}
+
+	public static void registrar(){
+
+
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Donam el nom de usuari\n");
+		String NewNomUsuari = scanner.next();
+		System.out.print("Introduix una contrasenya\n");
+		String contrasenya_1 = scanner.next();
+		System.out.print("Introduix la contrasenya un altre cop\n");
+		String contrasenya_2 = scanner.next();
+
+		try {
+
+
+			if (contrasenya_1.equals(contrasenya_2)) {
+				//les contrasenyes son iguals
+				boolean resposta_servidor = h.registrar_usuari(NewNomUsuari, contrasenya_1);
+				if (resposta_servidor = true) {
+					System.out.print("T'as registrat correctamen!!!\n ja pots logear\n");
+				} else {
+					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
+				}
+
+			} else {
+				System.out.print("Les contrasenyes son diferents!!\n");
+			}
+
+
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
 }

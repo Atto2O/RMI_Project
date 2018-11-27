@@ -34,6 +34,22 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         callbackObjects = new Vector();
     }
 
+    @Override
+    public boolean registrar_usuari (String NewNomUsuari, String contrasenya)  throws RemoteException
+    {
+        //SI EL NOM ES VALID RETORNA TRUE
+        return true;
+        /*if(){
+            return true;
+        }else{
+            return false;
+        }*/
+
+
+    }
+
+
+
     // method for client to call to add itself to its callback
     @Override
     public void addCallback (ClientCallbackInterface callbackObject)  throws RemoteException
