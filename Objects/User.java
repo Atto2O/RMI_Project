@@ -16,6 +16,7 @@ public class User {
     private String name;
     private String password;
     private int id;
+    private String state;
 
     public User(String name,String password, int id) {
         this.name=name;
