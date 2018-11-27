@@ -23,6 +23,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     private ArrayList <FileObject> files;
     private ArrayList<User> users;
 
+    private int lastFileID;
+    private int lastUserID;
+
     static int RMIPort;
     // vector for store list of callback objects
     private static Vector callbackObjects;
@@ -67,7 +70,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             catch(Exception e){
                 System.out.println("Error: "+e.toString());
             }
-            System.out.println("*******************************************************\n" + "Server completed callbacks ---");
+            System.out.println("--- Server completed callbacks"+"*******************************************************\n");
 
             //...
         }

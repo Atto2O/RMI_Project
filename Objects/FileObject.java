@@ -17,17 +17,20 @@ public class FileObject {
     public ArrayList<String> description;
     public String fileName;
     public int id;
-    public
+    public Type type;
+    public boolean isPublic;
+    public byte[] file;
 
-    public boolean publicFile;
-
-    public FileObject(String title,String description, String fileName) {
+    public FileObject(String title,ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile) {
         this.title=title;
         this.description=description;
         this.fileName=fileName;
+        this.type = type;
+        this.file = file;
+        this.isPublic = publicFile;
     }
 
-
+    //Getters
     public String getTitle(){
         return this.title;
     }
@@ -40,7 +43,11 @@ public class FileObject {
         return this.fileName;
     }
 
+    public Type getType() { return type; }
 
+    public byte[] getFile() {return file;}
+
+    //Setters
     public void setTitle(String title){
         this.title=title;
     }
@@ -61,4 +68,7 @@ public class FileObject {
         this.fileName=fileName;
     }
 
+    public void setType(Type type) {this.type = type;}
+
+    public void setFile(byte[] file) {this.file = file;}
 }
