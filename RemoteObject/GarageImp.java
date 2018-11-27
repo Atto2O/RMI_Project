@@ -20,21 +20,21 @@ import java.util.Vector;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
-    private ArrayList <FileObject> files;
-    private ArrayList<User> users;
+    private ArrayList<FileObject> files = null;
+    private ArrayList<User> users = null;
 
-    private int lastFileID;
-    private int lastUserID;
+    private int lastFileID = -1;
+    private int lastUserID = -1;
 
     static int RMIPort;
     // vector for store list of callback objects
     private static Vector callbackObjects;
 
-    public GarageImp() throws RemoteException
-    {
-        super ();
+    public GarageImp() throws RemoteException {
+        super();
         // instantiate a Vector object for storing callback objects
         callbackObjects = new Vector();
+        getInfo();
     }
 
     @Override
