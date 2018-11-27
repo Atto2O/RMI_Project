@@ -1,55 +1,107 @@
+package ServerUtils;
+
+import java.util.ArrayList;
+import RemoteObject.*;
+
+public static class ServerUtils(){
 //Get info from files
-public void getInfo()
-        {
-        System.out.println("Getting existing files...\n");
-        getFiles();
-        System.out.println("Getting last file ID available...\n");
-        getFileID();
-        System.out.println("Getting existing users...\n");
-        getUsers();
-        System.out.println("Getting last user ID available...\n");
-        getUserID();
-        }
 
-private void getFiles()
+    public static ArrayList<FileObject> getFiles() throws ClassNotFoundException{
+        ArrayList<FileObject> files = new ArrayList<>();
+        try
         {
-
-        }
-
-private void getUsers()
-        {
+            JsonReader reader = new JsonReader(new FileReader("./Files.json"));
+            reader.beginArray();
+            while (reader.hasNext()) {
+                FileObject value = new ObjectMapper().readValue(reader.nextString(), FileObject.class);
+                files.add(value);
+            }
+            reader.endArray();
+            reader.close();
 
         }
+        catch(Exception e)
+        {
+            System.out.println("Error getFiles() from ServerUtils: " + e.toString());
+        }
+        return files;
+    }
 
-private void getFileID()
+    public static ArrayList<User> getUsers()
+    {
+        ArrayList<User> users = new ArrayList<>();
+        try
+        {
+            JsonReader reader = new JsonReader(new FileReader("./Users.json"));
+            reader.beginArray();
+            while (reader.hasNext()) {
+                User value = new ObjectMapper().readValue(reader.nextString(), User.class);
+                users.add(value);
+            }
+            reader.endArray();
+            reader.close();
+
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error getUsers() from ServerUtils: " + e.toString());
+        }
+        return users;
+    }
+
+    public static int getFileID()
+    {
+        int id = -1;
+        try{
+            InputStream inJson=int.getResourceAsStream("./FileID.json");
+            Id ID = new ObjectMapper().readValue(inJson,Id.class);
+            id = ID.id;
+        }catch(Exception e){
+            System.out.println("Error getFileID from ServerUtils: " + e.toStrint());
+        }
+        return id;
+    }
+
+    public static int getUserID()
+    {
+        int id = -1;
+        try{
+            InputStream inJson=int.getResourceAsStream("./UserID.json");
+            Id ID = new ObjectMapper().readValue(inJson,Id.class);
+            id = ID.id;
+        }catch(Exception e){
+            System.out.println("Error getUserID from ServerUtils: " + e.toStrint());
+        }
+        return id;
+    }
+
+
+    //Save info to files
+    public static void saveFiles(ArrayList<FileObject> files)
         {
 
         }
 
-private void getUserID()
+    public static void saveUsers(ArrayList<User> users)
         {
 
         }
 
-
-//Save info to files
-private void saveFiles()
+    public static void saveFileID(int lastFileID)
         {
 
         }
 
-private void saveUsers()
-        {
-
-        }
-
-private void saveFileID()
-        {
-
-        }
-
-private void saveUserID()
+    public static void saveUserID(int lastUserID)
         {
 
 
         }
+}
+
+public class Id(){
+    int id;
+    public Id(int id){
+        this.id = id;
+    }
+}

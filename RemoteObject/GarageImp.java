@@ -20,7 +20,7 @@ import Server.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-
+import ServerUtils.*;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
@@ -38,7 +38,19 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         super();
         // instantiate a Vector object for storing callback objects
         callbackObjects = new Vector();
-        //getInfo();
+        this.getInfo();
+    }
+
+    private static void getInfo()
+    {
+        System.out.println("Getting existing files...\n");
+        this.files = ServerUtils.getFiles();
+        System.out.println("Getting last file ID available...\n");
+        this.lastFileID = ServerUtils.getFileID();
+        System.out.println("Getting existing users...\n");
+        this.users = ServerUtils.getUsers();
+        System.out.println("Getting last user ID available...\n");
+        this.lastUserID = ServerUtils.getUserID();
     }
 
     @Override
