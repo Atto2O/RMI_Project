@@ -16,7 +16,11 @@ import CallBack.*;
 import Objects.*;
 import RemoteObject.*;
 import Server.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
+
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
@@ -34,21 +38,41 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         super();
         // instantiate a Vector object for storing callback objects
         callbackObjects = new Vector();
-        getInfo();
+        //getInfo();
     }
 
     @Override
     public boolean registrar_usuari (String NewNomUsuari, String contrasenya)  throws RemoteException
     {
         //SI EL NOM ES VALID RETORNA TRUE
-        return true;
-        /*if(){
+
+
+
+        if(check_usuari_available(NewNomUsuari)){
             return true;
         }else{
             return false;
-        }*/
+        }
 
 
+    }
+
+
+
+    private boolean check_usuari_available (String NewNomUsuari)  throws RemoteException
+    {
+
+
+        Iterator<User> iter = this.users.iterator();
+
+        while (iter.hasNext()) {
+
+            if(iter.next().getName().equals(NewNomUsuari)){
+                return false;
+            }
+        }
+
+        return  true;
     }
 
 

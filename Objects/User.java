@@ -13,10 +13,10 @@ import Server.*;
 
 public class User {
 
-    public int id;
-    public String name;
-    public String password;
-    public String state;
+    private int id;
+    private String name;
+    private String password;
+    private String state;
 
 
     public User(String name,String password, int id) {

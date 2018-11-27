@@ -67,11 +67,11 @@ public class Client {
 			while(true){
 
 				if(state.equals("disconnected")){
-					System.out.print("Si voleu fer registrar-vos escriviu: registra. \n" +
+					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
 								     "Si voleu fer registrar-vos escriviu: logear.\n ");
 					String resposta = scanner.next();
 					if(resposta.equals("registrar")){
-						registrar();
+						registrar(h);
 
 					}else if(resposta.equals("logear")){
 
@@ -80,7 +80,9 @@ public class Client {
 
 
 
-				}
+				}else{
+
+
                 System.out.print("Function over server? (Deslogear ,upload, search,download) \n");
                 String order = scanner.next();
 
@@ -118,6 +120,7 @@ public class Client {
 					}
 				}
                 //DELETE
+				}
                 
 
 			}
@@ -129,7 +132,7 @@ public class Client {
 		}
 	}
 
-	public static void registrar(){
+	public static void registrar(Garage h){
 
 
 		Scanner scanner = new Scanner(System.in);
