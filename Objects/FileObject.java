@@ -13,13 +13,13 @@ import Server.*;
 
 public class FileObject {
 
-    public String title;
-    public ArrayList<String> description;
-    public String fileName;
-    public int id;
-    public Type type;
-    public boolean isPublic;
-    public byte[] file;
+    private String title;
+    private ArrayList<String> description;
+    private String fileName;
+    private int id;
+    private Type type;
+    private boolean isPublic;
+    private byte[] file;
 
     public FileObject(String title,ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile) {
         this.title=title;
@@ -43,11 +43,17 @@ public class FileObject {
         return this.fileName;
     }
 
-    public Type getType() { return type; }
+    public Type getType() { return this.type; }
 
-    public byte[] getFile() {return file;}
+    public byte[] getFile() {return this.file;}
+
+    public boolean getState() {return this.isPublic;}
+
+    public int getId() {return this.id;}
 
     //Setters
+    public void setId(int id){this.id=id;}
+
     public void setTitle(String title){
         this.title=title;
     }
@@ -71,4 +77,6 @@ public class FileObject {
     public void setType(Type type) {this.type = type;}
 
     public void setFile(byte[] file) {this.file = file;}
+
+    public void setState(boolean state) {this.isPublic = state;}
 }

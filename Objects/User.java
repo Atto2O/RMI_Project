@@ -13,9 +13,9 @@ import Server.*;
 
 public class User {
 
-    public String name;
-    public String password;
-    public int id;
+    private String name;
+    private String password;
+    private int id;
 
     public User(String name,String password, int id) {
         this.name=name;

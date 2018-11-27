@@ -18,6 +18,7 @@ import RemoteObject.*;
 import Server.*;
 
 public interface Garage extends Remote{
+
     public String uploadFile(byte[] myByteArray, String filename)  throws java.rmi.RemoteException;
     public String searchFile (String file) throws java.rmi.RemoteException;
     public byte[] downloadFile (String title) throws java.rmi.RemoteException;
