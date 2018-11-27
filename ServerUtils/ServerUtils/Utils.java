@@ -1,9 +1,13 @@
 package ServerUtils;
 
+import java.io.FileReader;
 import java.util.ArrayList;
-import RemoteObject.*;
 
-public static class ServerUtils(){
+import Objects.FileObject;
+import Objects.User;
+
+
+public class ServerUtils {
 //Get info from files
 
     public static ArrayList<FileObject> getFiles() throws ClassNotFoundException{
@@ -27,7 +31,7 @@ public static class ServerUtils(){
         return files;
     }
 
-    public static ArrayList<User> getUsers()
+    public static ArrayList<User> getUsers() throws ClassNotFoundException
     {
         ArrayList<User> users = new ArrayList<>();
         try
@@ -53,11 +57,11 @@ public static class ServerUtils(){
     {
         int id = -1;
         try{
-            InputStream inJson=int.getResourceAsStream("./FileID.json");
+            InputStream inJson=Id.getResourceAsStream("./FileID.json");
             Id ID = new ObjectMapper().readValue(inJson,Id.class);
             id = ID.id;
         }catch(Exception e){
-            System.out.println("Error getFileID from ServerUtils: " + e.toStrint());
+            System.out.println("Error getFileID from ServerUtils: " + e.toString());
         }
         return id;
     }
@@ -66,11 +70,11 @@ public static class ServerUtils(){
     {
         int id = -1;
         try{
-            InputStream inJson=int.getResourceAsStream("./UserID.json");
+            InputStream inJson=Id.getResourceAsStream("./UserID.json");
             Id ID = new ObjectMapper().readValue(inJson,Id.class);
             id = ID.id;
         }catch(Exception e){
-            System.out.println("Error getUserID from ServerUtils: " + e.toStrint());
+            System.out.println("Error getUserID from ServerUtils: " + e.toString());
         }
         return id;
     }
@@ -99,7 +103,7 @@ public static class ServerUtils(){
         }
 }
 
-public class Id(){
+class Id {
     int id;
     public Id(int id){
         this.id = id;

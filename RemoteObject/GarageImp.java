@@ -41,14 +41,22 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         this.getInfo();
     }
 
-    private static void getInfo()
+    private void getInfo()
     {
         System.out.println("Getting existing files...\n");
-        this.files = ServerUtils.getFiles();
+        try {
+            this.files = ServerUtils.getFiles();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         System.out.println("Getting last file ID available...\n");
         this.lastFileID = ServerUtils.getFileID();
         System.out.println("Getting existing users...\n");
-        this.users = ServerUtils.getUsers();
+        try {
+            this.users = ServerUtils.getUsers();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         System.out.println("Getting last user ID available...\n");
         this.lastUserID = ServerUtils.getUserID();
     }
