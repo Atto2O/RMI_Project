@@ -1,5 +1,11 @@
-$echo javac Hello.java
-$echo javac Client.java
-$echo javac HelloImpl.java
-$echo javac Server.java
-$echo java Server
+$echo javac ./RemoteObject/Garage.java
+$echo javac ./Client/Client.java
+$echo javac ./RemoteObject/GarageImp.java
+$echo javac ./Server/Server.java
+$echo javac ./CallBack/CallbackImpl.java
+$echo javac ./CallBack/ClientCallbackInterface.java
+$echo javac ./Objects/FileObject.java
+$echo javac ./Objects/User.java
+
+$echo java Server.Server
+
