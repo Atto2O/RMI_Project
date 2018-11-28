@@ -102,12 +102,17 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean user_login (String NomUsuari, String contrasenya)  throws RemoteException
 
     {
+
         Iterator<User> iter = this.users.iterator();
+
         boolean correct = false;
         while (iter.hasNext()) {
 
-            if(iter.next().getName().equals(NomUsuari)){
-                if(iter.next().getPassword().equals(contrasenya)){
+            User currentlyUser = iter.next();
+            if(currentlyUser.getName().equals(NomUsuari)){
+
+                if(currentlyUser.getPassword().equals(contrasenya)){
+
                     correct = true;
                 }else{
                     return correct;

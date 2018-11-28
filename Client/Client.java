@@ -145,7 +145,7 @@ public class Client {
 			if (!contrasenya.equals("") && !NomUsuari.equals("")){
 				//les contrasenyes son iguals
 				boolean resposta_servidor = h.user_login(NomUsuari, contrasenya);
-				if (resposta_servidor = true) {
+				if (resposta_servidor == true) {
 					System.out.print("T'as logeat correctamen!!!\n");
 				} else {
 					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
