@@ -22,7 +22,10 @@ public class User {
     public User(String name,String password, int id) {
         this.name=name;
         this.password=password;
+        this.id = id;
     }
+
+    public User(){}
 
     public String getName(){
         return this.name;

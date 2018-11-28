@@ -34,6 +34,7 @@ public class FileObject {
 
     public FileObject()
     {
+        this.id = -1;
     }
 
     //Getters
@@ -65,7 +66,10 @@ public class FileObject {
     }
 
     public void setDescription(List<String> description){
-        this.description=description;
+        this.description = new ArrayList<>();
+        for (String str : description) {
+            this.description.add(str);
+        }
     }
     public void addDescription(String descr)
     {
