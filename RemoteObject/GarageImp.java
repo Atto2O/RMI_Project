@@ -20,8 +20,8 @@ import ServerUtils.*;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
-    private ArrayList<FileObject> files = new ArrayList<>();
-    private ArrayList<User> users = new ArrayList<>();
+    private FilesArray files = new FilesArray();
+    private UsersArray users = new UsersArray();
 
     private int lastFileID = -1;
     private int lastUserID = -1;
@@ -58,15 +58,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
-    public boolean user_signup(String NewNomUsuari, String contrasenya)  throws RemoteException
+    public boolean user_signup(String newUserName, String password)
     {
+        System.out.println("Check username: " + newUserName);
         //SI EL NOM ES VALID RETORNA TRUE
-
-        if(checkAvailableUser(NewNomUsuari)){
-            User newUser = new User(NewNomUsuari,contrasenya,generateId(lastUserID));
-            this.users.add(newUser);
-            System.out.println("Usuari:"+NewNomUsuari+"registrat!!");
-            ServerUtils.saveUsers(this.users);
+        if(checkAvailableUser(newUserName)){
+            User newUser = new User(newUserName,password,generateId(lastUserID));
+            this.users.addUser(newUser);
+            System.out.println("Usuari:"+newUserName+"registrat!!");
+            ServerUtils.saveUsers(this.users.getUsers());
             ServerUtils.saveUserID(this.lastUserID);
             return true;
         }else{
@@ -76,25 +76,30 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     //WE GENERATE ID
     private int generateId(int id){
+        System.out.println("New ID: ");
         id += 1;
+        System.out.println(id);
         return id;
     }
 
 
-    private boolean checkAvailableUser(String NewNomUsuari)  throws RemoteException
+    private boolean checkAvailableUser(String newUserName)
     {
-        Iterator<User> iter = this.users.iterator();
-        while (iter.hasNext()) {
-            if(iter.next().getName().equals(NewNomUsuari)){
-                return false;
+        System.out.println("First user: "+this.users.isEmpty());
+        if(!this.users.isEmpty()){
+            Iterator<User> iter = this.users.getUsers().iterator();
+            while (iter.hasNext()) {
+                if(iter.next().getName().equals(newUserName)){
+                    return false;
+                }
             }
         }
         return  true;
     }
 
-    public boolean user_login (String NomUsuari, String contrasenya)  throws RemoteException
+    public boolean user_login (String NomUsuari, String contrasenya)
     {
-        Iterator<User> iter = this.users.iterator();
+        Iterator<User> iter = this.users.getUsers().iterator();
         boolean correct = false;
         while (iter.hasNext()) {
             User currentlyUser = iter.next();
@@ -167,7 +172,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
         ArrayList<FileObject> posibleFiles = new ArrayList<>();
         String[] keyWords = keyText.split("'., '");
-        Iterator<FileObject> iter = this.files.iterator();
+        Iterator<FileObject> iter = this.files.getFiles().iterator();
 
         for (int i=0;i<keyWords.length;i++)
         {
@@ -186,8 +191,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     }
                 }
             }
-
-
         }
 
         return posibleFiles;

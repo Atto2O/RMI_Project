@@ -23,24 +23,6 @@ public class Client {
 
 	private Client()
 	{
-		/*try {
-			System.setSecurityManager (new RMISecurityManager());
-			Registry registry = LocateRegistry.getRegistry ("localhost", RMIPort);
-			h = (Garage) registry.lookup("hello");
-			callbackObj = new CallbackImpl();
-			h.addCallback (callbackObj);
-			System.out.println("Registered for callback.");
-			try {
-				Thread.sleep(1000);
-			}
-			catch (InterruptedException ex){ // sleep over
-			}
-			h.deleteCallback (callbackObj);
-			System.out.println("Unregistered for callback.");
-		} // end try
-		catch (Exception e) {
-			System.out.println("Exception in CallbackClient: " + e);
-		} // end catch*/
 	}
 
 	public static void main (String args[])
@@ -73,8 +55,6 @@ public class Client {
 						}
 
 					}
-
-
 
 
 				}else{
@@ -162,24 +142,21 @@ public class Client {
 
 	}
 	public static void registrar(Garage h){
-
-
 		Scanner scanner = new Scanner(System.in);
-		System.out.print("Donam el nom de usuari\n");
-		String NewNomUsuari = scanner.next();
-		System.out.print("Introduix una contrasenya\n");
-		String contrasenya_1 = scanner.next();
-		System.out.print("Introduix la contrasenya un altre cop\n");
-		String contrasenya_2 = scanner.next();
+		System.out.print("Enter a user name:\n");
+		String newUserName = scanner.next();
+		System.out.print("Enter a password:\n");
+		String password_1 = scanner.next();
+		System.out.print("Repeat password:\n");
+		String password_2 = scanner.next();
 
 		try {
-
-
-			if (contrasenya_1.equals(contrasenya_2)) {
+			if (password_1.equals(password_2)) {
 				//les contrasenyes son iguals
-				boolean resposta_servidor = h.user_signup(NewNomUsuari, contrasenya_1);
-				if (resposta_servidor = true) {
-					System.out.print("T'as registrat correctamen!!!\n ja pots logear\n");
+				boolean server_response = h.user_signup(newUserName, password_1);
+                System.out.println(server_response);
+				if (server_response == true) {
+					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
 				}
