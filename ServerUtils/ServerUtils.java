@@ -22,34 +22,41 @@ public class ServerUtils{
         FileObject file = new FileObject();
         try
         {
-            InputStream is = new FileInputStream("./Files.json");
+            InputStream is = new FileInputStream("./Server/Backup/Files.json");
             String jsonTxt = is.toString();
-            JSONArray baseJSONResponse = new JSONArray(jsonTxt);
+            System.out.println(jsonTxt);
+           /* if(jsonTxt.equals("'{}'")){
+                return files;
+            }else
+            {
+                JSONArray baseJSONResponse = new JSONArray(jsonTxt);
 
-            for (int i = 0; i < baseJSONResponse.length(); i++) {
-                JSONObject fileObj = baseJSONResponse.getJSONObject(i);
+                for (int i = 0; i < baseJSONResponse.length(); i++) {
+                    JSONObject fileObj = baseJSONResponse.getJSONObject(i);
 
-                file.setTitle(fileObj.getString("title"));
+                    file.setTitle(fileObj.getString("title"));
 
-                JSONArray array = fileObj.getJSONArray("description");
-                List<Object> objects = array.toList();
-                List<String> strings = new ArrayList<>(objects.size());
-                for (Object object : objects) {
-                    strings.add(object.toString());
+                    JSONArray array = fileObj.getJSONArray("description");
+                    List<Object> objects = array.toList();
+                    List<String> strings = new ArrayList<>(objects.size());
+                    for (Object object : objects) {
+                        strings.add(object.toString());
+                    }
+                    file.setDescription(strings);
+
+                    file.setFileName(fileObj.getString("fileName"));
+
+                    file.setId(fileObj.getInt("id"));
+
+                    file.setType((Type)fileObj.get("type"));
+
+                    file.setState(fileObj.getBoolean("isPublic"));
+
+                    file.setFile((byte[])fileObj.get("file"));
+                    files.add(file);
                 }
-                file.setDescription(strings);
 
-                file.setFileName(fileObj.getString("fileName"));
-
-                file.setId(fileObj.getInt("id"));
-
-                file.setType((Type)fileObj.get("type"));
-
-                file.setState(fileObj.getBoolean("isPublic"));
-
-                file.setFile((byte[])fileObj.get("file"));
-                files.add(file);
-            }
+            }*/
         }
         catch(Exception e)
         {
@@ -64,7 +71,7 @@ public class ServerUtils{
         User user = new User();
         try
         {
-            InputStream is = new FileInputStream("./Users.json");
+            InputStream is = new FileInputStream("./Server/Backup/Files.json");
             String jsonTxt = is.toString();
             JSONArray baseJSONResponse = new JSONArray(jsonTxt);
 
@@ -91,7 +98,7 @@ public class ServerUtils{
     {
         Id ID = new Id();
         try{
-            InputStream is = new FileInputStream("./FileID.json");
+            InputStream is = new FileInputStream("./Server/Backup/FileID.json");
             String jsonTxt = is.toString();
             JSONObject jsonObject = new JSONObject(jsonTxt);
             ID.id =jsonObject.getInt("id");
@@ -105,7 +112,7 @@ public class ServerUtils{
     {
         Id ID = new Id();
         try{
-            InputStream is = new FileInputStream("./UserID.json");
+            InputStream is = new FileInputStream("./Server/Backup/UserID.json");
             String jsonTxt = is.toString();
             JSONObject jsonObject = new JSONObject(jsonTxt);
             ID.id =jsonObject.getInt("id");
@@ -121,7 +128,7 @@ public class ServerUtils{
         {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(new File("./Files.json"), files);
+                mapper.writeValue(new File("./Server/Backup/Files.json"), files);
             }catch (Exception e){
                 System.out.println("Error saveFiles(files) from ServerUtils: " + e.toString());
             }
@@ -131,7 +138,7 @@ public class ServerUtils{
         {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(new File("./Users.json"), users);
+                mapper.writeValue(new File("./Server/Backup/Users.json"), users);
             }catch (Exception e){
                 System.out.println("Error saveUsers(users) from ServerUtils: " + e.toString());
             }
@@ -141,7 +148,7 @@ public class ServerUtils{
         Id ID = new Id(lastFileID);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File("./FileID.json"), ID);
+            mapper.writeValue(new File("./Server/Backup/FileID.json"), ID);
         }catch (Exception e){
             System.out.println("Error saveFileID(id) from ServerUtils: " + e.toString());
         }
@@ -152,7 +159,7 @@ public class ServerUtils{
         Id ID = new Id(lastUserID);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File("./UserID.json"), ID);
+            mapper.writeValue(new File("./Server/Backup/UserID.json"), ID);
         }catch (Exception e){
             System.out.println("Error saveUserID(id) from ServerUtils: " + e.toString());
         }
