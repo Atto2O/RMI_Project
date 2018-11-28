@@ -20,9 +20,11 @@ import Server.*;
 public interface Garage extends Remote{
 
     public boolean registrar_usuari (String NewNomUsuari, String contrasenya)  throws RemoteException;
+    public boolean user_login (String NomUsuari, String contrasenya)  throws RemoteException;
     public String uploadFile(byte[] myByteArray, String filename)  throws java.rmi.RemoteException;
     public String searchFile (String file) throws java.rmi.RemoteException;
     public byte[] downloadFile (String title) throws java.rmi.RemoteException;
     public void addCallback (ClientCallbackInterface callbackObject) throws java.rmi.RemoteException;
     public void deleteCallback (ClientCallbackInterface callbackObject) throws java.rmi.RemoteException;
+
 }

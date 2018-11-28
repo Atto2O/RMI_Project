@@ -74,6 +74,7 @@ public class Client {
 						registrar(h);
 
 					}else if(resposta.equals("logear")){
+						logear(h);
 
 					}
 
@@ -131,7 +132,38 @@ public class Client {
 		    System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
+	public static void logear(Garage h){
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Nom de usuari:\n");
+		String NomUsuari = scanner.next();
+		System.out.print("Contrasenya:\n");
+		String contrasenya = scanner.next();
 
+		try {
+
+
+			if (!contrasenya.equals("") && !NomUsuari.equals("")){
+				//les contrasenyes son iguals
+				boolean resposta_servidor = h.user_login(NomUsuari, contrasenya);
+				if (resposta_servidor = true) {
+					System.out.print("T'as logeat correctamen!!!\n");
+				} else {
+					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
+				}
+
+			} else {
+				System.out.print("Un o mes camps son buit!!\n");
+			}
+
+
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in logear: " + e.toString());
+		}
+
+
+	}
 	public static void registrar(Garage h){
 
 
@@ -163,7 +195,7 @@ public class Client {
 		}
 		catch (Exception e)
 		{
-			System.out.println("Exception in SomeClient: " + e.toString());
+			System.out.println("Exception in registrar: " + e.toString());
 		}
 	}
 }
