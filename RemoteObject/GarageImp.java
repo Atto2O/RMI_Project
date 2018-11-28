@@ -8,19 +8,15 @@ import java.rmi.server.*;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+
 import CallBack.*;
 import Objects.*;
-import RemoteObject.*;
-import Server.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-//import ServerUtils.*;
+import ServerUtils.*;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
@@ -38,15 +34,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         super();
         // instantiate a Vector object for storing callback objects
         callbackObjects = new Vector();
-        //this.getInfo();
+        this.getInfo();
     }
 
-    /*private void getInfo()
+    private void getInfo()
     {
         System.out.println("Getting existing files...\n");
         try {
             this.files = ServerUtils.getFiles();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Getting last file ID available...\n");
@@ -54,72 +50,63 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("Getting existing users...\n");
         try {
             this.users = ServerUtils.getUsers();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Getting last user ID available...\n");
         this.lastUserID = ServerUtils.getUserID();
-    }*/
+    }
 
     @Override
-    public boolean registrar_usuari (String NewNomUsuari, String contrasenya)  throws RemoteException
+    public boolean user_signup(String NewNomUsuari, String contrasenya)  throws RemoteException
     {
         //SI EL NOM ES VALID RETORNA TRUE
 
-        if(check_usuari_available(NewNomUsuari)){
-            User newUser = new User(NewNomUsuari,contrasenya,generateId());
+        if(checkAvailableUser(NewNomUsuari)){
+            User newUser = new User(NewNomUsuari,contrasenya,generateId(lastUserID));
             this.users.add(newUser);
             System.out.println("Usuari:"+NewNomUsuari+"registrat!!");
+            ServerUtils.saveUsers(this.users);
+            ServerUtils.saveUserID(this.lastUserID);
             return true;
         }else{
             return false;
         }
-
-    }
-    //WE GENERATE ID FOR THE USER
-    private int generateId(){
-        this.lastUserID +=+ 1;
-        return this.lastUserID;
     }
 
-    private boolean check_usuari_available (String NewNomUsuari)  throws RemoteException
+    //WE GENERATE ID
+    private int generateId(int id){
+        id += 1;
+        return id;
+    }
+
+
+    private boolean checkAvailableUser(String NewNomUsuari)  throws RemoteException
     {
-
-
         Iterator<User> iter = this.users.iterator();
-
         while (iter.hasNext()) {
-
             if(iter.next().getName().equals(NewNomUsuari)){
-
                 return false;
             }
         }
-
         return  true;
     }
 
     public boolean user_login (String NomUsuari, String contrasenya)  throws RemoteException
-
     {
-
         Iterator<User> iter = this.users.iterator();
-
         boolean correct = false;
         while (iter.hasNext()) {
-
             User currentlyUser = iter.next();
             if(currentlyUser.getName().equals(NomUsuari)){
 
                 if(currentlyUser.getPassword().equals(contrasenya)){
-
                     correct = true;
                 }else{
                     return correct;
                 }
             }
         }
-
         return  correct;
     }
 

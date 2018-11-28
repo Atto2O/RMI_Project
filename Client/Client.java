@@ -4,20 +4,14 @@
 package Client;
 
 import java.rmi.*;
-import java.rmi.registry.*;
-import java.rmi.registry.Registry;
 import java.util.Scanner;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+
 import CallBack.*;
-import Objects.*;
 import RemoteObject.*;
-import Server.*;
 
 public class Client {
 
@@ -180,7 +174,7 @@ public class Client {
 
 			if (contrasenya_1.equals(contrasenya_2)) {
 				//les contrasenyes son iguals
-				boolean resposta_servidor = h.registrar_usuari(NewNomUsuari, contrasenya_1);
+				boolean resposta_servidor = h.user_signup(NewNomUsuari, contrasenya_1);
 				if (resposta_servidor = true) {
 					System.out.print("T'as registrat correctamen!!!\n ja pots logear\n");
 				} else {

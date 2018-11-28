@@ -17,7 +17,7 @@ import java.util.List;
 public class ServerUtils{
 //Get info from files
 
-    public ArrayList<FileObject> getFiles() {
+    public static ArrayList<FileObject> getFiles() {
         ArrayList<FileObject> files = new ArrayList<>();
         FileObject file = new FileObject();
         try
