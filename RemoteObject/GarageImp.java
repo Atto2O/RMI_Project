@@ -163,9 +163,35 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
-    public String searchFile(String file) throws RemoteException {
+    public  ArrayList<FileObject> searchFile(String keyText) throws RemoteException {
 
-        return "We find it: "+file+" !!";
+        ArrayList<FileObject> posibleFiles = new ArrayList<>();
+        String[] keyWords = keyText.split("'., '");
+        Iterator<FileObject> iter = this.files.iterator();
+
+        for (int i=0;i<keyWords.length;i++)
+        {
+
+            while (iter.hasNext())
+            {
+
+                FileObject currentlyFile = iter.next();
+                String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
+                if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getDescription().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
+                {
+
+                    if(!posibleFiles.contains(currentlyFile))
+                    {
+                        posibleFiles.add(currentlyFile);
+                    }
+                }
+            }
+
+
+        }
+
+        return posibleFiles;
+
     }
 
     @Override

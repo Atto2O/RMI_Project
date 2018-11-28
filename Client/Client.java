@@ -19,7 +19,7 @@ public class Client {
 	static int RMIPort = 8999;
 	static String hostName = "localhost";
 	static Garage h;
-
+	public String state ="disconnected";
 
 	private Client()
 	{
@@ -43,32 +43,34 @@ public class Client {
 		} // end catch*/
 	}
 
-
 	public static void main (String args[])
 	{
+		Client client = new Client();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;
-		String state = "disconnected";
+		client.state = "disconnected";
 
         try
 		{
 			ClientCallbackInterface callbackObj = new CallbackImpl();
-		    String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
-		    Garage h = (Garage)Naming.lookup(registryURL);
+			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
+			Garage h = (Garage)Naming.lookup(registryURL);
 
 			h.addCallback (callbackObj);
 
 			while(true){
-
-				if(state.equals("disconnected")){
+				if(client.state.equals("disconnected")){
 					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
-								     "Si voleu fer registrar-vos escriviu: logear.\n ");
+							"Si voleu fer registrar-vos escriviu: logear.\n ");
 					String resposta = scanner.next();
+
 					if(resposta.equals("registrar")){
 						registrar(h);
 
 					}else if(resposta.equals("logear")){
-						logear(h);
+						if(logear(h)){
+							client.state = "connected";
+						}
 
 					}
 
@@ -82,7 +84,7 @@ public class Client {
                 String order = scanner.next();
 
 				if(order.equals("Deslogear")){
-					state = "disconnected";
+					client.state = "disconnected";
 				}
 
                 //UPLOAD
@@ -96,9 +98,9 @@ public class Client {
                 }
                 //SEARCH
 				if(order.equals("search")){
-					System.out.print("Enter the title: \n");
-					String title = scanner.next();
-					System.out.println(h.searchFile(title));
+					System.out.print("Enter some key text: \n");
+					String keyText = scanner.next();
+					System.out.println(h.searchFile(keyText));
 				}
 
                 //DOWLOAD
@@ -126,7 +128,7 @@ public class Client {
 		    System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
-	public static void logear(Garage h){
+	public static boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Nom de usuari:\n");
 		String NomUsuari = scanner.next();
@@ -141,6 +143,7 @@ public class Client {
 				boolean resposta_servidor = h.user_login(NomUsuari, contrasenya);
 				if (resposta_servidor == true) {
 					System.out.print("T'as logeat correctamen!!!\n");
+                    return true;
 				} else {
 					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
 				}
@@ -155,7 +158,7 @@ public class Client {
 		{
 			System.out.println("Exception in logear: " + e.toString());
 		}
-
+		return false;
 
 	}
 	public static void registrar(Garage h){
