@@ -1,6 +1,6 @@
 package ServerUtils;
 
-class Id{
+public class Id{
     int id;
     public Id(){
         this.id = -1;
