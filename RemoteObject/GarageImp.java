@@ -20,12 +20,12 @@ import Server.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import ServerUtils.*;
+//import ServerUtils.*;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
-    private ArrayList<FileObject> files = null;
-    private ArrayList<User> users = null;
+    private ArrayList<FileObject> files = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
 
     private int lastFileID = -1;
     private int lastUserID = -1;
@@ -38,38 +38,49 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         super();
         // instantiate a Vector object for storing callback objects
         callbackObjects = new Vector();
-        this.getInfo();
+        //this.getInfo();
     }
 
-    private static void getInfo()
+    /*private void getInfo()
     {
         System.out.println("Getting existing files...\n");
-        this.files = ServerUtils.getFiles();
+        try {
+            this.files = ServerUtils.getFiles();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         System.out.println("Getting last file ID available...\n");
         this.lastFileID = ServerUtils.getFileID();
         System.out.println("Getting existing users...\n");
-        this.users = ServerUtils.getUsers();
+        try {
+            this.users = ServerUtils.getUsers();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         System.out.println("Getting last user ID available...\n");
         this.lastUserID = ServerUtils.getUserID();
-    }
+    }*/
 
     @Override
     public boolean registrar_usuari (String NewNomUsuari, String contrasenya)  throws RemoteException
     {
         //SI EL NOM ES VALID RETORNA TRUE
 
-
-
         if(check_usuari_available(NewNomUsuari)){
+            User newUser = new User(NewNomUsuari,contrasenya,generateId());
+            this.users.add(newUser);
+            System.out.println("Usuari:"+NewNomUsuari+"registrat!!");
             return true;
         }else{
             return false;
         }
 
-
     }
-
-
+    //WE GENERATE ID FOR THE USER
+    private int generateId(){
+        this.lastUserID +=+ 1;
+        return this.lastUserID;
+    }
 
     private boolean check_usuari_available (String NewNomUsuari)  throws RemoteException
     {
@@ -80,6 +91,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         while (iter.hasNext()) {
 
             if(iter.next().getName().equals(NewNomUsuari)){
+
                 return false;
             }
         }
@@ -87,7 +99,29 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return  true;
     }
 
+    public boolean user_login (String NomUsuari, String contrasenya)  throws RemoteException
 
+    {
+
+        Iterator<User> iter = this.users.iterator();
+
+        boolean correct = false;
+        while (iter.hasNext()) {
+
+            User currentlyUser = iter.next();
+            if(currentlyUser.getName().equals(NomUsuari)){
+
+                if(currentlyUser.getPassword().equals(contrasenya)){
+
+                    correct = true;
+                }else{
+                    return correct;
+                }
+            }
+        }
+
+        return  correct;
+    }
 
     // method for client to call to add itself to its callback
     @Override

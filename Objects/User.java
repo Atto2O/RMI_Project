@@ -16,7 +16,7 @@ public class User {
     private int id;
     private String name;
     private String password;
-    private String state;
+    private String state="disconnected";
 
 
     public User(String name,String password, int id) {
