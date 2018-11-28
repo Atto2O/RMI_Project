@@ -11,6 +11,7 @@ import Objects.*;
 import RemoteObject.*;
 import Server.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileObject {
 
@@ -29,6 +30,10 @@ public class FileObject {
         this.type = type;
         this.file = file;
         this.isPublic = publicFile;
+    }
+
+    public FileObject()
+    {
     }
 
     //Getters
@@ -59,7 +64,7 @@ public class FileObject {
         this.title=title;
     }
 
-    public void setDescription(ArrayList<String> description){
+    public void setDescription(List<String> description){
         this.description=description;
     }
     public void addDescription(String descr)

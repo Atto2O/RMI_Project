@@ -1,24 +1,51 @@
 package ServerUtils;
+import Objects.FileObject;
+import Objects.User;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import javax.json.*;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import RemoteObject.*;
+import java.util.List;
 
-public static class ServerUtils(){
+public class ServerUtils{
 //Get info from files
 
-    public static ArrayList<FileObject> getFiles() throws ClassNotFoundException{
+    public ArrayList<FileObject> getFiles() throws ClassNotFoundException{
         ArrayList<FileObject> files = new ArrayList<>();
+        FileObject file = new FileObject();
         try
         {
-            JsonReader reader = new JsonReader(new FileReader("./Files.json"));
-            reader.beginArray();
-            while (reader.hasNext()) {
-                FileObject value = new ObjectMapper().readValue(reader.nextString(), FileObject.class);
-                files.add(value);
-            }
-            reader.endArray();
-            reader.close();
+            InputStream is = new FileInputStream("./Files.json");
+            String jsonTxt = is.toString();
+            JSONArray baseJSONResponse = new JSONArray(jsonTxt);
 
+            for (int i = 0; i < baseJSONResponse.length(); i++) {
+                JSONObject fileObj = baseJSONResponse.getJSONObject(i);
+
+                file.setTitle(fileObj.getString("title"));
+
+                JSONArray array = fileObj.getJSONArray("description");
+
+                List<String> asd = array.toList();
+                file.setDescription();
+
+                CurStudentObj.setmStudentID(StudentObj.getString("StudentID"));
+                CurStudentObj.setmName(StudentObj.getString("Name"));
+                CurStudentObj.setmGender(StudentObj.getString("Gender").charAt(0));
+                String TempDOB = (StudentObj.getString("DOB"));
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE MM dd HH:mm:ss z yyyy");
+                CurStudentObj.setmNICN(StudentObj.getString("NICN"));
+                String TempDOJ = (StudentObj.getString("DOJ"));
+                CurStudentObj.setmGender(StudentObj.getString("Gender").charAt(0));
+                JSONArray array = StudentObj.getJSONArray("Module");
+
+            }
         }
         catch(Exception e)
         {
@@ -32,14 +59,6 @@ public static class ServerUtils(){
         ArrayList<User> users = new ArrayList<>();
         try
         {
-            JsonReader reader = new JsonReader(new FileReader("./Users.json"));
-            reader.beginArray();
-            while (reader.hasNext()) {
-                User value = new ObjectMapper().readValue(reader.nextString(), User.class);
-                users.add(value);
-            }
-            reader.endArray();
-            reader.close();
 
         }
         catch(Exception e)
@@ -53,7 +72,7 @@ public static class ServerUtils(){
     {
         int id = -1;
         try{
-            InputStream inJson=int.getResourceAsStream("./FileID.json");
+            InputStream inJson=Id.getResourceAsStream("./FileID.json");
             Id ID = new ObjectMapper().readValue(inJson,Id.class);
             id = ID.id;
         }catch(Exception e){
@@ -99,7 +118,7 @@ public static class ServerUtils(){
         }
 }
 
-public class Id(){
+class Id{
     int id;
     public Id(int id){
         this.id = id;
