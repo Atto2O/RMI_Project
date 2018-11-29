@@ -56,8 +56,8 @@ public class ServerUtils{
             System.out.println("Error getFileID from ServerUtils: " + e.toString());
         }
         if(ID==null){ID=new Id();}
-        System.out.println(ID.id);
-        return ID.id;
+        System.out.println(ID.getId());
+        return ID.getId();
     }
 
     public static int getUserID()
@@ -70,16 +70,17 @@ public class ServerUtils{
             System.out.println("Error getUserID from ServerUtils: " + e.toString());
         }
         if(ID==null){ID=new Id();}
-        System.out.println(ID.id);
-        return ID.id;
+        System.out.println(ID.getId());
+        return ID.getId();
     }
 
     //Save info to files
     public static void saveFiles(ArrayList<FileObject> files)
         {
+            FilesArray f = new FilesArray(files);
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(new File("./Server/Backup/Files.json"), files);
+                mapper.writeValue(new File("./Server/Backup/Files.json"), f);
             }catch (Exception e){
                 System.out.println("Error saveFiles(files) from ServerUtils: " + e.toString());
             }
@@ -87,9 +88,10 @@ public class ServerUtils{
 
     public static void saveUsers(ArrayList<User> users)
         {
+            UsersArray u = new UsersArray(users);
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(new File("./Server/Backup/Users.json"), users);
+                mapper.writeValue(new File("./Server/Backup/Users.json"), u);
             }catch (Exception e){
                 System.out.println("Error saveUsers(users) from ServerUtils: " + e.toString());
             }

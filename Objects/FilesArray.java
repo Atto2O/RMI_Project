@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class FilesArray {
     private ArrayList<FileObject> files = new ArrayList<>();
+    private boolean empty;
+
     public FilesArray(ArrayList<FileObject> files){
         this.files=files;
     }

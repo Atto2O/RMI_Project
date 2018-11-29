@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class UsersArray {
 
     private ArrayList<User> users = new ArrayList<>();
+    private boolean empty;
 
     public UsersArray(ArrayList<User> users){
         this.users=users;
