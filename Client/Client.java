@@ -4,6 +4,7 @@
 package Client;
 
 import java.rmi.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Path;
 import java.nio.file.Files;
@@ -11,6 +12,8 @@ import java.nio.file.Paths;
 import java.io.FileOutputStream;
 
 import CallBack.*;
+import Objects.FileObject;
+import Objects.Type;
 import RemoteObject.*;
 
 public class Client {
@@ -20,6 +23,7 @@ public class Client {
 	static String hostName = "localhost";
 	static Garage h;
 	public String state ="disconnected";
+	private String userName = "";
 
 	private Client()
 	{
@@ -47,10 +51,10 @@ public class Client {
 					String resposta = scanner.next();
 
 					if(resposta.toLowerCase().equals("registrar")){
-						registrar(h);
+						client.registrar(h);
 
 					}else if(resposta.toLowerCase().equals("logear")){
-						if(logear(h)){
+						if(client.logear(h)){
 							client.state = "connected";
 						}
 					}
@@ -65,12 +69,45 @@ public class Client {
 
                 //UPLOAD
                 if(order.toLowerCase().equals("upload")){
-					System.out.print("Enter the file name (E.g.: example.txt): \n");
-					String filename = scanner.next();
-
-					Path fileLocation = Paths.get("./clientBase/"+filename);
+					FileObject fileObject = new FileObject();
+					fileObject.setUser(client.userName);
+					//FILE
+					System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
+					String filePath = scanner.next();
+					Path fileLocation = Paths.get(filePath);
 					byte[] data = Files.readAllBytes(fileLocation);
-					System.out.println(h.uploadFile(data,filename));
+					fileObject.setFile(data);
+
+					//FILE NAME
+					System.out.print("Enter the file name (E.g.: Pug): \n");
+					String fileName = scanner.next();
+					fileObject.setFileName(fileName);
+
+					//TYPE
+					System.out.print("Enter a Type MOVIE, IMAGE, TEXT, PDF or AUDIO (E.g.: image): \n");
+					String t = scanner.next();
+					Type type  = Type.fromString(t);
+					fileObject.setType(type);
+
+					//DESCRIPTION
+					System.out.print("Enter description tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
+					String desc = scanner.next();
+					String[] keyWords = desc.split(",");
+					ArrayList<String> description = new ArrayList<>();
+					for(int i =0; i<keyWords.length; i++){
+						description.add(keyWords[i]);
+					}
+					fileObject.setDescription(description);
+
+					//IS PUBLIC
+					System.out.print("You will make it public? (YES/NO): \n");
+					String resp = scanner.next().toLowerCase();
+					if(resp.equals("yes")){
+						fileObject.setState(true);
+					}else{fileObject.setState(false);}
+
+					String response = h.uploadFile(fileObject);
+					System.out.println(response);
                 }
                 //SEARCH
 				if(order.toLowerCase().equals("search")){
@@ -104,19 +141,19 @@ public class Client {
 		    System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
-	public static boolean logear(Garage h){
+	public boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Nom de usuari:\n");
-		String NomUsuari = scanner.next();
+		userName = scanner.next();
 		System.out.print("Contrasenya:\n");
 		String contrasenya = scanner.next();
 
 		try {
 
 
-			if (!contrasenya.equals("") && !NomUsuari.equals("")){
+			if (!contrasenya.equals("") && !userName.equals("")){
 				//les contrasenyes son iguals
-				boolean resposta_servidor = h.user_login(NomUsuari, contrasenya);
+				boolean resposta_servidor = h.user_login(userName, contrasenya);
 				if (resposta_servidor == true) {
 					System.out.print("T'as logeat correctamen!!!\n");
                     return true;
@@ -137,7 +174,7 @@ public class Client {
 		return false;
 
 	}
-	public static void registrar(Garage h){
+	public void registrar(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter a user name:\n");
 		String newUserName = scanner.next();

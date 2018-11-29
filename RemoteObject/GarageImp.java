@@ -156,19 +156,21 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
-    public String uploadFile (byte[] myByteArray, String filename) throws RemoteException {
-        try (FileOutputStream fos = new FileOutputStream("./garage/"+filename)) {
-            System.out.println(fos);
-            fos.write(myByteArray);
+    public String uploadFile (FileObject file) {
+        try {
+            this.lastFileID = generateId(lastFileID);
+            file.setId(lastFileID);
+            this.files.addFile(file);
+            ServerUtils.saveFiles(files.getFiles());
+            return "Saved!";
         }catch(Exception e){
             System.out.println("Error uploading: " + e.toString());
             return "Error uploading: " + e.toString();
         }
-        return "Saved!";
     }
 
     @Override
-    public  ArrayList<FileObject> searchFile(String keyText) throws RemoteException {
+    public  ArrayList<FileObject> searchFile(String keyText) {
 
         ArrayList<FileObject> posibleFiles = new ArrayList<>();
         String[] keyWords = keyText.split("'., '");

@@ -13,9 +13,8 @@ import Server.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileObject {
+public class FileObject implements java.io.Serializable{
 
-    private String title;
     private ArrayList<String> description;
     private String fileName;
     private int id;
@@ -24,8 +23,7 @@ public class FileObject {
     private byte[] file;
     private String user;
 
-    public FileObject(String title,ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile, String user) {
-        this.title=title;
+    public FileObject(ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile, String user) {
         this.description=description;
         this.fileName=fileName;
         this.type = type;
@@ -40,10 +38,6 @@ public class FileObject {
     }
 
     //Getters
-    public String getTitle(){
-        return this.title;
-    }
-
     public ArrayList<String> getDescription(){
         return this.description;
     }
@@ -62,12 +56,10 @@ public class FileObject {
 
     public String getUser(){return this.user;}
 
+    public byte[] getDate(){return this.file;}
+
     //Setters
     public void setId(int id){this.id=id;}
-
-    public void setTitle(String title){
-        this.title=title;
-    }
 
     public void setDescription(List<String> description){
         this.description = new ArrayList<>();
