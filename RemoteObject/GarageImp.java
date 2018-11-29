@@ -209,6 +209,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
+    public String uploadFile (FileObject file) {
+        try {
+            this.lastFileID = generateId(lastFileID);
+            file.setId(lastFileID);
+            this.files.addFile(file);
+            ServerUtils.saveFiles(files.getFiles());
+            return "Saved!";
+        }catch(Exception e){
+            System.out.println("Error uploading: " + e.toString());
     public String uploadFile (byte[] myByteArray, String filename) throws RemoteException {
 
 
@@ -233,15 +242,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return "Error uploading: " + e.toString();
         }
-
-
-
-
-
+        return "Saved!";
     }
 
     @Override
-    public  ArrayList<FileObject> searchFile(String keyText) throws RemoteException {
+    public  ArrayList<FileObject> searchFile(String keyText) {
 
 
 
@@ -289,7 +294,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public byte[] downloadFile(String title) throws RemoteException
     {
-
         try
         {
             semaphore.acquire();
