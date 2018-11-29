@@ -46,29 +46,25 @@ public class Client {
 							"Si voleu fer registrar-vos escriviu: logear.\n ");
 					String resposta = scanner.next();
 
-					if(resposta.equals("registrar")){
+					if(resposta.toLowerCase().equals("registrar")){
 						registrar(h);
 
-					}else if(resposta.equals("logear")){
+					}else if(resposta.toLowerCase().equals("logear")){
 						if(logear(h)){
 							client.state = "connected";
 						}
-
 					}
-
-
 				}else{
 
-
-                System.out.print("Function over server? (Deslogear ,upload, search,download) \n");
+                System.out.print("Function over server? (deslogear ,upload, search,download) \n");
                 String order = scanner.next();
 
-				if(order.equals("Deslogear")){
+				if(order.toLowerCase().equals("deslogear")){
 					client.state = "disconnected";
 				}
 
                 //UPLOAD
-                if(order.equals("upload")){
+                if(order.toLowerCase().equals("upload")){
 					System.out.print("Enter the file name (E.g.: example.txt): \n");
 					String filename = scanner.next();
 
@@ -77,14 +73,14 @@ public class Client {
 					System.out.println(h.uploadFile(data,filename));
                 }
                 //SEARCH
-				if(order.equals("search")){
+				if(order.toLowerCase().equals("search")){
 					System.out.print("Enter some key text: \n");
 					String keyText = scanner.next();
 					System.out.println(h.searchFile(keyText));
 				}
 
                 //DOWLOAD
-                if(order.equals("download"))
+                if(order.toLowerCase().equals("download"))
                 {
 					System.out.println("Enter the file title:\n");
 					String filename = scanner.next();
