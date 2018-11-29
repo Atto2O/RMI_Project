@@ -22,14 +22,16 @@ public class FileObject {
     private Type type;
     private boolean isPublic;
     private byte[] file;
+    private String user;
 
-    public FileObject(String title,ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile) {
+    public FileObject(String title,ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile, String user) {
         this.title=title;
         this.description=description;
         this.fileName=fileName;
         this.type = type;
         this.file = file;
         this.isPublic = publicFile;
+        this.user = user;
     }
 
     public FileObject()
@@ -57,6 +59,8 @@ public class FileObject {
     public boolean getState() {return this.isPublic;}
 
     public int getId() {return this.id;}
+
+    public String getUser(){return this.user;}
 
     //Setters
     public void setId(int id){this.id=id;}
@@ -89,4 +93,6 @@ public class FileObject {
     public void setFile(byte[] file) {this.file = file;}
 
     public void setState(boolean state) {this.isPublic = state;}
+
+    public void setUser(String user) {this.user = user;}
 }
