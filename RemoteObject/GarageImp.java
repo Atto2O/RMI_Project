@@ -63,7 +63,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("Check username: " + newUserName);
         //SI EL NOM ES VALID RETORNA TRUE
         if(checkAvailableUser(newUserName)){
-            User newUser = new User(newUserName,password,generateId(lastUserID));
+            this.lastUserID = generateId(lastUserID);
+            User newUser = new User(newUserName,password,lastUserID);
             this.users.addUser(newUser);
             System.out.println("Usuari:"+newUserName+"registrat!!");
             ServerUtils.saveUsers(this.users.getUsers());
@@ -76,9 +77,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     //WE GENERATE ID
     private int generateId(int id){
-        System.out.println("New ID: ");
         id += 1;
-        System.out.println(id);
+        System.out.println("New ID: " + id);
         return id;
     }
 

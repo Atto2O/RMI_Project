@@ -21,6 +21,7 @@ public class ServerUtils{
         {
             ObjectMapper mapper = new ObjectMapper();
             files = mapper.readValue(new File("./Server/Backup/Files.json"), FilesArray.class);
+            System.out.println(files.toString());
         }
         catch(Exception e)
         {
@@ -41,6 +42,7 @@ public class ServerUtils{
         {
             System.out.println("Error getUsers() from ServerUtils: " + e.toString());
         }
+        System.out.println(users.toString());
         return users;
     }
 
@@ -54,6 +56,7 @@ public class ServerUtils{
             System.out.println("Error getFileID from ServerUtils: " + e.toString());
         }
         if(ID==null){ID=new Id();}
+        System.out.println(ID.id);
         return ID.id;
     }
 
@@ -66,6 +69,8 @@ public class ServerUtils{
         }catch(Exception e){
             System.out.println("Error getUserID from ServerUtils: " + e.toString());
         }
+        if(ID==null){ID=new Id();}
+        System.out.println(ID.id);
         return ID.id;
     }
 
@@ -90,8 +95,10 @@ public class ServerUtils{
             }
         }
 
-    public static void saveFileID(int lastFileID) throws IOException {
+    public static void saveFileID(int lastFileID)
+    {
         Id ID = new Id(lastFileID);
+        System.out.println(ID.toString());
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File("./Server/Backup/FileID.json"), ID);
@@ -103,6 +110,7 @@ public class ServerUtils{
     public static void saveUserID(int lastUserID)
     {
         Id ID = new Id(lastUserID);
+        System.out.println(ID.toString());
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File("./Server/Backup/UserID.json"), ID);

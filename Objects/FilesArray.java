@@ -3,7 +3,7 @@ package Objects;
 import java.util.ArrayList;
 
 public class FilesArray {
-    private ArrayList<FileObject> files;
+    private ArrayList<FileObject> files = new ArrayList<>();
     public FilesArray(ArrayList<FileObject> files){
         this.files=files;
     }
