@@ -44,8 +44,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     private void getInfo()
     {
-
-
         System.out.println("Getting existing files...\n");
         try {
             this.files = ServerUtils.getFiles();
@@ -67,7 +65,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public boolean user_signup(String newUserName, String password)
     {
-
         System.out.println("Check username: " + newUserName);
         //SI EL NOM ES VALID RETORNA TRUE
         try{
@@ -80,7 +77,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 System.out.println("Usuari:"+newUserName+"registrat!!");
                 ServerUtils.saveUsers(this.users.getUsers());
                 ServerUtils.saveUserID(this.lastUserID);
-
                 semaphore.release();
                 return true;
             }else{
@@ -88,12 +84,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 semaphore.release();
                 return false;
             }
-
-
         }catch (Exception e) {
             e.printStackTrace();
         }
-
         semaphore.release();
         return false;
     }
@@ -142,9 +135,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public void addCallback (ClientCallbackInterface callbackObject)  throws RemoteException
     {
-
-
-
         try{
             semaphore.acquire();
             // store the callback object into the vector
@@ -160,11 +150,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             e.printStackTrace();
             semaphore.release();
         }
-
-
-
-
-
     }
 
     @Override
@@ -175,17 +160,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             System.out.println ("Server got an 'deleteCallback' call.");
             callbackObjects.remove (callbackObject);
             semaphore.release();
-
-
-
-
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
         }
-
-
-
     }
 
     private static void callback()  throws RemoteException {
@@ -210,64 +188,44 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public String uploadFile (FileObject file) {
-        try {
-            this.lastFileID = generateId(lastFileID);
-            file.setId(lastFileID);
-            this.files.addFile(file);
-            ServerUtils.saveFiles(files.getFiles());
-            return "Saved!";
-        }catch(Exception e){
-            System.out.println("Error uploading: " + e.toString());
-    public String uploadFile (byte[] myByteArray, String filename) throws RemoteException {
-
-
         try{
-            semaphore.acquire();
+        semaphore.acquire();
 
-            try (FileOutputStream fos = new FileOutputStream("./garage/"+filename)) {
-                System.out.println(fos);
-                fos.write(myByteArray);
+            try {
+                this.lastFileID = generateId(lastFileID);
+                file.setId(lastFileID);
+                this.files.addFile(file);
+                ServerUtils.saveFiles(files.getFiles());
                 semaphore.release();
                 return "Saved!";
-
             }catch(Exception e){
                 System.out.println("Error uploading: " + e.toString());
                 semaphore.release();
                 return "Error uploading: " + e.toString();
             }
-
-
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
             return "Error uploading: " + e.toString();
         }
-        return "Saved!";
     }
 
     @Override
     public  ArrayList<FileObject> searchFile(String keyText) {
-
-
-
         try{
             semaphore.acquire();
 
             ArrayList<FileObject> posibleFiles = new ArrayList<>();
             String[] keyWords = keyText.split("'., '");
             Iterator<FileObject> iter = this.files.getFiles().iterator();
-
             for (int i=0;i<keyWords.length;i++)
             {
-
                 while (iter.hasNext())
                 {
-
                     FileObject currentlyFile = iter.next();
                     String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
                     if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getDescription().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
                     {
-
                         if(!posibleFiles.contains(currentlyFile))
                         {
                             posibleFiles.add(currentlyFile);
@@ -278,17 +236,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return posibleFiles;
 
-
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
             return new ArrayList<FileObject>();
         }
-
-
-
-
-
     }
 
     @Override
