@@ -3,6 +3,7 @@
  */
 package RemoteObject;
 
+import java.io.File;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.nio.file.Path;
@@ -16,6 +17,9 @@ import Objects.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
 import ServerUtils.*;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
@@ -25,6 +29,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     private int lastFileID = -1;
     private int lastUserID = -1;
+    public static final Semaphore semaphore = new Semaphore(1, true);
 
     static int RMIPort;
     // vector for store list of callback objects
@@ -39,6 +44,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     private void getInfo()
     {
+
+
         System.out.println("Getting existing files...\n");
         try {
             this.files = ServerUtils.getFiles();
@@ -60,19 +67,35 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public boolean user_signup(String newUserName, String password)
     {
+
         System.out.println("Check username: " + newUserName);
         //SI EL NOM ES VALID RETORNA TRUE
-        if(checkAvailableUser(newUserName)){
-            this.lastUserID = generateId(lastUserID);
-            User newUser = new User(newUserName,password,lastUserID);
-            this.users.addUser(newUser);
-            System.out.println("Usuari:"+newUserName+"registrat!!");
-            ServerUtils.saveUsers(this.users.getUsers());
-            ServerUtils.saveUserID(this.lastUserID);
-            return true;
-        }else{
-            return false;
+        try{
+            semaphore.acquire();
+
+            if(checkAvailableUser(newUserName)){
+                this.lastUserID = generateId(lastUserID);
+                User newUser = new User(newUserName,password,lastUserID);
+                this.users.addUser(newUser);
+                System.out.println("Usuari:"+newUserName+"registrat!!");
+                ServerUtils.saveUsers(this.users.getUsers());
+                ServerUtils.saveUserID(this.lastUserID);
+
+                semaphore.release();
+                return true;
+            }else{
+
+                semaphore.release();
+                return false;
+            }
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+
+        semaphore.release();
+        return false;
     }
 
     //WE GENERATE ID
@@ -119,20 +142,50 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public void addCallback (ClientCallbackInterface callbackObject)  throws RemoteException
     {
-    // store the callback object into the vector
-        if(!(callbackObjects.contains(callbackObject)))
-        {
-            callbackObjects.addElement (callbackObject);
-            System.out.println ("Server got an 'addCallback' call.");
+
+
+
+        try{
+            semaphore.acquire();
+            // store the callback object into the vector
+            if(!(callbackObjects.contains(callbackObject)))
+            {
+                callbackObjects.addElement (callbackObject);
+                System.out.println ("Server got an 'addCallback' call.");
+            }
+            callback();
+            semaphore.release();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            semaphore.release();
         }
-        callback();
+
+
+
+
+
     }
 
     @Override
     public void deleteCallback (ClientCallbackInterface callbackObject) throws RemoteException
     {
-        System.out.println ("Server got an 'deleteCallback' call.");
-        callbackObjects.remove (callbackObject);
+        try{
+            semaphore.acquire();
+            System.out.println ("Server got an 'deleteCallback' call.");
+            callbackObjects.remove (callbackObject);
+            semaphore.release();
+
+
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            semaphore.release();
+        }
+
+
+
     }
 
     private static void callback()  throws RemoteException {
@@ -157,59 +210,131 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public String uploadFile (byte[] myByteArray, String filename) throws RemoteException {
-        try (FileOutputStream fos = new FileOutputStream("./garage/"+filename)) {
-            System.out.println(fos);
-            fos.write(myByteArray);
-        }catch(Exception e){
-            System.out.println("Error uploading: " + e.toString());
+
+
+        try{
+            semaphore.acquire();
+
+            try (FileOutputStream fos = new FileOutputStream("./garage/"+filename)) {
+                System.out.println(fos);
+                fos.write(myByteArray);
+                semaphore.release();
+                return "Saved!";
+
+            }catch(Exception e){
+                System.out.println("Error uploading: " + e.toString());
+                semaphore.release();
+                return "Error uploading: " + e.toString();
+            }
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            semaphore.release();
             return "Error uploading: " + e.toString();
         }
-        return "Saved!";
+
+
+
+
+
     }
 
     @Override
     public  ArrayList<FileObject> searchFile(String keyText) throws RemoteException {
 
-        ArrayList<FileObject> posibleFiles = new ArrayList<>();
-        String[] keyWords = keyText.split("'., '");
-        Iterator<FileObject> iter = this.files.getFiles().iterator();
 
-        for (int i=0;i<keyWords.length;i++)
-        {
 
-            while (iter.hasNext())
+        try{
+            semaphore.acquire();
+
+            ArrayList<FileObject> posibleFiles = new ArrayList<>();
+            String[] keyWords = keyText.split("'., '");
+            Iterator<FileObject> iter = this.files.getFiles().iterator();
+
+            for (int i=0;i<keyWords.length;i++)
             {
 
-                FileObject currentlyFile = iter.next();
-                String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
-                if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getDescription().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
+                while (iter.hasNext())
                 {
 
-                    if(!posibleFiles.contains(currentlyFile))
+                    FileObject currentlyFile = iter.next();
+                    String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
+                    if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getDescription().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
                     {
-                        posibleFiles.add(currentlyFile);
+
+                        if(!posibleFiles.contains(currentlyFile))
+                        {
+                            posibleFiles.add(currentlyFile);
+                        }
                     }
                 }
             }
+            semaphore.release();
+            return posibleFiles;
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            semaphore.release();
+            return new ArrayList<FileObject>();
         }
 
-        return posibleFiles;
+
+
+
 
     }
 
     @Override
     public byte[] downloadFile(String title) throws RemoteException
     {
+
         try
         {
+            semaphore.acquire();
             Path fileLocation = Paths.get("./garage/"+title);
             byte[] data = Files.readAllBytes(fileLocation);
+            semaphore.release();
             return data;
         }
         catch(Exception e)
         {
             System.out.println("Download Error: " + e.toString());
+            semaphore.release();
             return null;
         }
+    }
+
+    public static boolean SetAvailableFile(String path){
+        try{
+
+        File tmpDir = new File(path);
+        if(!tmpDir.exists()){
+            File f = new File(path);
+
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+        }
+        }catch(Exception e){
+            System.out.println("erro pelotudo: "+e+"");
+        }
+        return true;
+    }
+
+    public static boolean SetAvailableDirectory(String path){
+        try{
+
+            File tmpDir = new File(path);
+            if(!tmpDir.exists()){
+                File f = new File(path);
+
+                f.getParentFile().mkdirs();
+                f.createNewFile();
+            }
+        }catch(Exception e){
+            System.out.println("erro pelotudo: "+e+"");
+        }
+        return true;
     }
 }
