@@ -192,8 +192,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         semaphore.acquire();
 
             try {
-                this.lastFileID = generateId(lastFileID);
-                file.setId(lastFileID);
+                this.lastFileID = generateId(this.lastFileID);
+                file.setId(this.lastFileID);
+                ServerUtils.saveFileID(this.lastFileID);
                 this.files.addFile(file);
                 ServerUtils.saveFiles(files.getFiles());
                 semaphore.release();
