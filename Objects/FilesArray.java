@@ -21,7 +21,15 @@ public class FilesArray {
 
     public void removeFile(FileObject file)
     {
+        System.out.println("Before remove:");
+        for (FileObject f:this.files) {
+            System.out.println(f.getId());
+        }
         this.files.remove(file);
+        System.out.println("After remove: ");
+        for (FileObject f:this.files) {
+            System.out.println(f.getId());
+        }
     }
 
     public int size(){

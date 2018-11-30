@@ -61,7 +61,7 @@ public class Client {
 					}
 				}else{
 
-                System.out.print("Function over server? (deslogear ,upload, search,download) \n");
+                System.out.print("Function over server? (deslogear,delete ,upload, search,download) \n");
                 String order = scanner.next();
 
 				if(order.toLowerCase().equals("deslogear")){
@@ -95,6 +95,12 @@ public class Client {
 					}
 				}
                 //DELETE
+				if(order.toLowerCase().equals("delete"))
+				{
+
+					System.out.println(client.deleteFile(h));
+
+				}
 				}
                 
 
@@ -233,5 +239,21 @@ public class Client {
 		{
 			System.out.println("Exception in registrar: " + e.toString());
 		}
+	}
+
+	public String deleteFile(Garage h){
+		Scanner scanner = new Scanner(System.in);
+		try{
+			System.out.println("Give me the id file:\n");
+			int fileId = Integer.parseInt(scanner.next());
+			return h.deleteFile(fileId, this.userName);
+		}catch (Exception e)
+		{
+			System.out.println("Exception in SomeClient: " + e.toString());
+			return "Error en el Client al intentar borra fitxer: " + e.toString();
+		}
+
+
+
 	}
 }
