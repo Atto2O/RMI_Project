@@ -44,15 +44,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     private void getInfo()
     {
-        System.out.println("Getting existing files...\n");
+        System.out.println("Getting existing files...");
         try {
             this.files = ServerUtils.getFiles();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Getting last file ID available...\n");
+        System.out.println("Getting last file ID available...");
         this.lastFileID = ServerUtils.getFileID();
-        System.out.println("Getting existing users...\n");
+        System.out.println("Getting existing users...");
         try {
             this.users = ServerUtils.getUsers();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         boolean correct = false;
         while (iter.hasNext()) {
             User currentlyUser = iter.next();
-            if(currentlyUser.getName().equals(NomUsuari)){
+            if(currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())){
 
                 if(currentlyUser.getPassword().equals(contrasenya)){
                     correct = true;
@@ -188,24 +188,17 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public String uploadFile (FileObject file) {
-        try{
-        semaphore.acquire();
-
-            try {
-                this.lastFileID = generateId(this.lastFileID);
-                file.setId(this.lastFileID);
-                ServerUtils.saveFileID(this.lastFileID);
-                this.files.addFile(file);
-                ServerUtils.saveFiles(files.getFiles());
-                semaphore.release();
-                return "Saved!";
-            }catch(Exception e){
-                System.out.println("Error uploading: " + e.toString());
-                semaphore.release();
-                return "Error uploading: " + e.toString();
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
+        try {
+            semaphore.acquire();
+            this.lastFileID = generateId(this.lastFileID);
+            file.setId(this.lastFileID);
+            ServerUtils.saveFileID(this.lastFileID);
+            this.files.addFile(file);
+            ServerUtils.saveFiles(files.getFiles());
+            semaphore.release();
+            return "Saved!";
+        }catch(Exception e){
+            System.out.println("Error uploading: " + e.toString());
             semaphore.release();
             return "Error uploading: " + e.toString();
         }
@@ -215,7 +208,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public  ArrayList<FileObject> searchFile(String keyText) {
         try{
             semaphore.acquire();
-
             ArrayList<FileObject> posibleFiles = new ArrayList<>();
             String[] keyWords = keyText.split("'., '");
             Iterator<FileObject> iter = this.files.getFiles().iterator();

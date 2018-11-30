@@ -108,6 +108,7 @@ public class Client {
 	}
 
 	public void upload(){
+		///home/s/sbp5/Escritorio/50mb.jpg
 		Scanner scanner = new Scanner(System.in);
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
@@ -126,7 +127,7 @@ public class Client {
 		fileObject.setFile(data);
 
 		//FILE NAME
-		System.out.print("Enter the file name (E.g.: Pug): \n");
+		System.out.print("Enter the file name (E.g.: Pug.jpg): \n");
 		String fileName = scanner.next();
 		fileObject.setFileName(fileName);
 
@@ -153,7 +154,13 @@ public class Client {
 			fileObject.setState(true);
 		}else{fileObject.setState(false);}
 
-		String response = null;
+		String response = "Error";
+
+		System.out.println(fileObject.getFileName());
+		System.out.println(fileObject.getDescription());
+		System.out.println(fileObject.getState());
+		System.out.println(fileObject.getType());
+		System.out.println(fileObject.getUser());
 
 		try {
 			response = this.h.uploadFile(fileObject);
@@ -166,7 +173,7 @@ public class Client {
 	public boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Nom de usuari:\n");
-		userName = scanner.next();
+		userName = scanner.next().toLowerCase();
 		System.out.print("Contrasenya:\n");
 		String contrasenya = scanner.next();
 
@@ -199,7 +206,7 @@ public class Client {
 	public void registrar(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter a user name:\n");
-		String newUserName = scanner.next();
+		String newUserName = scanner.next().toLowerCase();
 		System.out.print("Enter a password:\n");
 		String password_1 = scanner.next();
 		System.out.print("Repeat password:\n");
