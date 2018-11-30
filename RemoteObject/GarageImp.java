@@ -262,6 +262,42 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
+    @Override
+    public String deleteFile(int fileId, String user) throws RemoteException
+    {
+        try
+        {
+            semaphore.acquire();
+            Iterator<FileObject> iter = this.files.getFiles().iterator();
+            while (iter.hasNext()) {
+                FileObject currentlyFile=  iter.next();
+
+                if(currentlyFile.getId()==fileId){
+                        if(currentlyFile.getUser().equals(user)){
+
+                        //iter.remove();
+                        this.files.removeFile(currentlyFile);
+                        ServerUtils.saveFiles(this.files.getFiles());
+                        semaphore.release();
+                        return "Fitxer amb id: "+fileId+", eliminat correctament";
+                    }
+
+                }
+
+
+            }
+            semaphore.release();
+            return "No ets el propietari de aquest fitxer o no existeix :(";
+        }
+        catch(Exception e)
+        {
+            System.out.println("delete file Error: " + e.toString());
+            semaphore.release();
+            return "Error al intentar borra el fitxer";
+        }
+
+    }
+
     public static boolean SetAvailableFile(String path){
         try{
 
@@ -275,6 +311,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }catch(Exception e){
             System.out.println("erro pelotudo: "+e+"");
         }
+
         return true;
     }
 

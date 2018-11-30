@@ -57,8 +57,6 @@ public class FileObject implements java.io.Serializable{
 
     public String getUser(){return this.user;}
 
-    public byte[] getDate(){return this.file;}
-
     //Setters
     public void setId(int id){this.id=id;}
 
