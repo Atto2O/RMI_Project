@@ -3,6 +3,7 @@
  */
 package Client;
 
+import java.io.IOException;
 import java.rmi.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -69,45 +70,7 @@ public class Client {
 
                 //UPLOAD
                 if(order.toLowerCase().equals("upload")){
-					FileObject fileObject = new FileObject();
-					fileObject.setUser(client.userName);
-					//FILE
-					System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
-					String filePath = scanner.next();
-					Path fileLocation = Paths.get(filePath);
-					byte[] data = Files.readAllBytes(fileLocation);
-					fileObject.setFile(data);
-
-					//FILE NAME
-					System.out.print("Enter the file name (E.g.: Pug): \n");
-					String fileName = scanner.next();
-					fileObject.setFileName(fileName);
-
-					//TYPE
-					System.out.print("Enter a Type MOVIE, IMAGE, TEXT, PDF or AUDIO (E.g.: image): \n");
-					String t = scanner.next();
-					Type type  = Type.fromString(t);
-					fileObject.setType(type);
-
-					//DESCRIPTION
-					System.out.print("Enter description tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
-					String desc = scanner.next();
-					String[] keyWords = desc.split(",");
-					ArrayList<String> description = new ArrayList<>();
-					for(int i =0; i<keyWords.length; i++){
-						description.add(keyWords[i]);
-					}
-					fileObject.setDescription(description);
-
-					//IS PUBLIC
-					System.out.print("You will make it public? (YES/NO): \n");
-					String resp = scanner.next().toLowerCase();
-					if(resp.equals("yes")){
-						fileObject.setState(true);
-					}else{fileObject.setState(false);}
-
-					String response = h.uploadFile(fileObject);
-					System.out.println(response);
+					client.upload();
                 }
                 //SEARCH
 				if(order.toLowerCase().equals("search")){
@@ -120,11 +83,13 @@ public class Client {
                 if(order.toLowerCase().equals("download"))
                 {
 					System.out.println("Enter the file title:\n");
-					String filename = scanner.next();
-					byte[] arraybytes=h.downloadFile(filename);
+					int id = Integer.parseInt(scanner.next());
+					FileObject file = h.downloadFile(id);
 
-					try (FileOutputStream fos = new FileOutputStream("./clientBase/"+filename)) {
-						fos.write(arraybytes);
+					String home = System.getProperty("user.home");
+					try {
+						FileOutputStream fos = new FileOutputStream(home+"/Downloads/" + file.getFileName());
+						fos.write(file.getFile());
 					}catch(Exception e){
 						System.out.println("Error downloading: " + e.toString() + "\n");
 					}
@@ -141,6 +106,63 @@ public class Client {
 		    System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
+
+	public void upload(){
+		Scanner scanner = new Scanner(System.in);
+		FileObject fileObject = new FileObject();
+		fileObject.setUser(this.userName);
+		//FILE
+		System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
+		String filePath = scanner.next();
+		Path fileLocation = Paths.get(filePath);
+		byte[] data = new byte[0];
+
+		try {
+			data = Files.readAllBytes(fileLocation);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		fileObject.setFile(data);
+
+		//FILE NAME
+		System.out.print("Enter the file name (E.g.: Pug): \n");
+		String fileName = scanner.next();
+		fileObject.setFileName(fileName);
+
+		//TYPE
+		System.out.print("Enter a Type MOVIE, IMAGE, TEXT, PDF or AUDIO (E.g.: image): \n");
+		String t = scanner.next();
+		Type type  = Type.fromString(t);
+		fileObject.setType(type);
+
+		//DESCRIPTION
+		System.out.print("Enter description tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
+		String desc = scanner.next();
+		String[] keyWords = desc.split(",");
+		ArrayList<String> description = new ArrayList<>();
+		for(int i =0; i<keyWords.length; i++){
+			description.add(keyWords[i]);
+		}
+		fileObject.setDescription(description);
+
+		//IS PUBLIC
+		System.out.print("You will make it public? (YES/NO): \n");
+		String resp = scanner.next().toLowerCase();
+		if(resp.equals("yes")){
+			fileObject.setState(true);
+		}else{fileObject.setState(false);}
+
+		String response = null;
+
+		try {
+			response = this.h.uploadFile(fileObject);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		System.out.println(response);
+	}
+
 	public boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Nom de usuari:\n");

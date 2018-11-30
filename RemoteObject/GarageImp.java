@@ -244,15 +244,14 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
-    public byte[] downloadFile(String title) throws RemoteException
+    public FileObject downloadFile(int id) throws RemoteException
     {
         try
         {
             semaphore.acquire();
-            Path fileLocation = Paths.get("./garage/"+title);
-            byte[] data = Files.readAllBytes(fileLocation);
+            FileObject file = getFileObject(id);
             semaphore.release();
-            return data;
+            return file;
         }
         catch(Exception e)
         {
@@ -260,6 +259,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return null;
         }
+    }
+
+    private FileObject getFileObject(int id){
+        for (FileObject file: files.getFiles()) {
+            if(file.getId()==id){return file;}
+        }
+        return new FileObject();
     }
 
     public static boolean SetAvailableFile(String path){
