@@ -26,5 +26,7 @@ public interface Garage extends Remote{
     public FileObject downloadFile (int id) throws java.rmi.RemoteException;
     public void addCallback (ClientCallbackInterface callbackObject) throws java.rmi.RemoteException;
     public void deleteCallback (ClientCallbackInterface callbackObject) throws java.rmi.RemoteException;
+    public String deleteFile(int fileId, String user) throws java.rmi.RemoteException;
+
 
 }
