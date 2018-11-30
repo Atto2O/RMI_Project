@@ -105,7 +105,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         if(!this.users.isEmpty()){
             Iterator<User> iter = this.users.getUsers().iterator();
             while (iter.hasNext()) {
-                if(iter.next().getName().equals(newUserName)){
+                if(iter.next().getName().toLowerCase().equals(newUserName.toLowerCase())){
                     return false;
                 }
             }
