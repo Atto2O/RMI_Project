@@ -24,6 +24,8 @@ public class Client {
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
+	public int callbackid;
+	public ClientCallbackInterface callbackObj;
 
 	private Client(){}
 
@@ -36,12 +38,13 @@ public class Client {
 
         try
 		{
-			ClientCallbackInterface callbackObj = new CallbackImpl();
+
 			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
 			Garage h = (Garage)Naming.lookup(registryURL);
-
-			h.addCallback (callbackObj);
-
+			System.out.println("1---------------------------\n");
+			client.callbackObj = new CallbackImpl();
+			System.out.println(client.callbackid);
+			System.out.println("2----------------------------\n");
 			while(true){
 				if(client.state.equals("disconnected")){
 					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
@@ -180,14 +183,15 @@ public class Client {
 		userName = scanner.next().toLowerCase();
 		System.out.print("Contrasenya:\n");
 		String contrasenya = scanner.next();
-
+		int callbackid = -1;
 		try {
 
 
 			if (!contrasenya.equals("") && !userName.equals("")){
 				//les contrasenyes son iguals
-				boolean resposta_servidor = h.user_login(userName, contrasenya);
-				if (resposta_servidor == true) {
+				callbackid = h.user_login(userName, contrasenya,callbackObj);
+				if (callbackid != -1) {
+					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
                     return true;
 				} else {

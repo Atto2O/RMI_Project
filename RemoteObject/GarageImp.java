@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
+import java.util.*;
 
 import CallBack.*;
 import Objects.*;
@@ -26,19 +27,22 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     private FilesArray files = new FilesArray();
     private UsersArray users = new UsersArray();
+    Hashtable<Integer,User> connectUsers = new Hashtable<Integer,User>();
+    Hashtable<Integer,ClientCallbackInterface> callbackObjects = new Hashtable<Integer,ClientCallbackInterface>();
 
     private int lastFileID = -1;
     private int lastUserID = -1;
     public static final Semaphore semaphore = new Semaphore(1, true);
 
     static int RMIPort;
+
     // vector for store list of callback objects
-    private static Vector callbackObjects;
+    //private static Vector callbackObjects;
 
     public GarageImp() throws RemoteException {
         super();
         // instantiate a Vector object for storing callback objects
-        callbackObjects = new Vector();
+        //callbackObjects = new Vector();
         this.getInfo();
     }
 
@@ -123,44 +127,72 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return  true;
     }
 
-    public boolean user_login (String NomUsuari, String contrasenya)
+    public int user_login (String NomUsuari, String contrasenya, ClientCallbackInterface callbackObj) throws RemoteException
     {
         Iterator<User> iter = this.users.getUsers().iterator();
-        boolean correct = false;
+        int idConexio = -1;
         while (iter.hasNext()) {
             User currentlyUser = iter.next();
             if(currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())){
 
                 if(currentlyUser.getPassword().equals(contrasenya)){
-                    correct = true;
+
+
+                    return this.addCallback(callbackObj,currentlyUser);
                 }else{
-                    return correct;
+                    return idConexio;
                 }
             }
         }
-        return  correct;
+        return  idConexio;
     }
 
     // method for client to call to add itself to its callback
-    @Override
-    public void addCallback (ClientCallbackInterface callbackObject)  throws RemoteException
+    //@Override
+    public int addCallback (ClientCallbackInterface callbackObject,User currentlyUser)  throws RemoteException
     {
+        int key=-1;
         try{
             semaphore.acquire();
             // store the callback object into the vector
             if(!(callbackObjects.contains(callbackObject)))
             {
-                callbackObjects.addElement (callbackObject);
-                System.out.println ("Server got an 'addCallback' call.");
+                key =this.getKeyForCallBack();
+
+                //GUARDEM EL HAMBOO
+                this.callbackObjects.put(key,callbackObject);
+                this.connectUsers.put(key,currentlyUser);
+
+                System.out.println ("User: "+currentlyUser.getName()+" just connected with key: "+key+"\n");
+
+
+                this.notifyConnection(new ArrayList<Integer>(),currentlyUser.getName() );
+                //callbackObjects.addElement (callbackObject);
+
             }
-            callback();
+
             semaphore.release();
+            return key;
 
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
+            return key;
         }
     }
+
+    private  int getKeyForCallBack(){
+
+        if(this.callbackObjects.size() == 0) {return 0;}
+
+        for (int i = 0; i < this.callbackObjects.size(); i++) {
+            if(!callbackObjects.containsKey(i)){
+                return i;
+            }
+        }
+        return this.callbackObjects.size();
+    }
+
 
     @Override
     public void deleteCallback (ClientCallbackInterface callbackObject) throws RemoteException
@@ -176,26 +208,110 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
-    private static void callback()  throws RemoteException {
-        System.out.println("*******************************************************\n" + "Callbacks initiated ---");
+    private void notifyConnection(ArrayList<Integer> startFrom,String newConnection)  throws RemoteException {
+        ArrayList<Integer> notifiedUsers = new ArrayList<Integer> ();
+        ArrayList<Integer> usersToDelete= new ArrayList<Integer> ();
+        try{
+
+            for (int key : this.callbackObjects.keySet()) {
+                System.out.printf("Estem fent  servir la key: "+key+"\n");
+                if (notifiedUsers.contains(key)) {
+                }
+
+
+                try {
+                    ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
+                    client.callMe("Hey im the Server" +
+                            "User: " + newConnection+" just connected to the server\n");
+                    System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
+                    notifiedUsers.add(key);
+                } catch (Exception e) {
+                    //notifiedUsers.add(key);
+                    System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
+                    //this.callbackObjects.remove(key);
+                    usersToDelete.add(key);
+                    this.connectUsers.remove(key);
+
+                    //notifyConnection(notifiedUsers,newConnection);
+                    continue;
+                }
+            }
+
+            for (int idDelete:usersToDelete) {
+                this.callbackObjects.remove(idDelete);
+            }
+
+        } catch (Exception e) {
+
+        System.out.println("SOC UN ERRORRRRR" + e.toString());
+
+    }
+
+
+
+
+
+    }
+
+
+    /*
+
+        System.out.println("\n*******************************************************\n");
+        for (int i = startfrom; i < this..size(); i++) {
+
+            System.out.println("Now performing the " + i + "-th callback\n");
+            // convert the vector object to a callback object
+
+            try
+            {
+                client.callMe("Server calling back to client " + i);
+
+
+
+            }
+            catch(Exception e){
+
+
+                //DECREMENTAR EL CLALBAKC ID APARTIR DLE CLALBAKC NUMERO I
+                System.out.println("Hem borrat el usuari desconectat: "+e.toString());
+
+                return callbackObjects.size()-1;
+            }
+            System.out.println("--- Server completed callbacks"+i+"*******************************************************\n");
+
+            //...
+        }
+        return callbackObjects.size();
+        //...
+    }
+
+
+    private static void callbackSuscribed(FileObject file){
+
+        System.out.println("Into callbakc suscribers\n");
+
         for (int i = 0; i < callbackObjects.size(); i++) {
-            System.out.println("Now performing the " + i + "-th callback");
+
+            //if(   usuari CONNECTATS .llista de subscricions contain alguna de les k entren ara  )
+
             // convert the vector object to a callback object
             ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.elementAt(i);
             try
             {
-                client.callMe("Server calling back to client " + i);
+                client.callMe("hola callback: "+i+"+EL user xxxx a puajt la pelicula yyyyy ");
             }
             catch(Exception e){
+
                 System.out.println("Error: "+e.toString());
+
             }
-            System.out.println("Server completed callbacks ---"+"\n*******************************************************\n");
 
-            //...
+
         }
-        //...
-    }
 
+
+    }
+*/
     @Override
     public String uploadFile (FileObject file) {
         try {

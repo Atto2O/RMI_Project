@@ -17,7 +17,7 @@ public class User {
     private String name;
     private String password;
     private String state="disconnected";
-
+    private int callbackid=-1;
 
     public User(String name,String password, int id) {
         this.name=name;
@@ -36,7 +36,7 @@ public class User {
     }
 
     public int getId() { return this.id; }
-
+    public int getCallbackid() { return this.callbackid; }
 
     public void setName(String name){
         this.name=name;
@@ -47,4 +47,6 @@ public class User {
     }
 
     public void setId (int id) { this.id = id; }
+    public void setCallbackid (int callbackid) { this.callbackid = callbackid; }
+
 }
