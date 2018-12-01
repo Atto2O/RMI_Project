@@ -270,7 +270,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 {
                     FileObject currentlyFile = iter.next();
                     String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
-                    if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getDescription().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
+                    if((titleParsed.contains(keyWords[i].toString().toLowerCase())) || (currentlyFile.getTags().toString().toLowerCase().contains(keyWords[i].toLowerCase())) )
                     {
                         if(!posibleFiles.contains(currentlyFile))
                         {

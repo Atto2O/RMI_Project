@@ -3,20 +3,13 @@
  */
 package Objects;
 
-import java.rmi.*;
-import java.rmi.registry.*;
-import java.rmi.registry.Registry;
-import CallBack.*;
-import Objects.*;
-import RemoteObject.*;
-import Server.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class FileObject implements java.io.Serializable{
 
-    private ArrayList<String> description;
+    private ArrayList<String> tags;
+    private char[] description = new char[200];
     private String fileName;
     private int id;
     private Type type;
@@ -24,13 +17,14 @@ public class FileObject implements java.io.Serializable{
     private byte[] file;
     private String user;
 
-    public FileObject(ArrayList<String> description, String fileName, Type type, byte[] file, boolean publicFile, String user) {
-        this.description=description;
+    public FileObject(ArrayList<String> tags, String fileName, Type type, byte[] file, boolean publicFile, String user, char[] description) {
+        this.tags = tags;
         this.fileName=fileName;
         this.type = type;
         this.file = file;
         this.isPublic = publicFile;
         this.user = user;
+        this.description = description;
     }
 
     public FileObject()
@@ -39,8 +33,8 @@ public class FileObject implements java.io.Serializable{
     }
 
     //Getters
-    public ArrayList<String> getDescription(){
-        return this.description;
+    public ArrayList<String> getTags(){
+        return this.tags;
     }
 
     public String getFileName(){
@@ -60,19 +54,19 @@ public class FileObject implements java.io.Serializable{
     //Setters
     public void setId(int id){this.id=id;}
 
-    public void setDescription(List<String> description){
-        this.description = new ArrayList<>();
-        for (String str : description) {
-            this.description.add(str);
+    public void setTags(List<String> tags){
+        this.tags = new ArrayList<>();
+        for (String str : tags) {
+            this.tags.add(str);
         }
     }
     public void addDescription(String descr)
     {
-        this.description.add(descr);
+        this.tags.add(descr);
     }
     public void deleteDescription(String descr)
     {
-        this.description.remove(descr);
+        this.tags.remove(descr);
     }
 
     public void setFileName(String fileName){

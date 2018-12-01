@@ -15,7 +15,6 @@ import CallBack.*;
 import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
-import ServerUtils.ServerUtils;
 
 public class Client {
 
@@ -83,7 +82,7 @@ public class Client {
 						for (FileObject f: files) {
 							System.out.println(f.getId() + " - " + f.getFileName());
 							System.out.printf("\tTags: ");
-							for (String tag:f.getDescription()) {
+							for (String tag:f.getTags()) {
 								System.out.printf(tag + " ");
 							}
 							System.out.printf("\n");
@@ -190,7 +189,6 @@ public class Client {
 	//endregion
 
 	//region<MODIFY Params>
-
 	//region<Files>
 
 	//region<Upload>
@@ -233,7 +231,7 @@ public class Client {
 		for(int i =0; i<keyWords.length; i++){
 			description.add(keyWords[i]);
 		}
-		fileObject.setDescription(description);
+		fileObject.setTags(description);
 
 		//IS PUBLIC
 		System.out.print("You will make it public? (YES/NO): \n");
@@ -303,9 +301,9 @@ public class Client {
 		System.out.println("Type a tag to add: ");
 		String tag = scanner.next();
 
-		ArrayList<String> current_description = file.getDescription();
+		ArrayList<String> current_description = file.getTags();
 		current_description.add(tag);
-		file.setDescription(current_description);
+		file.setTags(current_description);
 		return "added!";
 	}
 
@@ -315,10 +313,10 @@ public class Client {
 		System.out.println("Type a tag to remove: ");
 		String tag = scanner.next();
 
-		ArrayList<String> current_description = file.getDescription();
+		ArrayList<String> current_description = file.getTags();
 		if(current_description.contains(tag.toLowerCase())){
 			current_description.remove(tag);
-			file.setDescription(current_description);
+			file.setTags(current_description);
 			return "added!";
 		}
 		else{
@@ -331,6 +329,5 @@ public class Client {
 
 	//region<Users>
 	//endregion
-
 	//endregion
 }
