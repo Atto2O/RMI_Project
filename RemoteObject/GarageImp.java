@@ -47,19 +47,29 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("Getting existing files...");
         try {
             this.files = ServerUtils.getFiles();
+            System.out.printf("\tFiles id: ");
+            for (FileObject f: this.files.getFiles()) {
+                System.out.printf(f.getId() + " ");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Getting last file ID available...");
+        System.out.println("\nGetting last file ID available...");
         this.lastFileID = ServerUtils.getFileID();
+        System.out.println("\tLast file ID: " + this.lastFileID);
         System.out.println("Getting existing users...");
         try {
             this.users = ServerUtils.getUsers();
+            System.out.printf("\tUsers id: ");
+            for (User f: this.users.getUsers()) {
+                System.out.printf(f.getId() + " ");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Getting last user ID available...\n");
+        System.out.println("\nGetting last user ID available...");
         this.lastUserID = ServerUtils.getUserID();
+        System.out.println("\tLast user ID: " + this.lastUserID + "\n");
     }
 
     @Override
@@ -169,7 +179,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     private static void callback()  throws RemoteException {
         System.out.println("*******************************************************\n" + "Callbacks initiated ---");
         for (int i = 0; i < callbackObjects.size(); i++) {
-            System.out.println("Now performing the " + i + "-th callback\n");
+            System.out.println("Now performing the " + i + "-th callback");
             // convert the vector object to a callback object
             ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.elementAt(i);
             try
@@ -179,7 +189,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             catch(Exception e){
                 System.out.println("Error: "+e.toString());
             }
-            System.out.println("--- Server completed callbacks"+"*******************************************************\n");
+            System.out.println("Server completed callbacks ---"+"\n*******************************************************\n");
 
             //...
         }

@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 
 import CallBack.*;
 import Objects.FileObject;
+import Objects.FilesArray;
 import Objects.Type;
 import RemoteObject.*;
 
@@ -61,49 +62,55 @@ public class Client {
 					}
 				}else{
 
-                System.out.print("Function over server? (deslogear,delete ,upload, search,download) \n");
-                String order = scanner.next();
+					System.out.print("Function over server? (deslogear,delete ,upload, search,download) \n");
+					String order = scanner.next();
 
-				if(order.toLowerCase().equals("deslogear")){
-					client.state = "disconnected";
-				}
+					if(order.toLowerCase().equals("deslogear")){
+						client.state = "disconnected";
+					}
 
-                //UPLOAD
-                if(order.toLowerCase().equals("upload")){
-					client.upload();
-                }
-                //SEARCH
-				if(order.toLowerCase().equals("search")){
-					System.out.print("Enter some key text: \n");
-					String keyText = scanner.next();
-					System.out.println(h.searchFile(keyText));
-				}
+					//UPLOAD
+					if(order.toLowerCase().equals("upload")){
+						client.upload(h);
+					}
+					//SEARCH
+					if(order.toLowerCase().equals("search")){
+						System.out.print("Enter some key text: \n");
+						String keyText = scanner.next();
+						ArrayList<FileObject> files = h.searchFile(keyText);
+						System.out.println("We found these files: ");
+						for (FileObject f: files) {
+							System.out.println(f.getId() + " - " + f.getFileName());
+							System.out.printf("\tTags: ");
+							for (String tag:f.getDescription()) {
+								System.out.printf(tag + " ");
+							}
+							System.out.printf("\n");
+						}
+					}
 
-                //DOWLOAD
-                if(order.toLowerCase().equals("download"))
-                {
-					System.out.println("Enter the file title:\n");
-					int id = Integer.parseInt(scanner.next());
-					FileObject file = h.downloadFile(id);
+					//DOWLOAD
+					if(order.toLowerCase().equals("download"))
+					{
+						System.out.println("Enter the file title:\n");
+						int id = Integer.parseInt(scanner.next());
+						FileObject file = h.downloadFile(id);
 
-					String home = System.getProperty("user.home");
-					try {
-						FileOutputStream fos = new FileOutputStream(home+"/Downloads/" + file.getFileName());
-						fos.write(file.getFile());
-					}catch(Exception e){
-						System.out.println("Error downloading: " + e.toString() + "\n");
+						String home = System.getProperty("user.home");
+						try {
+							FileOutputStream fos = new FileOutputStream(home+"/" + file.getFileName());
+							fos.write(file.getFile());
+							System.out.println("Downloaded!");
+						}catch(Exception e){
+							System.out.println("Error downloading: " + e.toString() + "\n");
+						}
+					}
+					//DELETE
+					if(order.toLowerCase().equals("delete"))
+					{
+						System.out.println(client.deleteFile(h));
 					}
 				}
-                //DELETE
-				if(order.toLowerCase().equals("delete"))
-				{
-
-					System.out.println(client.deleteFile(h));
-
-				}
-				}
-                
-
 			}
 		}
 
@@ -113,8 +120,8 @@ public class Client {
 		}
 	}
 
-	public void upload(){
-		///home/s/sbp5/Escritorio/50mb.jpg
+	public void upload(Garage h){
+		///home/s/sbp5/Escritorio/exemple.txt
 		Scanner scanner = new Scanner(System.in);
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
@@ -162,14 +169,8 @@ public class Client {
 
 		String response = "Error";
 
-		System.out.println(fileObject.getFileName());
-		System.out.println(fileObject.getDescription());
-		System.out.println(fileObject.getState());
-		System.out.println(fileObject.getType());
-		System.out.println(fileObject.getUser());
-
 		try {
-			response = this.h.uploadFile(fileObject);
+			response = h.uploadFile(fileObject);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -252,8 +253,5 @@ public class Client {
 			System.out.println("Exception in SomeClient: " + e.toString());
 			return "Error en el Client al intentar borra fitxer: " + e.toString();
 		}
-
-
-
 	}
 }
