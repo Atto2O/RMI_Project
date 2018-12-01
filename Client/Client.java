@@ -185,8 +185,6 @@ public class Client {
 		String contrasenya = scanner.next();
 		int callbackid = -1;
 		try {
-
-
 			if (!contrasenya.equals("") && !userName.equals("")){
 				//les contrasenyes son iguals
 				callbackid = h.user_login(userName, contrasenya,callbackObj);
@@ -197,12 +195,9 @@ public class Client {
 				} else {
 					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
 				}
-
 			} else {
 				System.out.print("Un o mes camps son buit!!\n");
 			}
-
-
 		}
 		catch (Exception e)
 		{

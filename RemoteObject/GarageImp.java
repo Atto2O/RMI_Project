@@ -6,20 +6,12 @@ package RemoteObject;
 import java.io.File;
 import java.rmi.*;
 import java.rmi.server.*;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.FileOutputStream;
 import java.util.*;
-
 import CallBack.*;
 import Objects.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import ServerUtils.*;
 
@@ -36,13 +28,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     static int RMIPort;
 
-    // vector for store list of callback objects
-    //private static Vector callbackObjects;
-
     public GarageImp() throws RemoteException {
         super();
-        // instantiate a Vector object for storing callback objects
-        //callbackObjects = new Vector();
         this.getInfo();
     }
 
@@ -112,7 +99,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return id;
     }
 
-
     private boolean checkAvailableUser(String newUserName)
     {
         System.out.println("First user: "+this.users.isEmpty());
@@ -136,7 +122,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             if(currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())){
 
                 if(currentlyUser.getPassword().equals(contrasenya)){
-
 
                     return this.addCallback(callbackObj,currentlyUser);
                 }else{
@@ -165,15 +150,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
                 System.out.println ("User: "+currentlyUser.getName()+" just connected with key: "+key+"\n");
 
-
                 this.notifyConnection(new ArrayList<Integer>(),currentlyUser.getName() );
                 //callbackObjects.addElement (callbackObject);
-
             }
-
             semaphore.release();
             return key;
-
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
@@ -182,7 +163,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     private  int getKeyForCallBack(){
-
         if(this.callbackObjects.size() == 0) {return 0;}
 
         for (int i = 0; i < this.callbackObjects.size(); i++) {
@@ -209,22 +189,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     private void notifyConnection(ArrayList<Integer> startFrom,String newConnection)  throws RemoteException {
-        ArrayList<Integer> notifiedUsers = new ArrayList<Integer> ();
         ArrayList<Integer> usersToDelete= new ArrayList<Integer> ();
         try{
-
             for (int key : this.callbackObjects.keySet()) {
                 System.out.printf("Estem fent  servir la key: "+key+"\n");
-                if (notifiedUsers.contains(key)) {
-                }
-
-
                 try {
                     ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
                     client.callMe("Hey im the Server" +
                             "User: " + newConnection+" just connected to the server\n");
                     System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
-                    notifiedUsers.add(key);
                 } catch (Exception e) {
                     //notifiedUsers.add(key);
                     System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
@@ -236,56 +209,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     continue;
                 }
             }
-
             for (int idDelete:usersToDelete) {
                 this.callbackObjects.remove(idDelete);
             }
-
         } catch (Exception e) {
-
         System.out.println("SOC UN ERRORRRRR" + e.toString());
-
+        }
     }
-
-
-
-
-
-    }
-
 
     /*
-
-        System.out.println("\n*******************************************************\n");
-        for (int i = startfrom; i < this..size(); i++) {
-
-            System.out.println("Now performing the " + i + "-th callback\n");
-            // convert the vector object to a callback object
-
-            try
-            {
-                client.callMe("Server calling back to client " + i);
-
-
-
-            }
-            catch(Exception e){
-
-
-                //DECREMENTAR EL CLALBAKC ID APARTIR DLE CLALBAKC NUMERO I
-                System.out.println("Hem borrat el usuari desconectat: "+e.toString());
-
-                return callbackObjects.size()-1;
-            }
-            System.out.println("--- Server completed callbacks"+i+"*******************************************************\n");
-
-            //...
-        }
-        return callbackObjects.size();
-        //...
-    }
-
-
     private static void callbackSuscribed(FileObject file){
 
         System.out.println("Into callbakc suscribers\n");
@@ -303,13 +235,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             catch(Exception e){
 
                 System.out.println("Error: "+e.toString());
-
             }
-
-
         }
-
-
     }
 */
     @Override
@@ -406,10 +333,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         semaphore.release();
                         return "Fitxer amb id: "+fileId+", eliminat correctament";
                     }
-
                 }
-
-
             }
             semaphore.release();
             return "No ets el propietari de aquest fitxer o no existeix :(";
@@ -420,7 +344,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return "Error al intentar borra el fitxer";
         }
-
     }
 
     public static boolean SetAvailableFile(String path){
@@ -436,7 +359,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }catch(Exception e){
             System.out.println("erro pelotudo: "+e+"");
         }
-
         return true;
     }
 
