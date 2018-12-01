@@ -99,7 +99,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return id;
     }
 
-    private boolean checkAvailableUser(String newUserName)
+    public boolean checkAvailableUser(String newUserName) throws RemoteException
     {
         System.out.println("First user: "+this.users.isEmpty());
         if(!this.users.isEmpty()){

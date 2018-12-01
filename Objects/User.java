@@ -16,7 +16,6 @@ public class User {
     private int id;
     private String name;
     private String password;
-    private String state="disconnected";
     private int callbackid=-1;
 
     public User(String name,String password, int id) {

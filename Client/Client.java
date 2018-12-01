@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
 import CallBack.*;
+import GUI.ClientGUI;
 import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
@@ -19,13 +20,20 @@ import RemoteObject.*;
 public class Client {
 
 	public String msg;
+
 	static int RMIPort = 8999;
 	static String hostName = "localhost";
-	static Garage h;
+
 	public String state ="disconnected";
 	private String userName = "";
 	public int callbackid;
 	public ClientCallbackInterface callbackObj;
+
+
+	public String clientIP;
+	public String clientPORT;
+	public String serverIP;
+	public String serverPORT;
 
 	private Client(){}
 
@@ -33,6 +41,8 @@ public class Client {
 	public static void main (String args[])
 	{
 		Client client = new Client();
+		ClientGUI.client = client;
+		ClientGUI.animation();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;
 		client.state = "disconnected";
@@ -42,6 +52,8 @@ public class Client {
 
 			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
 			Garage h = (Garage)Naming.lookup(registryURL);
+			System.out.println("Garage created!");
+			ClientGUI.h = h;
 			System.out.println("1---------------------------\n");
 			client.callbackObj = new CallbackImpl();
 			System.out.println(client.callbackid);
@@ -156,6 +168,12 @@ public class Client {
 	//endregion
 
 	//region<SignIn>
+
+
+	public void signin(Garage h){
+
+	}
+
 	public void registrar(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter a user name:\n");
@@ -367,4 +385,21 @@ public class Client {
 	//region<Users>
 	//endregion
 	//endregion
+
+
+	public boolean checkUsername(Garage h, String userName) throws RemoteException{
+		return !h.checkAvailableUser(userName);
+	}
+
+	public boolean logIn(Garage h, String userName, String password) throws RemoteException{
+		int callbackid = -1;
+		if (!password.equals("") && !userName.equals("")){
+			callbackid = h.user_login(userName, password, callbackObj);
+			if (callbackid != -1) {
+				this.callbackid = callbackid;
+				return true;
+			}
+		}
+		return false;
+	}
 }
