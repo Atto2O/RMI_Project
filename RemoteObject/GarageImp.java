@@ -115,21 +115,33 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     public int user_login (String NomUsuari, String contrasenya, ClientCallbackInterface callbackObj) throws RemoteException
     {
-        Iterator<User> iter = this.users.getUsers().iterator();
-        int idConexio = -1;
-        while (iter.hasNext()) {
-            User currentlyUser = iter.next();
-            if(currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())){
 
-                if(currentlyUser.getPassword().equals(contrasenya)){
+        try{
+            semaphore.acquire();
+            int idConexio = -1;
+            Iterator<User> iter = this.users.getUsers().iterator();
 
-                    return this.addCallback(callbackObj,currentlyUser);
-                }else{
-                    return idConexio;
+            while (iter.hasNext()) {
+                User currentlyUser = iter.next();
+                if(currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())){
+
+                    if(currentlyUser.getPassword().equals(contrasenya)){
+                        semaphore.release();
+                        return this.addCallback(callbackObj,currentlyUser);
+                    }else{
+                        semaphore.release();
+                        return idConexio;
+                    }
                 }
             }
+        }catch (Exception e) {
+            semaphore.release();
+            return  -1;
         }
-        return  idConexio;
+
+        return -1;
+
+
     }
 
     // method for client to call to add itself to its callback
@@ -150,7 +162,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
                 System.out.println ("User: "+currentlyUser.getName()+" just connected with key: "+key+"\n");
 
-                this.notifyConnection(new ArrayList<Integer>(),currentlyUser.getName() );
+
                 //callbackObjects.addElement (callbackObject);
             }
             semaphore.release();
@@ -188,32 +200,46 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
-    private void notifyConnection(ArrayList<Integer> startFrom,String newConnection)  throws RemoteException {
+    //fica semafors a damun
+    private void notifyNewFile(FileObject file)  throws RemoteException {
         ArrayList<Integer> usersToDelete= new ArrayList<Integer> ();
         try{
             for (int key : this.callbackObjects.keySet()) {
-                System.out.printf("Estem fent  servir la key: "+key+"\n");
-                try {
-                    ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
-                    client.callMe("Hey im the Server" +
-                            "User: " + newConnection+" just connected to the server\n");
-                    System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
-                } catch (Exception e) {
-                    //notifiedUsers.add(key);
-                    System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
-                    //this.callbackObjects.remove(key);
-                    usersToDelete.add(key);
-                    this.connectUsers.remove(key);
+                //si esta public i els teus tags contennt algun del fitxer nou
 
-                    //notifyConnection(notifiedUsers,newConnection);
-                    continue;
+                for (String filetag:file.getTags()) {
+
+
+                    if((file.getState() &&  this.connectUsers.get(key).getSubscriptions().contains(filetag)) ||
+                            (!file.getState() && this.connectUsers.get(key).getName().equals(filetag))){
+                        try {
+
+                            ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
+                            client.callMe("Hey im the Server" + "User:  just connected to the server\n");
+                            System.out.println("We notified " + this.connectUsers.get(key).getName() +":User"+file.getUser()+"Update the file "+file.getFileName()+",with tags:"+filetag+"\n");
+                        } catch (Exception e) {
+                            //notifiedUsers.add(key);
+                            System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
+                            //this.callbackObjects.remove(key);
+                            usersToDelete.add(key);
+                            this.connectUsers.remove(key);
+
+                            //notifyConnection(notifiedUsers,newConnection);
+                            continue;
+                        }
+
+                    }
                 }
             }
+            //BORREM ELS USUARIS QUE JA NO ESTAN CONNECTATS
             for (int idDelete:usersToDelete) {
                 this.callbackObjects.remove(idDelete);
             }
+
+
+
         } catch (Exception e) {
-        System.out.println("SOC UN ERRORRRRR" + e.toString());
+        System.out.println("ERROR AL RECORRE ELS CALLBACKS \n" + e.toString());
         }
     }
 
@@ -247,7 +273,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             file.setId(this.lastFileID);
             ServerUtils.saveFileID(this.lastFileID);
             this.files.addFile(file);
+
             ServerUtils.saveFiles(files.getFiles());
+            this.notifyNewFile(file);
             semaphore.release();
             return "Saved!";
         }catch(Exception e){
