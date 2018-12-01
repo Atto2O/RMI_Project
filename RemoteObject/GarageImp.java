@@ -352,7 +352,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                             ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
                             String msg="";
                             msg +="Hey im the Server, User: "+file.getUser()+" just upload the file: "+file.getFileName()+"\nWith Tags:\n";
-                            
+
                             for (String tag: tagArray) {
                                msg +="-"+tag+"\n";
                             }
