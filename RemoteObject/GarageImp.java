@@ -125,7 +125,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 if(currentlyUser.getPassword().equals(contrasenya)){
 
 
-                    this.addCallback(callbackObj,currentlyUser);
+                    return this.addCallback(callbackObj,currentlyUser);
                 }else{
                     return idConexio;
                 }
@@ -196,28 +196,46 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     private void notifyConnection(ArrayList<Integer> startFrom,String newConnection)  throws RemoteException {
+        ArrayList<Integer> notifiedUsers = new ArrayList<Integer> ();
+        ArrayList<Integer> usersToDelete= new ArrayList<Integer> ();
+        try{
+
+            for (int key : this.callbackObjects.keySet()) {
+                System.out.printf("Estem fent  servir la key: "+key+"\n");
+                if (notifiedUsers.contains(key)) {
+                }
 
 
-        ArrayList<Integer> notifiedUsers = startFrom;
+                try {
+                    ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
+                    client.callMe("Hey im the Server" +
+                            "User: " + newConnection+" just connected to the server\n");
+                    System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
+                    notifiedUsers.add(key);
+                } catch (Exception e) {
+                    //notifiedUsers.add(key);
+                    System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
+                    //this.callbackObjects.remove(key);
+                    usersToDelete.add(key);
+                    this.connectUsers.remove(key);
 
-        for (int key : callbackObjects.keySet()) {
-            if (notifiedUsers.contains(key)) {
+                    //notifyConnection(notifiedUsers,newConnection);
+                    continue;
+                }
             }
 
-            ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
-            try {
-                client.callMe("Hey im the Server" +
-                        "User: " + newConnection+" just connected to the server\n");
-                System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
-                notifiedUsers.add(key);
-            } catch (Exception e) {
-                notifiedUsers.add(key);
-                System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
-                callbackObjects.remove(key);
-                connectUsers.remove(key);
-                notifyConnection(notifiedUsers,newConnection);
+            for (int idDelete:usersToDelete) {
+                this.callbackObjects.remove(idDelete);
             }
-        }
+
+        } catch (Exception e) {
+
+        System.out.println("SOC UN ERRORRRRR" + e.toString());
+
+    }
+
+
+
 
 
     }

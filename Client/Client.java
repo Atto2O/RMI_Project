@@ -178,13 +178,13 @@ public class Client {
 		userName = scanner.next();
 		System.out.print("Contrasenya:\n");
 		String contrasenya = scanner.next();
-
+		int callbackid = -1;
 		try {
 
 
 			if (!contrasenya.equals("") && !userName.equals("")){
 				//les contrasenyes son iguals
-				int callbackid = h.user_login(userName, contrasenya,callbackObj);
+				callbackid = h.user_login(userName, contrasenya,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
