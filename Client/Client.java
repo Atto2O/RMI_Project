@@ -42,10 +42,9 @@ public class Client {
 
 			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
 			Garage h = (Garage)Naming.lookup(registryURL);
-			System.out.println("1---------------------------\n");
+
 			client.callbackObj = new CallbackImpl();
-			System.out.println(client.callbackid);
-			System.out.println("2----------------------------\n");
+
 			while(true){
 				if(client.state.equals("disconnected")){
 					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
@@ -62,7 +61,7 @@ public class Client {
 					}
 				}else{
 
-					System.out.print("Function over server? (deslogear,delete ,upload, search,download) \n");
+					System.out.print("Function over server? (deslogear,delete ,upload, search,download,subscribe) \n");
 					String order = scanner.next();
 
 					if(order.toLowerCase().equals("deslogear")){
@@ -110,6 +109,11 @@ public class Client {
 					{
 						System.out.println(client.deleteFile(h));
 					}
+					//SUBSCRIBE
+					if(order.toLowerCase().equals("subscribe"))
+					{
+						client.subscribeToTag(h);
+					}
 				}
 			}
 		}
@@ -123,6 +127,29 @@ public class Client {
 
 	//region<LogIn>
 	//region<SignUp>
+	public void subscribeToTag(Garage h){
+
+		Scanner scanner = new Scanner(System.in);
+		String newTag;
+		System.out.print("Tag al que voleu subscriureus:\n");
+		newTag = scanner.next().toLowerCase();
+		boolean correcte=false;
+		try {
+			correcte=h.addSubscriptionTag(this.userName, newTag);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in subscription: " + e.toString());
+		}
+
+		if(correcte){
+			System.out.println("Tas subscrit correctament");
+		}else{
+			System.out.println("No tas subscrit correctament");
+		}
+
+
+	}
 	public boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
 

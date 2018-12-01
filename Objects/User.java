@@ -20,13 +20,13 @@ public class User {
     private String password;
     private String state="disconnected";
     private int callbackid=-1;
-    private ArrayList<String> Subscriptions;
+    private ArrayList<String> Subscriptions= new ArrayList<>();
 
     public User(String name,String password, int id) {
         this.name=name;
         this.password=password;
         this.id = id;
-        this.Subscriptions = new ArrayList<>();
+        //this.Subscriptions = new ArrayList<>();
     }
 
     public User(){}
@@ -45,7 +45,12 @@ public class User {
         return this.Subscriptions;
     }
     public void addSubscriptions(String subscription){
-        this.Subscriptions.add(subscription);
+        try{
+            this.Subscriptions.add(subscription);
+        }catch (Exception e){
+            System.out.println("Error al objecte user: "+e.toString());
+        }
+
 
     }
     public void setName(String name){
