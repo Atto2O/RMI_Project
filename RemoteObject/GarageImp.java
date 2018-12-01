@@ -377,4 +377,16 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
         return true;
     }
+
+    //region<SAVE .json>
+    public String modifiedFile(FileObject file){
+        ServerUtils.saveFiles(this.files.getFiles());
+        return "changed!";
+    }
+
+    public String modifiedUser(User user){
+        ServerUtils.saveUsers(this.users.getUsers());
+        return "changed!";
+    }
+    //endregion
 }

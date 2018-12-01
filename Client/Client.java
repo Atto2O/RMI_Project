@@ -15,6 +15,7 @@ import CallBack.*;
 import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
+import ServerUtils.ServerUtils;
 
 public class Client {
 
@@ -29,6 +30,7 @@ public class Client {
 
 	private Client(){}
 
+	//region<MAIN>
 	public static void main (String args[])
 	{
 		Client client = new Client();
@@ -118,12 +120,86 @@ public class Client {
 		    System.out.println("Exception in SomeClient: " + e.toString());
 		}
 	}
+	//endregion
 
+	//region<LogIn>
+	//region<SignUp>
+	public boolean logear(Garage h){
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.print("Nom de usuari:\n");
+		userName = scanner.next().toLowerCase();
+		System.out.print("Contrasenya:\n");
+		String contrasenya = scanner.next();
+		int callbackid = -1;
+		try {
+			if (!contrasenya.equals("") && !userName.equals("")){
+				//les contrasenyes son iguals
+				callbackid = h.user_login(userName, contrasenya,callbackObj);
+				if (callbackid != -1) {
+					this.callbackid = callbackid;
+					System.out.print("T'as logeat correctamen!!!\n");
+                    return true;
+				} else {
+					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
+				}
+			} else {
+				System.out.print("Un o mes camps son buit!!\n");
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in logear: " + e.toString());
+		}
+		return false;
+
+	}
+	//endregion
+
+	//region<SignIn>
+	public void registrar(Garage h){
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Enter a user name:\n");
+		String newUserName = scanner.next().toLowerCase();
+		System.out.print("Enter a password:\n");
+		String password_1 = scanner.next();
+		System.out.print("Repeat password:\n");
+		String password_2 = scanner.next();
+
+		try {
+			if (password_1.equals(password_2)) {
+				//les contrasenyes son iguals
+				boolean server_response = h.user_signup(newUserName, password_1);
+                System.out.println(server_response);
+				if (server_response == true) {
+					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
+				} else {
+					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
+				}
+
+			} else {
+				System.out.print("Les contrasenyes son diferents!!\n");
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in registrar: " + e.toString());
+		}
+	}
+	//endregion
+	//endregion
+
+	//region<MODIFY Params>
+
+	//region<Files>
+
+	//region<Upload>
 	public void upload(Garage h){
 		///home/s/sbp5/Escritorio/exemple.txt
 		Scanner scanner = new Scanner(System.in);
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
+
 		//FILE
 		System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
 		String filePath = scanner.next();
@@ -175,69 +251,9 @@ public class Client {
 		}
 		System.out.println(response);
 	}
+	//endregion
 
-	public boolean logear(Garage h){
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.print("Nom de usuari:\n");
-		userName = scanner.next().toLowerCase();
-		System.out.print("Contrasenya:\n");
-		String contrasenya = scanner.next();
-		int callbackid = -1;
-		try {
-			if (!contrasenya.equals("") && !userName.equals("")){
-				//les contrasenyes son iguals
-				callbackid = h.user_login(userName, contrasenya,callbackObj);
-				if (callbackid != -1) {
-					this.callbackid = callbackid;
-					System.out.print("T'as logeat correctamen!!!\n");
-                    return true;
-				} else {
-					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
-				}
-			} else {
-				System.out.print("Un o mes camps son buit!!\n");
-			}
-		}
-		catch (Exception e)
-		{
-			System.out.println("Exception in logear: " + e.toString());
-		}
-		return false;
-
-	}
-	public void registrar(Garage h){
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Enter a user name:\n");
-		String newUserName = scanner.next().toLowerCase();
-		System.out.print("Enter a password:\n");
-		String password_1 = scanner.next();
-		System.out.print("Repeat password:\n");
-		String password_2 = scanner.next();
-
-		try {
-			if (password_1.equals(password_2)) {
-				//les contrasenyes son iguals
-				boolean server_response = h.user_signup(newUserName, password_1);
-                System.out.println(server_response);
-				if (server_response == true) {
-					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
-				} else {
-					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
-				}
-
-			} else {
-				System.out.print("Les contrasenyes son diferents!!\n");
-			}
-
-
-		}
-		catch (Exception e)
-		{
-			System.out.println("Exception in registrar: " + e.toString());
-		}
-	}
-
+	//region<Delete>
 	public String deleteFile(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		try{
@@ -250,4 +266,71 @@ public class Client {
 			return "Error en el Client al intentar borra fitxer: " + e.toString();
 		}
 	}
+	//endregion
+
+	public String changeName(Garage h, FileObject file, String newName){
+		try {
+			file.setFileName(newName);
+			return "Name " + h.modifiedFile(file);
+		}catch (Exception e){
+			return "Error changing file name: " + e.toString();
+		}
+	}
+
+	//region<Tags>
+	public String changeTags(FileObject file){
+		String state = "Tag ";
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("Add or delete tags?");
+		while (true){
+			String response = scanner.next();
+			if(response.toLowerCase().equals("add")){
+				state += addTag(file);
+				break;
+			}
+			if(response.toLowerCase().equals("delete")){
+				state += removeTag(file);
+				break;
+			}
+		}
+		return state;
+	}
+
+	public String addTag(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("Type a tag to add: ");
+		String tag = scanner.next();
+
+		ArrayList<String> current_description = file.getDescription();
+		current_description.add(tag);
+		file.setDescription(current_description);
+		return "added!";
+	}
+
+	public String removeTag(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("Type a tag to remove: ");
+		String tag = scanner.next();
+
+		ArrayList<String> current_description = file.getDescription();
+		if(current_description.contains(tag.toLowerCase())){
+			current_description.remove(tag);
+			file.setDescription(current_description);
+			return "added!";
+		}
+		else{
+			return "not in current tags!";
+		}
+	}
+	//endregion
+
+	//endregion
+
+	//region<Users>
+	//endregion
+
+	//endregion
 }

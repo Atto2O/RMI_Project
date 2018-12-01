@@ -28,5 +28,7 @@ public interface Garage extends Remote{
     public void deleteCallback (ClientCallbackInterface callbackObject) throws java.rmi.RemoteException;
     public String deleteFile(int fileId, String user) throws java.rmi.RemoteException;
 
+    public String modifiedFile(FileObject file);
+    public String modifiedUser(User user);
 
 }
