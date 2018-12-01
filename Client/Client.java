@@ -11,10 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
-
 import CallBack.*;
 import Objects.FileObject;
-import Objects.FilesArray;
 import Objects.Type;
 import RemoteObject.*;
 
@@ -27,9 +25,7 @@ public class Client {
 	public String state ="disconnected";
 	private String userName = "";
 
-	private Client()
-	{
-	}
+	private Client(){}
 
 	public static void main (String args[])
 	{
@@ -179,6 +175,7 @@ public class Client {
 
 	public boolean logear(Garage h){
 		Scanner scanner = new Scanner(System.in);
+
 		System.out.print("Nom de usuari:\n");
 		userName = scanner.next().toLowerCase();
 		System.out.print("Contrasenya:\n");
