@@ -199,21 +199,23 @@ public class Client {
 		fileObject.setUser(this.userName);
 
 		//FILE
-		System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
-		String filePath = scanner.next();
-		Path fileLocation = Paths.get(filePath);
-		byte[] data = new byte[0];
+		while(true) {
+			System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
+			String filePath = scanner.next();
+			Path fileLocation = Paths.get(filePath);
+			byte[] data = new byte[0];
 
-		try {
-			data = Files.readAllBytes(fileLocation);
-		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				data = Files.readAllBytes(fileLocation);
+				break;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			fileObject.setFile(data);
 		}
 
-		fileObject.setFile(data);
-
 		//FILE NAME
-		System.out.print("Enter the file name (E.g.: Pug.jpg): \n");
+		System.out.print("Enter the file name (E.g.: Pug): \n");
 		String fileName = scanner.next();
 		fileObject.setFileName(fileName);
 
@@ -275,6 +277,42 @@ public class Client {
 		}
 	}
 
+	public String changeType(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.print("Enter new Type MOVIE, IMAGE, TEXT, PDF or AUDIO: \n");
+		try {
+			String t = scanner.next();
+			Type type  = Type.fromString(t);
+			file.setType(type);
+			return "Type changed!";
+		}catch (Exception e){
+			return "Error changing file type: " + e.toString();
+		}
+	}
+
+	public String changeState(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+		String response;
+
+		System.out.printf("Current file state is ");
+		if(file.getState()){
+			System.out.printf("PUBLIC\nWill you change it to PRIVATE? (YES/NO)");
+			response = scanner.next();
+			if(response.toLowerCase().equals("yes")){
+				file.setState(false);
+				return "State changed, now this file is PRIVATE.";
+			}else{return "State not changed.";}
+		} else {
+			System.out.printf("PRIVATE\nWill you change it to PUBLIC? (YES/NO)");
+			response = scanner.next();
+			if(response.toLowerCase().equals("yes")){
+				file.setState(true);
+				return "State changed, now this file is PUBLIC.";
+			}else{return "State not changed.";}
+		}
+	}
+
 	//region<Tags>
 	public String changeTags(FileObject file){
 		String state = "Tag ";
@@ -324,7 +362,6 @@ public class Client {
 		}
 	}
 	//endregion
-
 	//endregion
 
 	//region<Users>

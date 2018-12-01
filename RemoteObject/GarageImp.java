@@ -132,6 +132,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return  idConexio;
     }
 
+    //region<CALLBACK>
     // method for client to call to add itself to its callback
     //@Override
     public int addCallback (ClientCallbackInterface callbackObject,User currentlyUser)  throws RemoteException
@@ -216,6 +217,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("SOC UN ERRORRRRR" + e.toString());
         }
     }
+    //endregion
 
     /*
     private static void callbackSuscribed(FileObject file){
@@ -325,8 +327,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 FileObject currentlyFile=  iter.next();
 
                 if(currentlyFile.getId()==fileId){
-                        if(currentlyFile.getUser().equals(user)){
-
+                        if(currentlyFile.getUser().equals(user)|| currentlyFile.getUser().toLowerCase().equals("admin")){
                         //iter.remove();
                         this.files.removeFile(currentlyFile);
                         ServerUtils.saveFiles(this.files.getFiles());
@@ -357,7 +358,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             f.createNewFile();
         }
         }catch(Exception e){
-            System.out.println("erro pelotudo: "+e+"");
+            System.out.println("Error: "+e.toString());
         }
         return true;
     }
@@ -373,17 +374,19 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 f.createNewFile();
             }
         }catch(Exception e){
-            System.out.println("erro pelotudo: "+e+"");
+            System.out.println("Error: "+e.toString());
         }
         return true;
     }
 
     //region<SAVE .json>
+    @Override
     public String modifiedFile(FileObject file){
         ServerUtils.saveFiles(this.files.getFiles());
         return "changed!";
     }
 
+    @Override
     public String modifiedUser(User user){
         ServerUtils.saveUsers(this.users.getUsers());
         return "changed!";
