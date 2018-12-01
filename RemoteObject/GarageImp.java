@@ -10,14 +10,11 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
-import java.util.Hashtable;
+import java.util.*;
 
 import CallBack.*;
 import Objects.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -28,19 +25,21 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     private FilesArray files = new FilesArray();
     private UsersArray users = new UsersArray();
     Hashtable<Integer,User> connectUsers = new Hashtable<Integer,User>();
+    Hashtable<Integer,ClientCallbackInterface> callbackObjects = new Hashtable<Integer,ClientCallbackInterface>();
 
     private int lastFileID = -1;
     private int lastUserID = -1;
     public static final Semaphore semaphore = new Semaphore(1, true);
 
     static int RMIPort;
+
     // vector for store list of callback objects
-    private static Vector callbackObjects;
+    //private static Vector callbackObjects;
 
     public GarageImp() throws RemoteException {
         super();
         // instantiate a Vector object for storing callback objects
-        callbackObjects = new Vector();
+        //callbackObjects = new Vector();
         this.getInfo();
     }
 
@@ -115,47 +114,72 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return  true;
     }
 
-    public boolean user_login (String NomUsuari, String contrasenya, int callbackID)
+    public int user_login (String NomUsuari, String contrasenya, ClientCallbackInterface callbackObj) throws RemoteException
     {
         Iterator<User> iter = this.users.getUsers().iterator();
-        boolean correct = false;
+        int idConexio = -1;
         while (iter.hasNext()) {
             User currentlyUser = iter.next();
             if(currentlyUser.getName().equals(NomUsuari)){
 
                 if(currentlyUser.getPassword().equals(contrasenya)){
-                    correct = true;
-                    this.connectUsers.put(callbackID,currentlyUser);
+
+
+                    this.addCallback(callbackObj,currentlyUser);
                 }else{
-                    return correct;
+                    return idConexio;
                 }
             }
         }
-        return  correct;
+        return  idConexio;
     }
 
     // method for client to call to add itself to its callback
-    @Override
-    public int addCallback (ClientCallbackInterface callbackObject)  throws RemoteException
+    //@Override
+    public int addCallback (ClientCallbackInterface callbackObject,User currentlyUser)  throws RemoteException
     {
+        int key=-1;
         try{
             semaphore.acquire();
             // store the callback object into the vector
             if(!(callbackObjects.contains(callbackObject)))
             {
-                callbackObjects.addElement (callbackObject);
-                System.out.println ("Server got an 'addCallback' call.");
+                key =this.getKeyForCallBack();
+
+                //GUARDEM EL HAMBOO
+                this.callbackObjects.put(key,callbackObject);
+                this.connectUsers.put(key,currentlyUser);
+
+                System.out.println ("User: "+currentlyUser.getName()+" just connected with key: "+key+"\n");
+
+
+                this.notifyConnection(new ArrayList<Integer>(),currentlyUser.getName() );
+                //callbackObjects.addElement (callbackObject);
+
             }
 
             semaphore.release();
-            return callback(0);
+            return key;
 
         }catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
-            return -1;
+            return key;
         }
     }
+
+    private  int getKeyForCallBack(){
+
+        if(this.callbackObjects.size() == 0) {return 0;}
+
+        for (int i = 0; i < this.callbackObjects.size(); i++) {
+            if(!callbackObjects.containsKey(i)){
+                return i;
+            }
+        }
+        return this.callbackObjects.size();
+    }
+
 
     @Override
     public void deleteCallback (ClientCallbackInterface callbackObject) throws RemoteException
@@ -171,25 +195,55 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
-    private static int callback(int startfrom)  throws RemoteException {
+    private void notifyConnection(ArrayList<Integer> startFrom,String newConnection)  throws RemoteException {
 
-        System.out.println("*******************************************************\n");
-        for (int i = startfrom; i < callbackObjects.size(); i++) {
+
+        ArrayList<Integer> notifiedUsers = startFrom;
+
+        for (int key : callbackObjects.keySet()) {
+            if (notifiedUsers.contains(key)) {
+            }
+
+            ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
+            try {
+                client.callMe("Hey im the Server" +
+                        "User: " + newConnection+" just connected to the server\n");
+                System.out.println("we notified User: " + this.connectUsers.get(key).getName() + " user:"+newConnection+ " just connected\n");
+                notifiedUsers.add(key);
+            } catch (Exception e) {
+                notifiedUsers.add(key);
+                System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
+                callbackObjects.remove(key);
+                connectUsers.remove(key);
+                notifyConnection(notifiedUsers,newConnection);
+            }
+        }
+
+
+    }
+
+
+    /*
+
+        System.out.println("\n*******************************************************\n");
+        for (int i = startfrom; i < this..size(); i++) {
 
             System.out.println("Now performing the " + i + "-th callback\n");
             // convert the vector object to a callback object
-            ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.elementAt(i);
+
             try
             {
                 client.callMe("Server calling back to client " + i);
+                
+                
+                
             }
             catch(Exception e){
 
-                System.out.println("Error: "+e.toString());
-                callbackObjects.remove(i);
+
                 //DECREMENTAR EL CLALBAKC ID APARTIR DLE CLALBAKC NUMERO I
                 System.out.println("Hem borrat el usuari desconectat: "+e.toString());
-                callback(i);
+
                 return callbackObjects.size()-1;
             }
             System.out.println("--- Server completed callbacks"+i+"*******************************************************\n");
@@ -226,7 +280,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
 
     }
-
+*/
     @Override
     public String uploadFile (FileObject file) {
         try{
