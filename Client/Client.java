@@ -4,6 +4,7 @@
 package Client;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.rmi.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,8 +23,8 @@ import javax.print.DocFlavor;
 public class Client {
 
 	public String msg;
-	static int RMIPort = 8997;
-	static String hostName = "172.16.0.26";//"localhost";//AQUEST A DE SER EL DEL SERVIDOR!!
+	static int RMIPort = 8001;
+	static String hostName = "localhost";//AQUEST A DE SER EL DEL SERVIDOR!!"172.16.0.26";//
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
@@ -43,7 +44,7 @@ public class Client {
 	{
 		Client client = new Client();
 		ClientGUI.client = client;
-		//ClientGUI.animation();
+		ClientGUI.animation();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
@@ -51,13 +52,9 @@ public class Client {
         try
 		{
 
-			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
-			Garage h = (Garage)Naming.lookup(registryURL);
-			System.out.println("Garage created!");
-			ClientGUI.h = h;
 
-			client.callbackObj = new CallbackImpl();
 
+			client.setUpConnections();
 
 
 
@@ -73,12 +70,12 @@ public class Client {
 					String resposta = scanner.next();
 
 					if(resposta.toLowerCase().equals("registrar")){
-						client.registrar(h);
+						//client.registrar(h);
 
 					}else if(resposta.toLowerCase().equals("logear")){
-						if(client.logear(h)){
-							client.state = "connected";
-						}
+						//if(client.logear(h)){
+						//	client.state = "connected";
+						//}
 					}
 					if(resposta.toLowerCase().equals("close"))
 					{
@@ -166,6 +163,29 @@ public class Client {
 	}
 	//endregion
 
+
+	public void setUpConnections(){
+		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";
+		Garage h = null;
+		try {
+			h = (Garage)Naming.lookup(registryURL);
+		} catch (NotBoundException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Garage created!");
+		ClientGUI.h = h;
+
+		try {
+			this.callbackObj = new CallbackImpl();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
 	//region<LogIn>
 	//region<SignUp>
 	public void subscribeToTag(Garage h){
@@ -191,18 +211,21 @@ public class Client {
 
 
 	}
-	public boolean logear(Garage h){
-		Scanner scanner = new Scanner(System.in);
+	public boolean logear(Garage h,String username, String password){
+		/*Scanner scanner = new Scanner(System.in);
 
 		System.out.print("Nom de usuari:\n");
 		userName = scanner.next().toLowerCase();
 		System.out.print("Contrasenya:\n");
 		String contrasenya = scanner.next();
+		*/
+		this.userName=username;
+		String contrasenya=password;
 		int callbackid = -1;
 		try {
-			if (!contrasenya.equals("") && !userName.equals("")){
+			if (!contrasenya.equals("") && !this.userName.equals("")){
 				//les contrasenyes son iguals
-				callbackid = h.user_login(userName, contrasenya,callbackObj);
+				callbackid = h.user_login(this.userName, contrasenya,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
@@ -230,14 +253,14 @@ public class Client {
 
 	}
 
-	public void registrar(Garage h){
-		Scanner scanner = new Scanner(System.in);
+	public boolean registrar(Garage h, String newUserName, String password_1, String password_2){
+		/*Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter a user name:\n");
 		String newUserName = scanner.next().toLowerCase();
 		System.out.print("Enter a password:\n");
 		String password_1 = scanner.next();
 		System.out.print("Repeat password:\n");
-		String password_2 = scanner.next();
+		String password_2 = scanner.next();*/
 
 		try {
 			if (password_1.equals(password_2)) {
@@ -246,17 +269,22 @@ public class Client {
                 System.out.println(server_response);
 				if (server_response == true) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
+					this.userName = newUserName;
+					return true;
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
+					return false;
 				}
 
 			} else {
 				System.out.print("Les contrasenyes son diferents!!\n");
+				return false;
 			}
 		}
 		catch (Exception e)
 		{
 			System.out.println("Exception in registrar: " + e.toString());
+			return false;
 		}
 	}
 	//endregion

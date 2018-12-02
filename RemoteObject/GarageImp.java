@@ -216,7 +216,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         try{
             semaphore.acquire();
             System.out.println ("We delete the callback with id "+id+" from client:"+this.connectUsers.get(id).getName()+"\n");
-            
+
             connectUsers.remove(id);
             callbackObjects.remove(id);
 
@@ -280,7 +280,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 User newUser = new User(newUserName,password,lastUserID);
                 //We add the user to the server
                 this.users.addUser(newUser);
-                System.out.println("Usuari:"+newUserName+"registrat!!");
+                System.out.println("Usuari: "+newUserName+" registrat!!");
                 //We save it to the back up
                 ServerUtils.saveUsers(this.users.getUsers());
                 ServerUtils.saveUserID(this.lastUserID);

@@ -171,12 +171,6 @@ public class ClientGUI extends Application {
             new_username.setOnKeyTyped(event ->{
                 int maxCharacters = max_username_chars;
                 if(new_username.getText().length() > maxCharacters) event.consume();
-                if(this.checkUsername(new_username.getText())){
-                    new_username.setStyle("-fx-text-fill: green;");
-                }
-                else if(new_username.getText().length()>0){
-                    new_username.setStyle("-fx-text-fill: red;");
-                }
             });
             new_username.setLayoutX((width-170)/2);
             new_username.setLayoutY(height-310);
@@ -357,13 +351,16 @@ public class ClientGUI extends Application {
 
         //region<BUTTONS_Actions>
         connect.setOnAction(action -> {
-            if(this.connect(serverIP.getText(), serverPORT.getText())){
-                stage.setScene(scene2);
+            if(/*!serverIP.getText().isEmpty() &&*/ !serverPORT.getText().isEmpty()){
+                if(this.connect(serverIP.getText(), serverPORT.getText())){
+                    stage.setScene(scene2);
+                }
             }
+
         });
 
         login.setOnAction(action -> {
-            if(this.login()){
+            if(this.login(username.getText(), password.getText())){
                 stage.setScene(main);
             }
             else{
@@ -372,7 +369,7 @@ public class ClientGUI extends Application {
         });
 
         register.setOnAction(action -> {
-            if(this.register()){
+            if(this.register(new_username.getText(), password1.getText(), password2.getText())){
                 stage.setScene(main);
             }
             else{
@@ -415,23 +412,24 @@ public class ClientGUI extends Application {
     public boolean connect(String ip, String port){
         client.serverIP = (ip);
         client.serverPORT = (port);
-
-        //COMPROVAR CONNECTIVITAT
-        return true;
+        client.setUpConnections();
+        if(h==null) return false;
+        else return true;
     }
 
-    public boolean login(){
-        return true;
+    public boolean login(String username, String password){
+        return this.client.logear(this.h,username,password);
+
     }
 
-    public boolean register(){
-        return true;
+    public boolean register(String username, String password1, String password2){
+        return this.client.registrar(this.h, username, password1, password2);
     }
 
     public boolean checkUsername(String new_username){
         try {
             if(new_username.length()>0 && this.h!=null){
-                if(client.checkUsername(h, new_username)){
+                if(this.client.checkUsername(h, new_username)){
                     return true;
                 }else{
                     return false;
