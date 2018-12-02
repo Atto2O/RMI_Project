@@ -216,7 +216,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         try{
             semaphore.acquire();
             System.out.println ("We delete the callback with id "+id+" from client:"+this.connectUsers.get(id).getName()+"\n");
-            System.out.printf("id callback:"+id+"\n");
+            
             connectUsers.remove(id);
             callbackObjects.remove(id);
 

@@ -55,8 +55,15 @@ public class Client {
 			Garage h = (Garage)Naming.lookup(registryURL);
 			System.out.println("Garage created!");
 			ClientGUI.h = h;
-			System.out.println("1---------------------------\n");
+
 			client.callbackObj = new CallbackImpl();
+
+
+
+
+
+
+
 
 			while(true){
 				if(client.state.equals("disconnected")){
