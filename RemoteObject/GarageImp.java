@@ -76,35 +76,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("\tLast user ID: " + this.lastUserID + "\n");
     }
 
-
-    @Override
-    public boolean user_signup(String newUserName, String password)
-    {
-        System.out.println("Check username: " + newUserName);
-        //SI EL NOM ES VALID RETORNA TRUE
-        try{
-            semaphore.acquire();
-            if(checkAvailableUser(newUserName)){
-                this.lastUserID = generateId(lastUserID);
-                User newUser = new User(newUserName,password,lastUserID);
-                this.users.addUser(newUser);
-                System.out.println("Usuari:"+newUserName+"registrat!!");
-                ServerUtils.saveUsers(this.users.getUsers());
-                ServerUtils.saveUserID(this.lastUserID);
-                semaphore.release();
-                return true;
-            }else{
-
-                semaphore.release();
-                return false;
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        semaphore.release();
-        return false;
-    }
-
     /**
      *
      * @param id Last id created
@@ -425,12 +396,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
-    private FileObject getFileObject(int id){
-        for (FileObject file: files.getFiles()) {
-            if(file.getId()==id){return file;}
-        }
-        return new FileObject();
-    }
     /**
      *
      * @param fileId id of the file we want to delete
@@ -438,8 +403,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @return We return the message that confirm if the file was deleted or not and why
      * @throws RemoteException
      */
-
-
     @Override
     public String deleteFile(int fileId, String user) throws RemoteException
     {

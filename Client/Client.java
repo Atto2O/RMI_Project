@@ -43,7 +43,7 @@ public class Client {
 	{
 		Client client = new Client();
 		ClientGUI.client = client;
-		ClientGUI.animation();
+		//ClientGUI.animation();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
@@ -324,9 +324,6 @@ public class Client {
 			}else{
 				System.out.printf("Error al pujar o guarda el fitxer\n");
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
 		System.out.println(response);
         } catch (IOException e) {
             System.out.printf("Aquest no es un fitxer valid\n");
