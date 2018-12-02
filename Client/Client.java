@@ -50,7 +50,8 @@ public class Client {
 			while(true){
 				if(client.state.equals("disconnected")){
 					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
-							"Si voleu fer registrar-vos escriviu: logear.\n ");
+							"Si voleu fer registrar-vos escriviu: logear.\n "+
+							"Si voleu fer tancar l'app escriviu: close.\n ");
 					String resposta = scanner.next();
 
 					if(resposta.toLowerCase().equals("registrar")){
@@ -61,14 +62,16 @@ public class Client {
 							client.state = "connected";
 						}
 					}
+					if(resposta.toLowerCase().equals("close"))
+					{
+
+						break;
+					}
 				}else{
 
-					System.out.print("Function over server? (deslogear,delete ,upload, search,download,subscribe) \n");
+					System.out.print("Function over server? (close, deslogear,delete ,upload, search,download,subscribe) \n");
 					String order = scanner.next();
 
-					if(order.toLowerCase().equals("deslogear")){
-						client.state = "disconnected";
-					}
 
 					//UPLOAD
 					if(order.toLowerCase().equals("upload")){
@@ -115,9 +118,24 @@ public class Client {
 					if(order.toLowerCase().equals("subscribe"))
 					{
 						client.subscribeToTag(h);
+
 					}
+					if(order.toLowerCase().equals("deslogear"))
+					{
+						h.deleteCallback(client.callbackid);
+						client.state = "disconnected";
+					}
+					if(order.toLowerCase().equals("close"))
+					{
+						h.deleteCallback(client.callbackid);
+						break;
+					}
+
 				}
 			}
+			System.out.println("Gracies per fer servir la nostra aplicacio esperem que tornis aviat\n");
+
+			System.exit(0);
 		}
 
 		catch (Exception e)
@@ -277,7 +295,11 @@ public class Client {
 		String response = "Error";
 
 		try {
-			response = h.uploadFile(fileObject);
+			if(h.uploadFile(fileObject)){
+				System.out.printf("Fitxer pujat i guardat correctament\n");
+			}else{
+				System.out.printf("Error al pujar o guarda el fitxer\n");
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
