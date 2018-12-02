@@ -16,11 +16,13 @@ import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
 
+import javax.print.DocFlavor;
+
 public class Client {
 
 	public String msg;
 	static int RMIPort = 8997;
-	static String hostName = "172.16.0.26";//"localhost";//AQUEST A DE SER EL DEL SERVIDOR!!
+	static String hostName = "localhost";//AQUEST A DE SER EL DEL SERVIDOR!!"172.16.0.26";//
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
@@ -233,10 +235,7 @@ public class Client {
 
 		try {
 			data = Files.readAllBytes(fileLocation);
-		} catch (IOException e) {
-			System.out.printf("Aquest no es un fitxer valid");
-			e.printStackTrace();
-		}
+
 
 		fileObject.setFile(data);
 
@@ -252,7 +251,7 @@ public class Client {
 		fileObject.setType(type);
 
 		//DESCRIPTION
-		System.out.print("Enter description tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
+		System.out.print("Enter topic tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
 		String desc = scanner.next();
 		String[] keyWords = desc.split(",");
 		ArrayList<String> description = new ArrayList<>();
@@ -260,6 +259,13 @@ public class Client {
 			description.add(keyWords[i]);
 		}
 		fileObject.setTags(description);
+
+        //DESCRIPTION TEXT
+        System.out.print("Enter description: \n");
+        char[] descript = scanner.next().toCharArray();
+
+
+        fileObject.setDescription(descript);
 
 		//IS PUBLIC
 		System.out.print("You will make it public? (YES/NO): \n");
@@ -276,6 +282,10 @@ public class Client {
 			e.printStackTrace();
 		}
 		System.out.println(response);
+        } catch (IOException e) {
+            System.out.printf("Aquest no es un fitxer valid\n");
+            //e.printStackTrace();
+        }
 	}
 	//endregion
 
