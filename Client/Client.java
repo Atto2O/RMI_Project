@@ -19,8 +19,8 @@ import RemoteObject.*;
 public class Client {
 
 	public String msg;
-	static int RMIPort = 8999;
-	static String hostName = "localhost";
+	static int RMIPort = 8997;
+	static String hostName = "172.16.0.26";//"localhost";//AQUEST A DE SER EL DEL SERVIDOR!!
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
@@ -34,7 +34,7 @@ public class Client {
 	{
 		Client client = new Client();
 		Scanner scanner = new Scanner(System.in);
-		int portNum = 8001;
+		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
 
         try
@@ -234,6 +234,7 @@ public class Client {
 		try {
 			data = Files.readAllBytes(fileLocation);
 		} catch (IOException e) {
+			System.out.printf("Aquest no es un fitxer valid");
 			e.printStackTrace();
 		}
 
