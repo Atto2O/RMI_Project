@@ -414,7 +414,6 @@ public class Client {
 	//endregion
 	//endregion
 
-
 	public boolean checkUsername(Garage h, String userName) throws RemoteException{
 		return !h.checkAvailableUser(userName);
 	}
