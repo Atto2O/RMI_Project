@@ -10,6 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import Client.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
@@ -35,6 +37,8 @@ public class ClientGUI extends Application {
         int width = 700;
         int height = 400;
 
+        int panels_height = height-90;
+
         //region<INPUT_Limits>
         int max_ip_chars = 8;
         int max_port_chars = 8;
@@ -46,6 +50,14 @@ public class ClientGUI extends Application {
         Color background_start_color = Color.DARKSLATEBLUE;
         Color background_signin_color = Color.LIGHTSTEELBLUE;
         Color background_signup_color = Color.LIGHTSTEELBLUE;
+        Color background_upload_color = Color.LIGHTSTEELBLUE;
+        Color background_userFiles_color = Color.LIGHTSTEELBLUE;
+        Color background_subscribe_color = Color.LIGHTSTEELBLUE;
+        Color background_search_color = Color.LIGHTSTEELBLUE;
+        Color background_changePWD_color = Color.LIGHTSTEELBLUE;
+        Color background_disconnect_color = Color.LIGHTSTEELBLUE;
+
+        Color notification_box_color = Color.DARKSLATEBLUE;
         //endregion
 
         Rectangle background = new Rectangle(width,height, background_start_color);
@@ -149,7 +161,7 @@ public class ClientGUI extends Application {
             Group signin_group = new Group(background, username, password, text_u_name, text_pwd, login);
 
             Tab signin = new Tab();
-            signin.setText("SIGNIN");
+            signin.setText("SIGN IN");
             signin.setContent(signin_group);
         //endregion
         //region<SIGNUP>
@@ -159,16 +171,11 @@ public class ClientGUI extends Application {
             new_username.setOnKeyTyped(event ->{
                 int maxCharacters = max_username_chars;
                 if(new_username.getText().length() > maxCharacters) event.consume();
-                try {
-                    if(new_username.getText().length()>0 && h!=null){
-                        if(client.checkUsername(h, new_username.getText())){
-                            new_username.setStyle("-fx-text-fill: green;");
-                        }else{
-                            new_username.setStyle("-fx-text-fill: red;");
-                        }
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+                if(this.checkUsername(new_username.getText())){
+                    new_username.setStyle("-fx-text-fill: green;");
+                }
+                else if(new_username.getText().length()>0){
+                    new_username.setStyle("-fx-text-fill: red;");
                 }
             });
             new_username.setLayoutX((width-170)/2);
@@ -206,13 +213,13 @@ public class ClientGUI extends Application {
             text_pwd2.setLayoutY(height-180);
 
             Button register = new Button("Register and login");
-            register.setLayoutX((width-130)/2);
+            register.setLayoutX((width-140)/2);
             register.setLayoutY(height-100);
 
             Group signup_group = new Group(background,new_username, password1, password2, text_new_u, text_pwd1, text_pwd2, register);
 
             Tab signup = new Tab();
-            signup.setText("SIGNUP");
+            signup.setText("SIGN UP");
             signup.setContent(signup_group);
         //endregion
         tabPane.getTabs().addAll(signin, signup);
@@ -221,16 +228,128 @@ public class ClientGUI extends Application {
         //endregion
 
         //region<MAIN>
+        TabPane mainMenu = new TabPane();
+        mainMenu.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        mainMenu.setMaxWidth(width);
+        mainMenu.setMinWidth(width);
+        mainMenu.setMaxHeight(height-90);
         //region<User_Files>
+        background = new Rectangle(width,height, background_userFiles_color);
+
+
+        Group users = new Group (background);
+        Tab user_files_tab = new Tab();
+        user_files_tab.setText("MY FILES");
+        user_files_tab.setContent(users);
         //endregion
         //region<Upload_Files>
+        background = new Rectangle(width,height, background_upload_color);
+
+
+        Group upload = new Group (background);
+        Tab upload_files_tab = new Tab();
+        upload_files_tab.setText("UPLOAD FILES");
+        upload_files_tab.setContent(upload);
         //endregion
         //region<Subscribe_Topics>
+        background = new Rectangle(width,height, background_subscribe_color);
+
+
+        Group subscribe = new Group (background);
+        Tab subcriptions_tab = new Tab();
+        subcriptions_tab.setText("SUBSCRIBE");
+        subcriptions_tab.setContent(subscribe);
         //endregion
         //region<Search>
+        background = new Rectangle(width,height, background_search_color);
+
+
+        Group search = new Group (background);
+        Tab search_tab = new Tab();
+        search_tab.setText("SEARCH");
+        search_tab.setContent(search);
         //endregion
         //region<Change_PWD>
+        background = new Rectangle(width,height, background_changePWD_color);
+
+        PasswordField current_password = new PasswordField();
+        current_password.setOnKeyTyped(event ->{
+            int maxCharacters = max_password_chars;
+            if(current_password.getText().length() > maxCharacters) event.consume();
+        });
+        current_password.setLayoutX((width-170)/2);
+        current_password.setLayoutY(50);
+        Text text_current_password = new Text("Current password");
+        text_current_password.setFont(Font.font(12));
+        text_current_password.setFill(Color.BLACK);
+        text_current_password.setLayoutX((width-170)/2);
+        text_current_password.setLayoutY(40);
+
+        PasswordField new_password1 = new PasswordField();
+        new_password1.setOnKeyTyped(event ->{
+            int maxCharacters = max_password_chars;
+            if(new_password1.getText().length() > maxCharacters) event.consume();
+        });
+        new_password1.setLayoutX((width-170)/2);
+        new_password1.setLayoutY(110);
+        Text text_new_pwd1 = new Text("New password");
+        text_new_pwd1.setFont(Font.font(12));
+        text_new_pwd1.setFill(Color.BLACK);
+        text_new_pwd1.setLayoutX((width-170)/2);
+        text_new_pwd1.setLayoutY(100);
+
+        PasswordField new_password2 = new PasswordField();
+        new_password2.setOnKeyTyped(event ->{
+            int maxCharacters = max_password_chars;
+            if(new_password2.getText().length() > maxCharacters) event.consume();
+        });
+        new_password2.setLayoutX((width-170)/2);
+        new_password2.setLayoutY(170);
+        Text text_new_pwd2 = new Text("Repeat new password");
+        text_new_pwd2.setFont(Font.font(12));
+        text_new_pwd2.setFill(Color.BLACK);
+        text_new_pwd2.setLayoutX((width-170)/2);
+        text_new_pwd2.setLayoutY(160);
+
+        Button change_pwd_button = new Button("Save");
+        change_pwd_button.setLayoutX((width-50)/2);
+        change_pwd_button.setLayoutY(220);
+
+        Group changePWD = new Group (background, current_password, text_current_password, new_password1, text_new_pwd1, new_password2, text_new_pwd2, change_pwd_button);
+        Tab changePWD_tab = new Tab();
+        changePWD_tab.setText("CHANGE PASSWORD");
+        changePWD_tab.setContent(changePWD);
         //endregion
+        //region<DISCONNECT>
+        background = new Rectangle(width,height, background_disconnect_color);
+
+        Button change_user_button = new Button("Change user");
+        change_user_button.setLayoutX((width-90)/2);
+        change_user_button.setLayoutY(80);
+        Button disconnect_button = new Button("Disconnect");
+        disconnect_button.setLayoutX((width-80)/2);
+        disconnect_button.setLayoutY(170);
+
+        Group disconnect = new Group (background, change_user_button, disconnect_button);
+        Tab disconnect_tab = new Tab();
+        disconnect_tab.setGraphic(buildImage("./GUI/Graphics/logout.png"));
+        disconnect_tab.setContent(disconnect);
+        //endregion
+
+        mainMenu.setTabMaxWidth(width-40/6);
+        mainMenu.setTabMinWidth(92);
+        mainMenu.getTabs().addAll(user_files_tab, upload_files_tab, subcriptions_tab, search_tab, changePWD_tab, disconnect_tab);
+
+        //region<NOTIFICATIONS>
+        Rectangle notificationBox = new Rectangle(width,height, notification_box_color);
+        notificationBox.setWidth(width);
+        notificationBox.setHeight(90);
+        notificationBox.setY(height-90);
+        Group notifications_group = new Group(notificationBox);
+        //endregion
+
+        Group main_root = new Group(mainMenu, notifications_group);
+        Scene main = new Scene(main_root, width, height);
         //endregion
 
         stage.setScene(scene1);
@@ -238,130 +357,100 @@ public class ClientGUI extends Application {
 
         //region<BUTTONS_Actions>
         connect.setOnAction(action -> {
-            client.clientIP = (clientIP.getText());
-            client.clientPORT = (clientPORT.getText());
-            client.serverIP = (serverIP.getText());
-            client.serverPORT = (serverPORT.getText());
-            //COMPROVAR CONNECTIVITAT
-            stage.setScene(scene2);
+            if(this.connect(serverIP.getText(), serverPORT.getText())){
+                stage.setScene(scene2);
+            }
         });
 
         login.setOnAction(action -> {
-            try {
-                if(client.logIn(h, username.getText(), password.getText())){
-                    //NEXT SCENE
-                }else{
-                    //BORRAR CAMPS I MOSTRAR ERROR
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            if(this.login()){
+                stage.setScene(main);
+            }
+            else{
+                //ERROR + BUIDAR CAMPS DE USER I PASSWORD
             }
         });
 
         register.setOnAction(action -> {
+            if(this.register()){
+                stage.setScene(main);
+            }
+            else{
+                //ERROR + BUIDAR CAMPS REGISTRAR
+            }
+        });
 
+        change_pwd_button.setOnAction(action -> {
+            this.changePWD(new_password1.getText(), new_password2.getText());
+        });
+
+        change_user_button.setOnAction(action -> {
+            stage.setScene(scene2);
+            this.changeUser();
+        });
+
+        disconnect_button.setOnAction(action -> {
+            this.exit();
         });
         //endregion
-
-
-/*
-        // Setting the text
-        Text text = new Text(
-                "Type any letter to rotate the box, and click on the box to stop the rotation");
-
-        // Setting the font of the text
-        text.setFont(Font.font(null, FontWeight.BOLD, 15));
-
-        // Setting the color of the text
-        text.setFill(Color.CRIMSON);
-
-        // Setting the position of the text
-        text.setX(20);
-        text.setY(50);
-
-        // Setting the material of the box
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.DARKSLATEBLUE);
-
-        // Setting the diffuse color material to box
-        box.setMaterial(material);
-
-        // Setting the rotation animation to the box
-        RotateTransition rotateTransition = new RotateTransition();
-
-        // Setting the duration for the transition
-        rotateTransition.setDuration(Duration.millis(1000));
-
-        // Setting the node for the transition
-        rotateTransition.setNode(box);
-
-        // Setting the axis of the rotation
-        rotateTransition.setAxis(Rotate.Y_AXIS);
-
-        // Setting the angle of the rotation
-        rotateTransition.setByAngle(360);
-
-        // Setting the cycle count for the transition
-        rotateTransition.setCycleCount(50);
-
-        // Setting auto reverse value to false
-        rotateTransition.setAutoReverse(false);
-
-        // Creating a text filed
-        TextField textField = new TextField();
-
-        // Setting the position of the text field
-        textField.setLayoutX(50);
-        textField.setLayoutY(100);
-
-        // Handling the key typed event
-        EventHandler<KeyEvent> eventHandlerTextField = new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                // Playing the animation
-                rotateTransition.play();
-            }
-        };
-
-        // Adding an event handler to the text feld
-        textField.addEventHandler(KeyEvent.KEY_TYPED, eventHandlerTextField);
-
-        // Handling the mouse clicked event(on box)
-        EventHandler<javafx.scene.input.MouseEvent> eventHandlerBox =
-                new EventHandler<javafx.scene.input.MouseEvent>() {
-                    @Override
-                    public void handle(javafx.scene.input.MouseEvent e) {
-                        rotateTransition.stop();
-                    }
-                };
-
-        // Adding the event handler to the box
-        box.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, eventHandlerBox);
-
-        // Creating a Group object
-        Group root = new Group(box, textField, text);
-
-        // Creating a scene object
-        Scene scene = new Scene(root, 600, 300);
-
-        // Setting camera
-        PerspectiveCamera camera = new PerspectiveCamera(false);
-        camera.setTranslateX(0);
-        camera.setTranslateY(0);
-        camera.setTranslateZ(0);
-        scene.setCamera(camera);
-
-        // Adding scene to the stage
-        stage.setScene(scene);
-
-        // Displaying the contents of the stage
-        stage.show();*/
     }
 
     @Override
     public void stop() {
-        System.exit(0);
+        this.exit();
     }
 
     public static void animation(){ launch();}
+
+    private static ImageView buildImage(String imgPatch) {
+        Image i = new Image(imgPatch);
+        ImageView imageView = new ImageView();
+        //You can set width and height
+        imageView.setFitHeight(16);
+        imageView.setFitWidth(16);
+        imageView.setImage(i);
+        return imageView;
+    }
+
+    public boolean connect(String ip, String port){
+        client.serverIP = (ip);
+        client.serverPORT = (port);
+
+        //COMPROVAR CONNECTIVITAT
+        return true;
+    }
+
+    public boolean login(){
+        return true;
+    }
+
+    public boolean register(){
+        return true;
+    }
+
+    public boolean checkUsername(String new_username){
+        try {
+            if(new_username.length()>0 && this.h!=null){
+                if(client.checkUsername(h, new_username)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void exit(){
+        System.exit(0);
+    }
+
+    public void changeUser(){
+    }
+
+    public void changePWD(String newPassword1, String newPassword2){
+
+    }
 }
