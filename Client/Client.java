@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
 import CallBack.*;
+import GUI.ClientGUI;
 import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
@@ -19,13 +20,20 @@ import RemoteObject.*;
 public class Client {
 
 	public String msg;
-	static int RMIPort = 8997;
-	static String hostName = "172.16.0.26";//"localhost";//AQUEST A DE SER EL DEL SERVIDOR!!
+
+	static int RMIPort = 8999;
+	static String hostName = "localhost";
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
 	public int callbackid;
 	public ClientCallbackInterface callbackObj;
+
+
+	public String clientIP;
+	public String clientPORT;
+	public String serverIP;
+	public String serverPORT;
 
 	private Client(){}
 
@@ -33,6 +41,8 @@ public class Client {
 	public static void main (String args[])
 	{
 		Client client = new Client();
+		ClientGUI.client = client;
+		ClientGUI.animation();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
@@ -42,7 +52,9 @@ public class Client {
 
 			String registryURL = "rmi://"+ hostName +":" + portNum + "/some";
 			Garage h = (Garage)Naming.lookup(registryURL);
-
+			System.out.println("Garage created!");
+			ClientGUI.h = h;
+			System.out.println("1---------------------------\n");
 			client.callbackObj = new CallbackImpl();
 
 			while(true){
@@ -183,6 +195,12 @@ public class Client {
 	//endregion
 
 	//region<SignIn>
+
+
+	public void signin(Garage h){
+
+	}
+
 	public void registrar(Garage h){
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter a user name:\n");
@@ -226,22 +244,23 @@ public class Client {
 		fileObject.setUser(this.userName);
 
 		//FILE
-		System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
-		String filePath = scanner.next();
-		Path fileLocation = Paths.get(filePath);
-		byte[] data = new byte[0];
+		while(true) {
+			System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
+			String filePath = scanner.next();
+			Path fileLocation = Paths.get(filePath);
+			byte[] data = new byte[0];
 
-		try {
-			data = Files.readAllBytes(fileLocation);
-		} catch (IOException e) {
-			System.out.printf("Aquest no es un fitxer valid");
-			e.printStackTrace();
+			try {
+				data = Files.readAllBytes(fileLocation);
+				break;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			fileObject.setFile(data);
 		}
 
-		fileObject.setFile(data);
-
 		//FILE NAME
-		System.out.print("Enter the file name (E.g.: Pug.jpg): \n");
+		System.out.print("Enter the file name (E.g.: Pug): \n");
 		String fileName = scanner.next();
 		fileObject.setFileName(fileName);
 
@@ -303,6 +322,42 @@ public class Client {
 		}
 	}
 
+	public String changeType(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.print("Enter new Type MOVIE, IMAGE, TEXT, PDF or AUDIO: \n");
+		try {
+			String t = scanner.next();
+			Type type  = Type.fromString(t);
+			file.setType(type);
+			return "Type changed!";
+		}catch (Exception e){
+			return "Error changing file type: " + e.toString();
+		}
+	}
+
+	public String changeState(FileObject file){
+		Scanner scanner = new Scanner(System.in);
+		String response;
+
+		System.out.printf("Current file state is ");
+		if(file.getState()){
+			System.out.printf("PUBLIC\nWill you change it to PRIVATE? (YES/NO)");
+			response = scanner.next();
+			if(response.toLowerCase().equals("yes")){
+				file.setState(false);
+				return "State changed, now this file is PRIVATE.";
+			}else{return "State not changed.";}
+		} else {
+			System.out.printf("PRIVATE\nWill you change it to PUBLIC? (YES/NO)");
+			response = scanner.next();
+			if(response.toLowerCase().equals("yes")){
+				file.setState(true);
+				return "State changed, now this file is PUBLIC.";
+			}else{return "State not changed.";}
+		}
+	}
+
 	//region<Tags>
 	public String changeTags(FileObject file){
 		String state = "Tag ";
@@ -358,4 +413,20 @@ public class Client {
 	//region<Users>
 	//endregion
 	//endregion
+
+	public boolean checkUsername(Garage h, String userName) throws RemoteException{
+		return !h.checkAvailableUser(userName);
+	}
+
+	public boolean logIn(Garage h, String userName, String password) throws RemoteException{
+		int callbackid = -1;
+		if (!password.equals("") && !userName.equals("")){
+			callbackid = h.user_login(userName, password, callbackObj);
+			if (callbackid != -1) {
+				this.callbackid = callbackid;
+				return true;
+			}
+		}
+		return false;
+	}
 }

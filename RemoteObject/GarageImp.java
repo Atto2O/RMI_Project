@@ -63,7 +63,34 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("\tLast user ID: " + this.lastUserID + "\n");
     }
 
+    @Override
+    public boolean user_signup(String newUserName, String password)
+    {
+        System.out.println("Check username: " + newUserName);
+        //SI EL NOM ES VALID RETORNA TRUE
+        try{
+            semaphore.acquire();
 
+            if(checkAvailableUser(newUserName)){
+                this.lastUserID = generateId(lastUserID);
+                User newUser = new User(newUserName,password,lastUserID);
+                this.users.addUser(newUser);
+                System.out.println("Usuari:"+newUserName+"registrat!!");
+                ServerUtils.saveUsers(this.users.getUsers());
+                ServerUtils.saveUserID(this.lastUserID);
+                semaphore.release();
+                return true;
+            }else{
+
+                semaphore.release();
+                return false;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        semaphore.release();
+        return false;
+    }
 
     //WE GENERATE ID
     private int generateId(int id){
@@ -72,7 +99,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return id;
     }
 
-    private boolean checkAvailableUser(String newUserName)
+    public boolean checkAvailableUser(String newUserName) throws RemoteException
     {
         System.out.println("First user: "+this.users.isEmpty());
         if(!this.users.isEmpty()){
@@ -117,6 +144,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     }
 
+    //region<CALLBACK>
     // method for client to call to add itself to its callback
     //@Override
     public int addCallback (ClientCallbackInterface callbackObject,User currentlyUser)  throws RemoteException
@@ -226,6 +254,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         semaphore.release();
         return false;
     }
+    //endregion
 
     @Override
     public String uploadFile (FileObject file) {
@@ -297,6 +326,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
+    private FileObject getFileObject(int id){
+        for (FileObject file: files.getFiles()) {
+            if(file.getId()==id){return file;}
+        }
+        return new FileObject();
+    }
+
     @Override
     public String deleteFile(int fileId, String user) throws RemoteException
     {
@@ -308,8 +344,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 FileObject currentlyFile=  iter.next();
 
                 if(currentlyFile.getId()==fileId){
-                        if(currentlyFile.getUser().equals(user)){
-
+                        if(currentlyFile.getUser().equals(user)|| currentlyFile.getUser().toLowerCase().equals("admin")){
                         //iter.remove();
                         this.files.removeFile(currentlyFile);
                         ServerUtils.saveFiles(this.files.getFiles());
@@ -402,7 +437,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             f.createNewFile();
         }
         }catch(Exception e){
-            System.out.println("erro pelotudo: "+e+"");
+            System.out.println("Error: "+e.toString());
         }
         return true;
     }
@@ -418,17 +453,19 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 f.createNewFile();
             }
         }catch(Exception e){
-            System.out.println("erro pelotudo: "+e+"");
+            System.out.println("Error: "+e.toString());
         }
         return true;
     }
 
     //region<SAVE .json>
+    @Override
     public String modifiedFile(FileObject file){
         ServerUtils.saveFiles(this.files.getFiles());
         return "changed!";
     }
 
+    @Override
     public String modifiedUser(User user){
         ServerUtils.saveUsers(this.users.getUsers());
         return "changed!";
