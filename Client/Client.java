@@ -17,12 +17,13 @@ import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
 
+import javax.print.DocFlavor;
+
 public class Client {
 
 	public String msg;
-
-	static int RMIPort = 8999;
-	static String hostName = "localhost";
+	static int RMIPort = 8997;
+	static String hostName = "172.16.0.26";//"localhost";//AQUEST A DE SER EL DEL SERVIDOR!!
 	static Garage h;
 	public String state ="disconnected";
 	private String userName = "";
@@ -60,7 +61,8 @@ public class Client {
 			while(true){
 				if(client.state.equals("disconnected")){
 					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
-							"Si voleu fer registrar-vos escriviu: logear.\n ");
+							"Si voleu fer registrar-vos escriviu: logear.\n "+
+							"Si voleu fer tancar l'app escriviu: close.\n ");
 					String resposta = scanner.next();
 
 					if(resposta.toLowerCase().equals("registrar")){
@@ -71,9 +73,14 @@ public class Client {
 							client.state = "connected";
 						}
 					}
+					if(resposta.toLowerCase().equals("close"))
+					{
+
+						break;
+					}
 				}else{
 
-					System.out.print("Function over server? (deslogear,delete ,upload, search,download,subscribe) \n");
+					System.out.print("Function over server? (close, deslogear,delete ,upload, search,download,subscribe) \n");
 					String order = scanner.next();
 
 					if(order.toLowerCase().equals("deslogear")){
@@ -125,9 +132,24 @@ public class Client {
 					if(order.toLowerCase().equals("subscribe"))
 					{
 						client.subscribeToTag(h);
+
 					}
+					if(order.toLowerCase().equals("deslogear"))
+					{
+						h.deleteCallback(client.callbackid);
+						client.state = "disconnected";
+					}
+					if(order.toLowerCase().equals("close"))
+					{
+						h.deleteCallback(client.callbackid);
+						break;
+					}
+
 				}
 			}
+			System.out.println("Gracies per fer servir la nostra aplicacio esperem que tornis aviat\n");
+
+			System.exit(0);
 		}
 
 		catch (Exception e)
@@ -271,7 +293,7 @@ public class Client {
 		fileObject.setType(type);
 
 		//DESCRIPTION
-		System.out.print("Enter description tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
+		System.out.print("Enter topic tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
 		String desc = scanner.next();
 		String[] keyWords = desc.split(",");
 		ArrayList<String> description = new ArrayList<>();
@@ -279,6 +301,13 @@ public class Client {
 			description.add(keyWords[i]);
 		}
 		fileObject.setTags(description);
+
+        //DESCRIPTION TEXT
+        System.out.print("Enter description: \n");
+        char[] descript = scanner.next().toCharArray();
+
+
+        fileObject.setDescription(descript);
 
 		//IS PUBLIC
 		System.out.print("You will make it public? (YES/NO): \n");
@@ -290,11 +319,19 @@ public class Client {
 		String response = "Error";
 
 		try {
-			response = h.uploadFile(fileObject);
+			if(h.uploadFile(fileObject)){
+				System.out.printf("Fitxer pujat i guardat correctament\n");
+			}else{
+				System.out.printf("Error al pujar o guarda el fitxer\n");
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		System.out.println(response);
+        } catch (IOException e) {
+            System.out.printf("Aquest no es un fitxer valid\n");
+            //e.printStackTrace();
+        }
 	}
 	//endregion
 

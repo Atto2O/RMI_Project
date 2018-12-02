@@ -9,7 +9,7 @@ import java.util.List;
 public class FileObject implements java.io.Serializable{
 
     private ArrayList<String> tags;
-    private char[] description = new char[200];
+    private String description ;//= new char[200];
     private String fileName;
     private int id;
     private Type type;
@@ -17,7 +17,7 @@ public class FileObject implements java.io.Serializable{
     private byte[] file;
     private String user;
 
-    public FileObject(ArrayList<String> tags, String fileName, Type type, byte[] file, boolean publicFile, String user, char[] description) {
+    public FileObject(ArrayList<String> tags, String fileName, Type type, byte[] file, boolean publicFile, String user, String description) {
         this.tags = tags;
         this.fileName=fileName;
         this.type = type;
@@ -51,6 +51,10 @@ public class FileObject implements java.io.Serializable{
 
     public String getUser(){return this.user;}
 
+    public String getDescription(){
+        return this.description;
+    }
+
     //Setters
     public void setId(int id){this.id=id;}
 
@@ -80,4 +84,8 @@ public class FileObject implements java.io.Serializable{
     public void setState(boolean state) {this.isPublic = state;}
 
     public void setUser(String user) {this.user = user;}
+
+    public void setDescription(char[] description){
+        this.description=description.toString();
+    }
 }
