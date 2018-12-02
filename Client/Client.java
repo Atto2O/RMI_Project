@@ -43,7 +43,7 @@ public class Client {
 	{
 		Client client = new Client();
 		ClientGUI.client = client;
-		//ClientGUI.animation();
+		ClientGUI.animation();
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";

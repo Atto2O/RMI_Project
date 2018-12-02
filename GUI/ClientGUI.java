@@ -24,10 +24,13 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public class ClientGUI extends Application {
     public static Client client;
     public static Garage h;
+
+    private String client_current_username;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -254,6 +257,12 @@ public class ClientGUI extends Application {
         //region<Subscribe_Topics>
         background = new Rectangle(width,height, background_subscribe_color);
 
+        if(this.getSubscriptions().size()==0){
+            //MISSATGE NO SUBSCRIPCIONS
+        }else{
+            //MOSTRAR SUBSCRIPCIONS
+        }
+        // TEXTFIELD + ADD TAG BUTTON (SPACES NOT ALLOWED)
 
         Group subscribe = new Group (background);
         Tab subcriptions_tab = new Tab();
@@ -364,6 +373,7 @@ public class ClientGUI extends Application {
 
         login.setOnAction(action -> {
             if(this.login()){
+                this.client_current_username = username.getText();
                 stage.setScene(main);
             }
             else{
@@ -373,6 +383,7 @@ public class ClientGUI extends Application {
 
         register.setOnAction(action -> {
             if(this.register()){
+                this.client_current_username = new_username.getText();
                 stage.setScene(main);
             }
             else{
@@ -452,5 +463,10 @@ public class ClientGUI extends Application {
 
     public void changePWD(String newPassword1, String newPassword2){
 
+    }
+
+    public ArrayList<String> getSubscriptions(){
+        //this.client_current_username;
+        return new ArrayList<>();
     }
 }
