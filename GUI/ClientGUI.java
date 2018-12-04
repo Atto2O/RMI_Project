@@ -392,7 +392,9 @@ public class ClientGUI extends Application {
         });
 
         change_pwd_button.setOnAction(action -> {
-            this.changePWD(new_password1.getText(), new_password2.getText());
+            if(this.changePWD(current_password.getText(), new_password1.getText(), new_password2.getText())){
+            }else{
+            }
         });
 
         change_user_button.setOnAction(action -> {
@@ -456,14 +458,20 @@ public class ClientGUI extends Application {
     }
 
     public void exit(){
+
+        this.client.deleteCallbackFromClienth(h);
         System.exit(0);
     }
 
     public void changeUser(){
+        this.client.deslogear(h);
     }
 
-    public void changePWD(String newPassword1, String newPassword2){
-
+    public boolean changePWD(String oldPassword, String newPassword1, String newPassword2){
+        if(newPassword1.equals(newPassword2)){
+            return (this.client.changePassword(h,oldPassword,newPassword1));
+        }
+        return false;
     }
 
     public ArrayList<String> getSubscriptions(){

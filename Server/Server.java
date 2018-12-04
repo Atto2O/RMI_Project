@@ -12,6 +12,7 @@ import RemoteObject.*;
 import Client.*;
 
 public class Server {
+
     public static void main(String args[])
     {
         int portNum = 8001;

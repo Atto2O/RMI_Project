@@ -140,12 +140,12 @@ public class Client {
 					}
 					if(order.toLowerCase().equals("deslogear"))
 					{
-						h.deleteCallback(client.callbackid);
-						client.state = "disconnected";
+						client.deslogear(h);
+
 					}
 					if(order.toLowerCase().equals("close"))
 					{
-						h.deleteCallback(client.callbackid);
+						client.deleteCallbackFromClienth(h);
 						break;
 					}
 
@@ -163,6 +163,34 @@ public class Client {
 	}
 	//endregion
 
+	public boolean changePassword(Garage h,String oldPassword,String newPassword1){
+		try{
+		return h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
+		}catch (Exception e)
+		{
+			System.out.println("Exception in SomeClient: " + e.toString());
+		}
+
+		return false;
+	}
+	public void deslogear(Garage h){
+		try{
+		h.deleteCallback(this.callbackid);
+		this.state = "disconnected";
+		}catch (Exception e)
+		{
+			System.out.println("Exception in SomeClient: " + e.toString());
+		}
+	}
+	public void deleteCallbackFromClienth(Garage h){
+		try{
+			h.deleteCallback(this.callbackid);
+		}catch (Exception e)
+		{
+			System.out.println("Exception in SomeClient: " + e.toString());
+		}
+
+	}
 
 	public void setUpConnections(){
 		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";

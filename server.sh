@@ -10,5 +10,5 @@ $echo javac ./Objects/Type.java
 $echo javac ./ServerUtils/ServerUtils.java
 $echo javac ./ServerUtils/Id.java
 
-$echo java Server.Server
+$echo java ./Server/Server
 

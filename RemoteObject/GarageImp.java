@@ -148,6 +148,35 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     }
 
+    public boolean changePaswordOnServer(String userName,String oldPassword,String newPassword1)throws java.rmi.RemoteException{
+
+        try{
+            semaphore.acquire();
+            Iterator<User> iter = this.users.getUsers().iterator();
+            //We search for the currently user
+            while (iter.hasNext()) {
+                User curentlyUser = iter.next();
+                if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
+                    if(curentlyUser.getPassword().equals(oldPassword)){
+                        curentlyUser.setPassword(newPassword1);
+                        semaphore.release();
+                        return true;
+                    }
+
+
+                }
+            }
+            semaphore.release();
+            return false;
+
+        }catch (Exception e) {
+            e.printStackTrace();
+
+            semaphore.release();
+            return  false;
+        }
+
+    }
     //region<CALLBACK>
     // method for client to call to add itself to its callback
     //@Override
