@@ -24,10 +24,13 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public class ClientGUI extends Application {
     public static Client client;
     public static Garage h;
+
+    private String client_current_username;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -171,6 +174,12 @@ public class ClientGUI extends Application {
             new_username.setOnKeyTyped(event ->{
                 int maxCharacters = max_username_chars;
                 if(new_username.getText().length() > maxCharacters) event.consume();
+                /*if(this.checkUsername(new_username.getText())){
+                    new_username.setStyle("-fx-text-fill: green;");
+                }
+                else if(new_username.getText().length()>0){
+                    new_username.setStyle("-fx-text-fill: red;");
+                }*/
             });
             new_username.setLayoutX((width-170)/2);
             new_username.setLayoutY(height-310);
@@ -248,6 +257,12 @@ public class ClientGUI extends Application {
         //region<Subscribe_Topics>
         background = new Rectangle(width,height, background_subscribe_color);
 
+        if(this.getSubscriptions().size()==0){
+            //MISSATGE NO SUBSCRIPCIONS
+        }else{
+            //MOSTRAR SUBSCRIPCIONS
+        }
+        // TEXTFIELD + ADD TAG BUTTON (SPACES NOT ALLOWED)
 
         Group subscribe = new Group (background);
         Tab subcriptions_tab = new Tab();
@@ -356,7 +371,6 @@ public class ClientGUI extends Application {
                     stage.setScene(scene2);
                 }
             }
-
         });
 
         login.setOnAction(action -> {
@@ -450,5 +464,10 @@ public class ClientGUI extends Application {
 
     public void changePWD(String newPassword1, String newPassword2){
 
+    }
+
+    public ArrayList<String> getSubscriptions(){
+        //this.client_current_username;
+        return new ArrayList<>();
     }
 }
