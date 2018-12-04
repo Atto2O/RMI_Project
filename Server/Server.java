@@ -19,7 +19,7 @@ public class Server {
         int RMIPort = 8001;
         try
         {
-            GarageImp exportedObj = new GarageImp();
+            GarageImp exportedObj = new GarageImp();//asar les ip's?
             startRegistry(RMIPort);
             String registryURL = "rmi://localhost:" + portNum + "/some";
             Naming.rebind(registryURL, exportedObj);

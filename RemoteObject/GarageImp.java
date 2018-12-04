@@ -148,6 +148,14 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     }
 
+    /**
+     *
+     * @param userName currenlty user name
+     * @param oldPassword old password
+     * @param newPassword1 password that will replace the old one
+     * @return return true if all goes fine,false if not
+     * @throws java.rmi.RemoteException
+     */
     public boolean changePaswordOnServer(String userName,String oldPassword,String newPassword1)throws java.rmi.RemoteException{
 
         try{
@@ -159,6 +167,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
                     if(curentlyUser.getPassword().equals(oldPassword)){
                         curentlyUser.setPassword(newPassword1);
+                        ServerUtils.saveUsers(this.users.getUsers());
                         semaphore.release();
                         return true;
                     }
