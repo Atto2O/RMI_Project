@@ -1,30 +1,42 @@
 package GUI;
 
+import Objects.FileObject;
+import Objects.Type;
 import RemoteObject.Garage;
 import javafx.application.Application;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import Client.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientGUI extends Application {
     public static Client client;
@@ -47,6 +59,7 @@ public class ClientGUI extends Application {
         int max_port_chars = 8;
         int max_username_chars = 10;
         int max_password_chars = 12;
+        int max_tag_chars = 15;
         //endregion
 
         //region<COLORS>
@@ -239,8 +252,56 @@ public class ClientGUI extends Application {
         //region<User_Files>
         background = new Rectangle(width,height, background_userFiles_color);
 
+        Text title_mainFiles = new Text("My files:");
+        title_mainFiles.setFont(Font.font(null, FontWeight.BOLD, 14));
+        title_mainFiles.setFill(Color.BLACK);
+        title_mainFiles.setLayoutX(20);
+        title_mainFiles.setLayoutY(25);
 
-        Group users = new Group (background);
+        Group mainFiles_group;
+
+        if(this.getUserFiles().size()==0||this.getUserFiles()==null) {
+            Text no_mainFiles = new Text("You don't upload files yet.");
+            no_mainFiles.setFont(Font.font(null, FontPosture.ITALIC, 10));
+            no_mainFiles.setFill(Color.BLACK);
+            no_mainFiles.setLayoutX((width - 140) / 2);
+            no_mainFiles.setLayoutY(110);
+
+            mainFiles_group = new Group(no_mainFiles);
+        }else{
+            TableView userFiles_table = new TableView();
+            userFiles_table.setEditable(false);
+
+            TableColumn id_column = new TableColumn("ID");
+            id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
+            TableColumn name_column = new TableColumn("Name");
+            name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
+            TableColumn type_column = new TableColumn("Type");
+            type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
+            TableColumn state_column = new TableColumn("Public");
+            state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
+            TableColumn tags_column = new TableColumn("Tags");
+            tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
+            TableColumn description_column = new TableColumn("Description");
+            description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
+            TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
+            TableColumn download_column = new TableColumn("Download");//edit, download, delete
+            TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
+
+            ObservableList<FileObject> observableFilesList = FXCollections.observableList(this.getUserFiles());
+            userFiles_table.setItems(observableFilesList);
+            userFiles_table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
+            userFiles_table.setMaxHeight(230);
+            userFiles_table.setMaxWidth(width-100);
+            userFiles_table.setLayoutX(50);
+            userFiles_table.setLayoutY(40);
+
+
+
+            mainFiles_group = new Group(userFiles_table);
+        }
+
+        Group users = new Group (background, title_mainFiles, mainFiles_group);
         Tab user_files_tab = new Tab();
         user_files_tab.setText("MY FILES");
         user_files_tab.setContent(users);
@@ -256,15 +317,61 @@ public class ClientGUI extends Application {
         //endregion
         //region<Subscribe_Topics>
         background = new Rectangle(width,height, background_subscribe_color);
+        Text title_subscribe = new Text("My subscribed tags:");
+        title_subscribe.setFont(Font.font(null, FontWeight.BOLD, 14));
+        title_subscribe.setFill(Color.BLACK);
+        title_subscribe.setLayoutX(20);
+        title_subscribe.setLayoutY(25);
+
+        Group subscription_group;
 
         if(this.getSubscriptions().size()==0){
             //MISSATGE NO SUBSCRIPCIONS
-        }else{
-            //MOSTRAR SUBSCRIPCIONS
-        }
-        // TEXTFIELD + ADD TAG BUTTON (SPACES NOT ALLOWED)
+            Text no_subscribed_tags = new Text("You are not subscribed to any tags yet.");
+            no_subscribed_tags.setFont(Font.font(null, FontPosture.ITALIC, 10));
+            no_subscribed_tags.setFill(Color.BLACK);
+            no_subscribed_tags.setLayoutX((width-180)/2);
+            no_subscribed_tags.setLayoutY(110);
 
-        Group subscribe = new Group (background);
+            subscription_group = new Group(no_subscribed_tags);
+        }else{
+            BorderPane layout = new BorderPane();
+            List<HBoxCell> subscribed_items = new ArrayList<>();
+            for (String tag:this.getSubscriptions()) {
+                Button delete_tag = new Button();
+                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                delete_tag.setStyle("-fx-border-color: #000000; -fx-border-width: 5px;");
+                delete_tag.setStyle("-fx-background-color: #ffbbbb");
+                //RED BUTTON WITH IMAGE
+                subscribed_items.add(new HBoxCell(tag, delete_tag, this.client));
+                }
+
+                ListView<HBoxCell> listView = new ListView<HBoxCell>();
+                ObservableList<HBoxCell> observableSubscriptionList = FXCollections.observableList(subscribed_items);
+                listView.setItems(observableSubscriptionList);
+                listView.setMaxHeight(230);
+                //listView.setPrefHeight(230);
+
+                layout.setCenter(listView);
+                layout.setLayoutX(50);
+                layout.setLayoutY(40);
+
+
+            subscription_group = new Group(layout);
+        }
+        TextField addTag_field = new TextField();
+        addTag_field.setOnKeyTyped(event ->{
+            int maxCharacters = max_tag_chars;
+            if(addTag_field.getText().length() > maxCharacters) event.consume();
+        });
+        addTag_field.setLayoutX(width-220);
+        addTag_field.setLayoutY(240);
+        Button add_button = new Button();
+        add_button.setGraphic(this.buildImage("./GUI/Graphics/add.png"));
+        add_button.setLayoutX(width-50);
+        add_button.setLayoutY(240);
+
+        Group subscribe = new Group (background, title_subscribe, subscription_group, addTag_field, add_button);
         Tab subcriptions_tab = new Tab();
         subcriptions_tab.setText("SUBSCRIBE");
         subcriptions_tab.setContent(subscribe);
@@ -403,6 +510,12 @@ public class ClientGUI extends Application {
         disconnect_button.setOnAction(action -> {
             this.exit();
         });
+
+        add_button.setOnAction(action -> {
+            if(addTag_field.getText().length()>0){
+                this.addTag(addTag_field.getText());
+            }
+        });
         //endregion
     }
 
@@ -421,6 +534,29 @@ public class ClientGUI extends Application {
         imageView.setFitWidth(16);
         imageView.setImage(i);
         return imageView;
+    }
+
+    public static class HBoxCell extends HBox {
+        Label label = new Label();
+        Button button = new Button();
+
+        HBoxCell(String labelText, Button button, Client client) {
+            super();
+
+            label.setText(labelText);
+            label.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(label, Priority.ALWAYS);
+
+            this.getChildren().addAll(label, button);
+
+            button.setOnAction(action -> {
+                this.deleteTag(label.getText());
+            });
+        }
+
+        public void deleteTag(String tag){
+            ///client.deleteTag(tag);
+        }
     }
 
     public boolean connect(String ip, String port){
@@ -466,8 +602,28 @@ public class ClientGUI extends Application {
 
     }
 
+    public ArrayList<FileObject> getUserFiles (){
+        ArrayList<FileObject> f = new ArrayList<>();
+        ArrayList<String> a = new ArrayList<>();
+        a.add("1tag");
+        a.add("2tag");
+        f.add(new FileObject(a, "this File name", Type.IMAGE, null, true, "admin", "this is my custom description"));
+        f.add(new FileObject(null, "sdfasdfasdfasdf", Type.PDF, null, false, "adaff", "tsdfkjdfs hdsafh asdf hodsf a flkjfeaslfen"));
+        return f;
+    }
+
     public ArrayList<String> getSubscriptions(){
         //this.client_current_username;
-        return new ArrayList<>();
+        ArrayList<String> a = new ArrayList<>();
+        a.add("añsldkf");
+        a.add("asdfasd");
+        a.add("uiluik");
+        a.add("uiktywefrger");
+        a.add("hngguweo");
+        return a;
+    }
+
+    public void addTag(String tag){
+
     }
 }
