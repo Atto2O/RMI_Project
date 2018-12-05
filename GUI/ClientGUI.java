@@ -5,11 +5,16 @@ import Objects.Type;
 import RemoteObject.Garage;
 import javafx.application.Application;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -18,10 +23,8 @@ import Client.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 
@@ -32,6 +35,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -285,8 +289,23 @@ public class ClientGUI extends Application {
             TableColumn description_column = new TableColumn("Description");
             description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
             TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
+            edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+                @Override public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                    return new EditFile_fromTable(stage, userFiles_table);
+                }
+            });
             TableColumn download_column = new TableColumn("Download");//edit, download, delete
+            download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+                @Override public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                    return new DownloadFile_fromTable(stage, userFiles_table);
+                }
+            });
             TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
+            delete_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+                @Override public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                    return new DeleteFile_fromTable(stage, userFiles_table);
+                }
+            });
 
             ObservableList<FileObject> observableFilesList = FXCollections.observableList(this.getUserFiles());
             userFiles_table.setItems(observableFilesList);
@@ -295,8 +314,6 @@ public class ClientGUI extends Application {
             userFiles_table.setMaxWidth(width-100);
             userFiles_table.setLayoutX(50);
             userFiles_table.setLayoutY(40);
-
-
 
             mainFiles_group = new Group(userFiles_table);
         }
@@ -476,7 +493,11 @@ public class ClientGUI extends Application {
             if(/*!serverIP.getText().isEmpty() &&*/ !serverPORT.getText().isEmpty()){
                 if(this.connect(serverIP.getText(), serverPORT.getText())){
                     stage.setScene(scene2);
+                }else{
+                    //ERROR
                 }
+                serverIP.setText("");
+                serverPORT.setText("");
             }
         });
 
@@ -485,8 +506,10 @@ public class ClientGUI extends Application {
                 stage.setScene(main);
             }
             else{
-                //ERROR + BUIDAR CAMPS DE USER I PASSWORD
+                //ERROR
             }
+            username.setText("");
+            password.setText("");
         });
 
         register.setOnAction(action -> {
@@ -496,12 +519,20 @@ public class ClientGUI extends Application {
             else{
                 //ERROR + BUIDAR CAMPS REGISTRAR
             }
+            new_username.setText("");
+            password1.setText("");
+            password2.setText("");
         });
 
         change_pwd_button.setOnAction(action -> {
             if(this.changePWD(current_password.getText(), new_password1.getText(), new_password2.getText())){
+                //SUCCES
             }else{
+                //ERROR
             }
+            current_password.setText("");
+            new_password1.setText("");
+            new_password2.setText("");
         });
 
         change_user_button.setOnAction(action -> {
@@ -537,6 +568,114 @@ public class ClientGUI extends Application {
         imageView.setImage(i);
         return imageView;
     }
+
+    //region<Table-buttons>
+    private class DeleteFile_fromTable extends TableCell<FileObject, Boolean> {
+        final Button deleteFile;
+        {
+            deleteFile = new Button();
+            deleteFile.setGraphic(buildImage("./GUI/Graphics/delete.png"));
+        }
+
+        final StackPane paddedButton = new StackPane();
+        DoubleProperty buttonY = new SimpleDoubleProperty();
+        DeleteFile_fromTable(final Stage stage, final TableView table) {
+            paddedButton.setPadding(new Insets(3));
+            paddedButton.getChildren().add(deleteFile);
+            deleteFile.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    buttonY.set(mouseEvent.getScreenY());
+                }
+            });
+            deleteFile.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent actionEvent) {
+                    table.getSelectionModel().select(getTableRow().getIndex());
+
+                    //remove this file from server
+                }
+            });
+        }
+        @Override protected void updateItem(Boolean item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty) {
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                setGraphic(paddedButton);
+            } else {
+                setGraphic(null);
+            }
+        }
+    }
+
+    private class DownloadFile_fromTable extends TableCell<FileObject, Boolean> {
+        final Button download;
+        {
+            download = new Button();
+            download.setGraphic(buildImage("./GUI/Graphics/download.png"));
+        }
+        final StackPane paddedButton = new StackPane();
+        DoubleProperty buttonY = new SimpleDoubleProperty();
+        DownloadFile_fromTable(final Stage stage, final TableView table) {
+            paddedButton.setPadding(new Insets(3));
+            paddedButton.getChildren().add(download);
+            download.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    buttonY.set(mouseEvent.getScreenY());
+                }
+            });
+            download.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent actionEvent) {
+                    table.getSelectionModel().select(getTableRow().getIndex());
+
+                    //download this file from server && select download path
+                }
+            });
+        }
+        @Override protected void updateItem(Boolean item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty) {
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                setGraphic(paddedButton);
+            } else {
+                setGraphic(null);
+            }
+        }
+    }
+
+    private class EditFile_fromTable extends TableCell<FileObject, Boolean> {
+        final Button edit;
+        {
+           edit = new Button();
+           edit.setGraphic(buildImage("./GUI/Graphics/edit.png"));
+        }
+        final StackPane paddedButton = new StackPane();
+        DoubleProperty buttonY = new SimpleDoubleProperty();
+        EditFile_fromTable(final Stage stage, final TableView table) {
+            paddedButton.setPadding(new Insets(3));
+            paddedButton.getChildren().add(edit);
+            edit.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    buttonY.set(mouseEvent.getScreenY());
+                }
+            });
+            edit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent actionEvent) {
+                    table.getSelectionModel().select(getTableRow().getIndex());
+
+                    //open edit window from this file;
+                }
+            });
+        }
+        @Override protected void updateItem(Boolean item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty) {
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                setGraphic(paddedButton);
+            } else {
+                setGraphic(null);
+            }
+        }
+    }
+    //endregion
 
     public static class HBoxCell extends HBox {
         Label label = new Label();
@@ -635,3 +774,4 @@ public class ClientGUI extends Application {
 
     }
 }
+
