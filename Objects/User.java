@@ -7,6 +7,7 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import CallBack.*;
 import Objects.*;
@@ -41,14 +42,26 @@ public class User {
     public ArrayList<String> getSubscriptions(){
         return this.Subscriptions;
     }
-    public void addSubscriptions(String subscription){
+    public boolean addSubscriptions(String subscription){
         try{
             this.Subscriptions.add(subscription);
+            return true;
         }catch (Exception e){
             System.out.println("Error al objecte user: "+e.toString());
+            return false;
         }
+    }
+    public boolean deleteSubscriptions(String oldTag) {
+        Iterator<String> iter = this.Subscriptions.iterator();
+        //We search for the currently user
+        while (iter.hasNext()) {
+            if (iter.next().equals(oldTag)) {
+                iter.remove();
+                return true;
+            }
 
-
+        }
+        return false;
     }
     public void setName(String name){
         this.name=name;
