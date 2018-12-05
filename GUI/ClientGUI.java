@@ -33,6 +33,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -40,6 +42,7 @@ import javafx.util.Callback;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClientGUI extends Application {
@@ -325,9 +328,27 @@ public class ClientGUI extends Application {
         //endregion
         //region<Upload_Files>
         background = new Rectangle(width,height, background_upload_color);
+        final FileChooser fileChooser = new FileChooser();
+        TextField upload_path_file = new TextField("Enter a file path");
+
+        Button browse_button = new Button("Browse");
+
+        TextField upload_file_name = new TextField();
 
 
-        Group upload = new Group (background);
+        ObservableList<String> upload_type_options =
+                FXCollections.observableArrayList(
+                        "MOVIE",
+                        "IMAGE",
+                        "TEXT",
+                        "PDF",
+                        "AUDIO"
+                );
+        final ComboBox upload_types = new ComboBox(upload_type_options);
+
+        Button save_upload_button = new Button("Save");
+
+        Group upload = new Group (background, upload_path_file, browse_button, upload_file_name, upload_types, save_upload_button);
         Tab upload_files_tab = new Tab();
         upload_files_tab.setText("UPLOAD FILES");
         upload_files_tab.setContent(upload);
@@ -549,6 +570,20 @@ public class ClientGUI extends Application {
                 this.addTag(addTag_field.getText());
             }
         });
+
+        browse_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String path = "";
+                upload_path_file.setText(path);
+                File file = fileChooser.showOpenDialog(stage);
+                if (file != null) {
+                    path = file.getAbsolutePath();
+                    upload_path_file.setText(path);
+
+                }
+            }
+        });
         //endregion
     }
 
@@ -571,6 +606,7 @@ public class ClientGUI extends Application {
 
     //region<Table-buttons>
     private class DeleteFile_fromTable extends TableCell<FileObject, Boolean> {
+
         final Button deleteFile;
         {
             deleteFile = new Button();
@@ -587,10 +623,10 @@ public class ClientGUI extends Application {
                     buttonY.set(mouseEvent.getScreenY());
                 }
             });
+
             deleteFile.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
-
                     //remove this file from server
                 }
             });
@@ -622,10 +658,19 @@ public class ClientGUI extends Application {
                     buttonY.set(mouseEvent.getScreenY());
                 }
             });
+            final DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Select a Directory for download");
+            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             download.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
-
+                    String path;
+                    File dir = directoryChooser.showDialog(stage);
+                    if (dir != null) {
+                        path = dir.getAbsolutePath();
+                    } else {
+                        path = "";
+                    }
                     //download this file from server && select download path
                 }
             });
