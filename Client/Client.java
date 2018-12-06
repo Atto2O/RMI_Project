@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
+import java.util.concurrent.ExecutionException;
+
 import CallBack.*;
 import GUI.ClientGUI;
 import Objects.FileObject;
@@ -120,6 +122,9 @@ public class Client {
 
 						String home = System.getProperty("user.home");
 						try {
+							//per defcte aquet------------------------------------------------------------
+							//--------------------------------------
+							//-------------------------------------------------------------------
 							FileOutputStream fos = new FileOutputStream(home+"/" + file.getFileName());
 							fos.write(file.getFile());
 							System.out.println("Downloaded!");
@@ -135,7 +140,7 @@ public class Client {
 					//SUBSCRIBE
 					if(order.toLowerCase().equals("subscribe"))
 					{
-						client.subscribeToTag(h);
+						//client.subscribeToTag(h);
 
 					}
 					if(order.toLowerCase().equals("deslogear"))
@@ -163,6 +168,25 @@ public class Client {
 	}
 	//endregion
 
+    public ArrayList<FileObject> getFilesByText(Garage h,String text){
+        try {
+            return h.searchFile(text);
+        }catch (Exception e)
+        {
+            System.out.println("Exception in SomeClient: " + e.toString());
+        }
+        return new ArrayList<FileObject>();
+    }
+
+    public ArrayList<FileObject> getFilesByUser(){
+        try {
+            return h.searchFileByName(this.userName);
+        }catch (Exception e)
+        {
+            System.out.println("Exception in SomeClient: " + e.toString());
+        }
+        return new ArrayList<FileObject>();
+    }
 	public boolean changePassword(Garage h,String oldPassword,String newPassword1){
 		try{
 		return h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
@@ -216,27 +240,36 @@ public class Client {
 
 	//region<LogIn>
 	//region<SignUp>
-	public void subscribeToTag(Garage h){
+	public boolean subscribeToTag(Garage h, String newTag){
 
-		Scanner scanner = new Scanner(System.in);
-		String newTag;
-		System.out.print("Tag al que voleu subscriureus:\n");
-		newTag = scanner.next().toLowerCase();
-		boolean correcte=false;
+
+
+
 		try {
-			correcte=h.addSubscriptionTag(this.userName, newTag);
+
+			return h.addSubscriptionTag(this.userName, newTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
 			System.out.println("Exception in subscription: " + e.toString());
+			return false;
 		}
 
-		if(correcte){
-			System.out.println("Tas subscrit correctament");
-		}else{
-			System.out.println("No tas subscrit correctament");
-		}
+	}
 
+	public boolean desSubscribeToTag(Garage h, String oldTag){
+
+
+
+		try {
+
+			return h.deleteSubscriptionTag(this.userName, oldTag.toLowerCase());
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in subscription: " + e.toString());
+			return false;
+		}
 
 	}
 	public boolean logear(Garage h,String username, String password){
@@ -474,6 +507,15 @@ public class Client {
 		}
 		return state;
 	}
+	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
+        try{
+            return h.getSubscriptionsList(this.userName);
+        }catch(Exception e){
+            System.out.println("Error getSubscriptionsClient: " + e.toString() + "\n");
+            return new ArrayList<String>();
+        }
+
+	}
 
 	public String addTag(FileObject file){
 		Scanner scanner = new Scanner(System.in);
@@ -487,22 +529,21 @@ public class Client {
 		return "added!";
 	}
 
-	public String removeTag(FileObject file){
-		Scanner scanner = new Scanner(System.in);
+	public String removeTag(FileObject file) {
+        Scanner scanner = new Scanner(System.in);
 
-		System.out.println("Type a tag to remove: ");
-		String tag = scanner.next();
+        System.out.println("Type a tag to remove: ");
+        String tag = scanner.next();
 
-		ArrayList<String> current_description = file.getTags();
-		if(current_description.contains(tag.toLowerCase())){
-			current_description.remove(tag);
-			file.setTags(current_description);
-			return "added!";
-		}
-		else{
-			return "not in current tags!";
-		}
-	}
+        ArrayList<String> current_description = file.getTags();
+        if (current_description.contains(tag.toLowerCase())) {
+            current_description.remove(tag);
+            file.setTags(current_description);
+            return "removed!";
+        } else {
+            return "not in current tags!";
+        }
+    }
 	//endregion
 
 	//endregion

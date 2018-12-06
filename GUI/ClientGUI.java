@@ -363,7 +363,7 @@ public class ClientGUI extends Application {
 
         Group subscription_group;
 
-        if(this.getSubscriptions().size()==0){
+        if(this.getSubscriptions().isEmpty()){
             //MISSATGE NO SUBSCRIPCIONS
             Text no_subscribed_tags = new Text("You are not subscribed to any tags yet.");
             no_subscribed_tags.setFont(Font.font(null, FontPosture.ITALIC, 10));
@@ -741,8 +741,10 @@ public class ClientGUI extends Application {
         }
 
         public void deleteTag(String tag){
-            ///client.deleteTag(tag);
+            client.desSubscribeToTag(h, tag);
+
         }
+
     }
 
     public boolean connect(String ip, String port){
@@ -795,27 +797,28 @@ public class ClientGUI extends Application {
     }
 
     public ArrayList<FileObject> getUserFiles (){
-        ArrayList<FileObject> f = new ArrayList<>();
+        /*ArrayList<FileObject> f = new ArrayList<>();
         ArrayList<String> a = new ArrayList<>();
         a.add("1tag");
         a.add("2tag");
         f.add(new FileObject(a, "this File name", Type.IMAGE, null, true, "admin", "this is my custom description"));
         f.add(new FileObject(null, "sdfasdfasdfasdf", Type.PDF, null, false, "adaff", "tsdfkjdfs hdsafh asdf hodsf a flkjfeaslfen"));
-        return f;
+        return f;*/
+        return client.getFilesByUser();
+
     }
 
-    public ArrayList<String> getSubscriptions(){
-        //this.client_current_username;
-        ArrayList<String> a = new ArrayList<>();
-        a.add("añsldkf");
-        a.add("asdfasd");
-        a.add("uiluik");
-        a.add("uiktywefrger");
-        a.add("hngguweo");
-        return a;
+    public ArrayList<String> getSubscriptions() throws RemoteException {
+
+        return client.getSubscriptionsClient();
     }
 
-    public void addTag(String tag){
+    public void addTag(String newtag){
+        if(this.client.subscribeToTag(h,newtag)){
+            System.out.println("Tas subscrit correctament");
+        }else{
+            System.out.println("No tas subscrit correctament");
+        }
 
     }
 }
