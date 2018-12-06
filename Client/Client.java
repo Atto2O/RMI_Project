@@ -54,49 +54,51 @@ public class Client {
 	}
 	//endregion
 
-    public ArrayList<FileObject> getFilesByText(Garage h,String text){
-        try {
-            return h.searchFile(text);
+    public ArrayList<FileObject> getFilesByText(String text){
+        ArrayList<FileObject> array = new ArrayList<>();
+		try {
+            array = this.h.searchFile(text);
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
         }
-        return new ArrayList<FileObject>();
+        return array;
     }
 
     public ArrayList<FileObject> getFilesByUser(){
-		System.out.println(h.toString());
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = h.searchFileByName(this.userName);
+            array = this.h.searchFileByName(this.userName);
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
         }
         return array;
     }
-	public boolean changePassword(Garage h,String oldPassword,String newPassword1){
+
+    public boolean changePassword(String oldPassword,String newPassword1){
 		try{
-			return h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
+			return this.h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-changePassword(): " + e.toString());
 		}
-
 		return false;
 	}
-	public void deslogear(Garage h){
+
+	public void deslogear(){
 		try{
-		h.deleteCallback(this.callbackid);
-		this.state = "disconnected";
+			this.h.deleteCallback(this.callbackid);
+			this.state = "disconnected";
+			this.userName = "";
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deslogear(): " + e.toString());
 		}
 	}
-	public void deleteCallbackFromClienth(Garage h){
+	public void deleteCallbackFromClienth(){
 		try{
-			h.deleteCallback(this.callbackid);
+			this.h.deleteCallback(this.callbackid);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deleteCallbackFromClient: " + e.toString());
@@ -106,9 +108,8 @@ public class Client {
 
 	public void setUpConnections(){
 		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";
-		Garage h = null;
 		try {
-			h = (Garage)Naming.lookup(registryURL);
+			this.h = (Garage)Naming.lookup(registryURL);
 		} catch (NotBoundException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -117,7 +118,6 @@ public class Client {
 			e.printStackTrace();
 		}
 		System.out.println("Garage created!");
-		ClientGUI.h = h;
 
 		try {
 			this.callbackObj = new CallbackImpl();
@@ -128,53 +128,36 @@ public class Client {
 
 	//region<LogIn>
 	//region<SignUp>
-	public boolean subscribeToTag(Garage h, String newTag){
-
-
-
-
+	public boolean subscribeToTag(String newTag){
 		try {
+			return this.h.addSubscriptionTag(this.userName, newTag.toLowerCase());
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception in Client-subscribeToTag(): " + e.toString());
+		}
+		return false;
+	}
 
-			return h.addSubscriptionTag(this.userName, newTag.toLowerCase());
+	public boolean desSubscribeToTag(String oldTag){
+		try {
+			return this.h.deleteSubscriptionTag(this.userName, oldTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
 			System.out.println("Exception in subscription: " + e.toString());
-			return false;
 		}
-
+		return false;
 	}
 
-	public boolean desSubscribeToTag(Garage h, String oldTag){
-
-
-
-		try {
-
-			return h.deleteSubscriptionTag(this.userName, oldTag.toLowerCase());
-		}
-		catch (Exception e)
-		{
-			System.out.println("Exception in subscription: " + e.toString());
-			return false;
-		}
-
-	}
-	public boolean logear(Garage h,String username, String password){
-		/*Scanner scanner = new Scanner(System.in);
-
-		System.out.print("Nom de usuari:\n");
-		userName = scanner.next().toLowerCase();
-		System.out.print("Contrasenya:\n");
-		String contrasenya = scanner.next();
-		*/
+	public boolean logear(String username, String password){
 		this.userName=username;
 		String contrasenya=password;
 		int callbackid = -1;
 		try {
 			if (!contrasenya.equals("") && !this.userName.equals("")){
 				//les contrasenyes son iguals
-				callbackid = h.user_login(this.userName, contrasenya,callbackObj);
+				callbackid = this.h.user_login(this.userName, contrasenya,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
@@ -188,7 +171,7 @@ public class Client {
 		}
 		catch (Exception e)
 		{
-			System.out.println("Exception in logear: " + e.toString());
+			System.out.println("Exception in Client-logear(): " + e.toString());
 		}
 		return false;
 
@@ -196,23 +179,15 @@ public class Client {
 	//endregion
 
 	//region<SignIn>
-	public void signin(Garage h){
+	public void signin(){
 
 	}
 
-	public boolean registrar(Garage h, String newUserName, String password_1, String password_2){
-		/*Scanner scanner = new Scanner(System.in);
-		System.out.print("Enter a user name:\n");
-		String newUserName = scanner.next().toLowerCase();
-		System.out.print("Enter a password:\n");
-		String password_1 = scanner.next();
-		System.out.print("Repeat password:\n");
-		String password_2 = scanner.next();*/
-
+	public boolean registrar(String newUserName, String password_1, String password_2){
 		try {
 			if (password_1.equals(password_2)) {
 				//les contrasenyes son iguals
-				boolean server_response = h.user_signup(newUserName, password_1);
+				boolean server_response = this.h.user_signup(newUserName, password_1);
                 System.out.println(server_response);
 				if (server_response == true) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
@@ -230,7 +205,7 @@ public class Client {
 		}
 		catch (Exception e)
 		{
-			System.out.println("Exception in registrar: " + e.toString());
+			System.out.println("Exception in Client-registrar(): " + e.toString());
 			return false;
 		}
 	}
@@ -241,12 +216,10 @@ public class Client {
 	//region<Files>
 
 	//region<Upload>
-	public void upload(Garage h){
-		///home/s/sbp5/Escritorio/exemple.txt
+	public void upload(){
 		Scanner scanner = new Scanner(System.in);
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
-
 		//FILE
 		while(true) {
 			System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
@@ -315,40 +288,32 @@ public class Client {
 	//endregion
 
 	//region<Delete>
-	public String deleteFile(Garage h){
-		Scanner scanner = new Scanner(System.in);
+	public void deleteFile(){
 		try{
-			System.out.println("Give me the id file:\n");
-			int fileId = Integer.parseInt(scanner.next());
-			return h.deleteFile(fileId, this.userName);
+			//return this.h.deleteFile(fileId, this.userName);
 		}catch (Exception e)
 		{
-			System.out.println("Exception in SomeClient: " + e.toString());
-			return "Error en el Client al intentar borra fitxer: " + e.toString();
+			System.out.println("Exception in Client-deleteFile(): " + e.toString());
 		}
 	}
 	//endregion
 
-	public String changeName(Garage h, FileObject file, String newName){
+	public void changeName(FileObject file, String newName){
 		try {
 			file.setFileName(newName);
-			return "Name " + h.modifiedFile(file);
+			this.h.modifiedFile(file);
 		}catch (Exception e){
-			return "Error changing file name: " + e.toString();
+			System.out.println("Exception in Client-changeName(): " + e.toString());
 		}
 	}
 
-	public String changeType(FileObject file){
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.print("Enter new Type MOVIE, IMAGE, TEXT, PDF or AUDIO: \n");
+	public void changeType(FileObject file, String t){
 		try {
-			String t = scanner.next();
 			Type type  = Type.fromString(t);
 			file.setType(type);
-			return "Type changed!";
+			this.h.modifiedFile(file);
 		}catch (Exception e){
-			return "Error changing file type: " + e.toString();
+			System.out.println("Exception in Client-changeType(): " + e.toString());
 		}
 	}
 
@@ -375,36 +340,18 @@ public class Client {
 	}
 
 	//region<Tags>
-	public String changeTags(FileObject file){
-		String state = "Tag ";
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("Add or delete tags?");
-		while (true){
-			String response = scanner.next();
-			if(response.toLowerCase().equals("add")){
-				state += addTag(file);
-				break;
-			}
-			if(response.toLowerCase().equals("delete")){
-				state += removeTag(file);
-				break;
-			}
-		}
-		return state;
-	}
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
 		System.out.println(h.toString());
 		ArrayList<String> array = new ArrayList<>();
         try{
             array = h.getSubscriptionsList(this.userName);
         }catch(Exception e){
-            System.out.println("Error getSubscriptionsClient: " + e.toString() + "\n");
+            System.out.println("Error in Client-getSubscriptionsClient(): " + e.toString());
         }
         return array;
 	}
 
-	public String addTag(FileObject file){
+	public String addTag(FileObject file) throws RemoteException{
 		Scanner scanner = new Scanner(System.in);
 
 		System.out.println("Type a tag to add: ");
@@ -413,10 +360,11 @@ public class Client {
 		ArrayList<String> current_description = file.getTags();
 		current_description.add(tag);
 		file.setTags(current_description);
+		this.h.modifiedFile(file);
 		return "added!";
 	}
 
-	public String removeTag(FileObject file) {
+	public String removeTag(FileObject file) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type a tag to remove: ");
@@ -426,6 +374,7 @@ public class Client {
         if (current_description.contains(tag.toLowerCase())) {
             current_description.remove(tag);
             file.setTags(current_description);
+            this.h.modifiedFile(file);
             return "removed!";
         } else {
             return "not in current tags!";
@@ -439,14 +388,19 @@ public class Client {
 	//endregion
 	//endregion
 
-	public boolean checkUsername(Garage h, String userName) throws RemoteException{
-		return !h.checkAvailableUser(userName);
+	public boolean checkUsername(String userName) throws RemoteException{
+		try {
+			return this.h.checkAvailableUser(userName);
+		}catch (Exception e){
+			System.out.println("Error in Client-checkUsername(): " + e.toString());
+		}
+		return false;
 	}
 
-	public boolean logIn(Garage h, String userName, String password) throws RemoteException{
+	public boolean logIn(String userName, String password) throws RemoteException{
 		int callbackid = -1;
 		if (!password.equals("") && !userName.equals("")){
-			callbackid = h.user_login(userName, password, callbackObj);
+			callbackid = this.h.user_login(userName, password, callbackObj);
 			if (callbackid != -1) {
 				this.callbackid = callbackid;
 				return true;

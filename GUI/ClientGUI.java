@@ -44,8 +44,6 @@ import java.util.List;
 public class ClientGUI extends Application {
 
     public static Client client;
-    public static Garage h;
-
     private String client_current_username;
 
     private Scene connection_scene;
@@ -533,7 +531,7 @@ public class ClientGUI extends Application {
         Button change_user_button = new Button("Change user");
         change_user_button.setLayoutX((width - 90) / 2);
         change_user_button.setLayoutY(80);
-        change_user_button.setDisable(true);
+       // change_user_button.setDisable(true);
         Button disconnect_button = new Button("Disconnect");
         disconnect_button.setLayoutX((width - 80) / 2);
         disconnect_button.setLayoutY(170);
@@ -573,6 +571,7 @@ public class ClientGUI extends Application {
 
         change_user_button.setOnAction(action -> {
             this.changeUser();
+            stage.setTitle("MyTube");
             stage.setScene(setLogin_scene(stage));
         });
 
@@ -771,7 +770,7 @@ public class ClientGUI extends Application {
         }
 
         public void deleteTag(String tag){
-            client.desSubscribeToTag(h, tag);
+            client.desSubscribeToTag(tag);
 
         }
 
@@ -780,24 +779,28 @@ public class ClientGUI extends Application {
     public boolean connect(String ip, String port){
         client.serverIP = (ip);
         client.serverPORT = (port);
-        client.setUpConnections();
-        if(h==null) return false;
-        else return true;
+        try{
+            client.setUpConnections();
+            return true;
+        }catch (Exception e){
+            System.out.println("Error on GUI-connect(): "+e.toString());
+        }
+        return false;
     }
 
     public boolean login(String username, String password){
-        return this.client.logear(this.h,username,password);
+        return this.client.logear(username,password);
 
     }
 
     public boolean register(String username, String password1, String password2){
-        return this.client.registrar(this.h, username, password1, password2);
+        return this.client.registrar(username, password1, password2);
     }
 
     public boolean checkUsername(String new_username){
         try {
-            if(new_username.length()>0 && this.h!=null){
-                if(this.client.checkUsername(h, new_username)){
+            if(new_username.length()>0){
+                if(this.client.checkUsername(new_username)){
                     return true;
                 }else{
                     return false;
@@ -811,17 +814,21 @@ public class ClientGUI extends Application {
 
     public void exit(){
 
-        this.client.deleteCallbackFromClienth(h);
+        this.client.deleteCallbackFromClienth();
         System.exit(0);
     }
 
     public void changeUser(){
-        this.client.deslogear(h);
+        try{
+            this.client.deslogear();
+        }catch(Exception e){
+            System.out.println("Error on GUI-changeUser(): "+e.toString());
+        }
     }
 
     public boolean changePWD(String oldPassword, String newPassword1, String newPassword2){
         if(newPassword1.equals(newPassword2)){
-            return (this.client.changePassword(h,oldPassword,newPassword1));
+            return (this.client.changePassword(oldPassword,newPassword1));
         }
         return false;
     }
@@ -843,7 +850,7 @@ public class ClientGUI extends Application {
     }
 
     public void addTag(String newtag){
-        if(this.client.subscribeToTag(h,newtag)){
+        if(this.client.subscribeToTag(newtag)){
             System.out.println("Tas subscrit correctament");
         }else{
             System.out.println("No tas subscrit correctament");
