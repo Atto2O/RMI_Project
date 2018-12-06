@@ -5,6 +5,7 @@ import RemoteObject.Garage;
 import javafx.application.Application;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -53,9 +54,10 @@ public class ClientGUI extends Application {
     //region<INPUT_Limits>
     private final int max_ip_chars = 8;
     private final int max_port_chars = 8;
-    private final int max_username_chars = 10;
+    private final int max_username_chars = 12;
     private final int max_password_chars = 12;
     private final int max_tag_chars = 15;
+    private final int max_description_chars = 100;
     //endregion
 
     private final int width = 700;
@@ -288,6 +290,12 @@ public class ClientGUI extends Application {
     }
     //endregion
 
+    public static ObservableList<String> observableSubscriptions;
+    public static ObservableList<HBoxCell> observableSubscriptionList;
+    public static ObservableList<HBoxCell> tags_list;
+
+    public static File upload_file;
+
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {
         Rectangle background;
@@ -373,12 +381,26 @@ public class ClientGUI extends Application {
         //region<Upload_Files>
         background = new Rectangle(width, height, background_upload_color);
         final FileChooser fileChooser = new FileChooser();
+
+
+
+        Label text_browse = new Label("Enter a file path:");
         TextField upload_path_file = new TextField("Enter a file path");
-
+        upload_path_file.setDisable(true);
         Button browse_button = new Button("Browse");
+        text_browse.setLayoutX(40);
+        text_browse.setLayoutY(20);
+        upload_path_file.setLayoutX(40);
+        upload_path_file.setLayoutY(40);
+        browse_button.setLayoutX(210);
+        browse_button.setLayoutY(40);
 
+        Label text_filename = new Label("Enter a file name:");
         TextField upload_file_name = new TextField();
-
+        text_filename.setLayoutX(40);
+        text_filename.setLayoutY(80);
+        upload_file_name.setLayoutX(40);
+        upload_file_name.setLayoutY(100);
 
         ObservableList<String> upload_type_options =
                 FXCollections.observableArrayList(
@@ -389,10 +411,75 @@ public class ClientGUI extends Application {
                         "AUDIO"
                 );
         final ComboBox upload_types = new ComboBox(upload_type_options);
+        Label text_types = new Label("Select a file type:");
+        text_types.setLayoutX(40);
+        text_types.setLayoutY(140);
+        upload_types.setLayoutX(40);
+        upload_types.setLayoutY(160);
+
+        ToggleSwitch switch_state_button = new ToggleSwitch();
+        Label text_state = new Label("File state:");
+        text_state.setLayoutX(40);
+        text_state.setLayoutY(200);
+        switch_state_button.setLayoutX(40);
+        switch_state_button.setLayoutY(220);
+
+        TextArea description_file_upload = new TextArea();
+        description_file_upload.setOnKeyTyped(event ->{
+            int maxCharacters = max_description_chars;
+            if(description_file_upload.getText().length() > maxCharacters) event.consume();
+        });
+        description_file_upload.setPrefWidth(340);
+        description_file_upload.setPrefHeight(90);
+        Label text_description = new Label("Enter a description (max " + max_description_chars + " characters):");
+        text_description.setLayoutX(340);
+        text_description.setLayoutY(20);
+        description_file_upload.setLayoutX(340);
+        description_file_upload.setLayoutY(40);
+
+        ArrayList<String> tags_upload = new ArrayList<>();
+
+        BorderPane tags_layout = new BorderPane();
+        List<HBoxCell> tag_upload_items = new ArrayList<>();
+        for (String tag : tags_upload) {
+            Button delete_tag_upload = new Button();
+            delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, this.client, true));
+        }
+
+        Label text_tags = new Label("Enter file tags:");
+        text_tags.setLayoutX(340);
+        text_tags.setLayoutY(140);
+        ListView<HBoxCell> tagsView = new ListView<>();
+        ClientGUI.tags_list = FXCollections.observableList(tag_upload_items);
+        tagsView.setItems(ClientGUI.tags_list);
+        tagsView.setMaxHeight(70);
+        tagsView.setMinHeight(10);
+        tagsView.setMaxWidth(250);
+
+        tags_layout.setCenter(tagsView);
+        tags_layout.setLayoutX(340);
+        tags_layout.setLayoutY(160);
+
+        TextField addTag_field_upload = new TextField();
+        addTag_field_upload.setOnKeyTyped(event -> {
+            int maxCharacters = max_tag_chars;
+            if (addTag_field_upload.getText().length() > maxCharacters) event.consume();
+        });
+        addTag_field_upload.setLayoutX(width - 240);
+        addTag_field_upload.setLayoutY(240);
+        Button add_button_upload = new Button();
+        add_button_upload.setGraphic(buildImage("./GUI/Graphics/add.png"));
+        add_button_upload.setLayoutX(width - 70);
+        add_button_upload.setLayoutY(240);
+
 
         Button save_upload_button = new Button("Save");
+        save_upload_button.setLayoutX(320);
+        save_upload_button.setLayoutY(height-160);
 
-        Group upload = new Group(background, upload_path_file, browse_button, upload_file_name, upload_types, save_upload_button);
+        Group upload = new Group(background,text_browse, upload_path_file, browse_button, text_filename, upload_file_name,text_types, upload_types, text_state,
+                switch_state_button, text_description, description_file_upload, save_upload_button, tags_layout, addTag_field_upload, add_button_upload, text_tags);
         Tab upload_files_tab = new Tab();
         upload_files_tab.setText("UPLOAD FILES");
         upload_files_tab.setContent(upload);
@@ -407,57 +494,42 @@ public class ClientGUI extends Application {
 
         Group subscription_group;
 
-        ObservableList<String> observableSubscriptions = null;
         try {
-            observableSubscriptions = FXCollections.observableArrayList(this.getSubscriptions());
+            ClientGUI.observableSubscriptions = FXCollections.observableArrayList(this.getSubscriptions());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        if ((observableSubscriptions == null) || observableSubscriptions.isEmpty()) {
-            //MISSATGE NO SUBSCRIPCIONS
-            Text no_subscribed_tags = new Text("You are not subscribed to any tags yet.");
-            no_subscribed_tags.setFont(Font.font(null, FontPosture.ITALIC, 10));
-            no_subscribed_tags.setFill(Color.BLACK);
-            no_subscribed_tags.setLayoutX((width - 180) / 2);
-            no_subscribed_tags.setLayoutY(110);
-
-            subscription_group = new Group(no_subscribed_tags);
-        } else {
-            BorderPane layout = new BorderPane();
-            List<HBoxCell> subscribed_items = new ArrayList<>();
-            for (String tag : observableSubscriptions) {
-                Button delete_tag = new Button();
-                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-                delete_tag.setStyle("-fx-border-color: #000000; -fx-border-width: 5px;");
-                delete_tag.setStyle("-fx-background-color: #ffbbbb");
-                //RED BUTTON WITH IMAGE
-                subscribed_items.add(new HBoxCell(tag, delete_tag, this.client));
-            }
-
-            ListView<HBoxCell> listView = new ListView<HBoxCell>();
-            ObservableList<HBoxCell> observableSubscriptionList = FXCollections.observableList(subscribed_items);
-            listView.setItems(observableSubscriptionList);
-            listView.setMaxHeight(230);
-            //listView.setPrefHeight(230);
-
-            layout.setCenter(listView);
-            layout.setLayoutX(50);
-            layout.setLayoutY(40);
-
-
-            subscription_group = new Group(layout);
+        BorderPane layout = new BorderPane();
+        List<HBoxCell> subscribed_items = new ArrayList<>();
+        for (String tag : ClientGUI.observableSubscriptions) {
+            Button delete_tag = new Button();
+            delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            //RED BUTTON WITH IMAGE
+            subscribed_items.add(new HBoxCell(tag, delete_tag, this.client, false));
         }
+
+        ListView<HBoxCell> listView = new ListView<>();
+        ClientGUI.observableSubscriptionList = FXCollections.observableList(subscribed_items);
+        listView.setItems(ClientGUI.observableSubscriptionList);
+        listView.setMaxHeight(230);
+        listView.setMinHeight(10);
+
+        layout.setCenter(listView);
+        layout.setLayoutX(50);
+        layout.setLayoutY(40);
+        subscription_group = new Group(layout);
+
         TextField addTag_field = new TextField();
         addTag_field.setOnKeyTyped(event -> {
             int maxCharacters = max_tag_chars;
             if (addTag_field.getText().length() > maxCharacters) event.consume();
         });
-        addTag_field.setLayoutX(width - 220);
+        addTag_field.setLayoutX(width - 240);
         addTag_field.setLayoutY(240);
         Button add_button = new Button();
         add_button.setGraphic(buildImage("./GUI/Graphics/add.png"));
-        add_button.setLayoutX(width - 50);
+        add_button.setLayoutX(width - 70);
         add_button.setLayoutY(240);
 
         Group subscribe = new Group(background, title_subscribe, subscription_group, addTag_field, add_button);
@@ -581,7 +653,20 @@ public class ClientGUI extends Application {
 
         add_button.setOnAction(action -> {
             if (addTag_field.getText().length() > 0) {
+                Button delete_tag = new Button();
+                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
                 this.addTag(addTag_field.getText());
+                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, this.client, false));
+                addTag_field.clear();
+            }
+        });
+
+        add_button_upload.setOnAction(action -> {
+            if (addTag_field_upload.getText().length() > 0) {
+                Button delete_tag_upload = new Button();
+                delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, this.client, true));
+                addTag_field_upload.clear();
             }
         });
 
@@ -590,11 +675,45 @@ public class ClientGUI extends Application {
             public void handle(ActionEvent event) {
                 String path = "";
                 upload_path_file.setText(path);
-                File file = fileChooser.showOpenDialog(stage);
-                if (file != null) {
-                    path = file.getAbsolutePath();
+                ClientGUI.upload_file = fileChooser.showOpenDialog(stage);
+                if (ClientGUI.upload_file != null) {
+                    path = ClientGUI.upload_file.getAbsolutePath();
                     upload_path_file.setText(path);
 
+                }
+            }
+        });
+
+        save_upload_button.setOnAction(action -> {
+            String path = ClientGUI.upload_file.getAbsolutePath();
+            if (path.isEmpty()){
+                //AVIS ENTRAR PATH
+            }else{
+                String filename = upload_file_name.getText();
+                if(filename.isEmpty()){
+                    //AVIS ENTRAR NAME
+                }else{
+                    String type = upload_types.getSelectionModel().getSelectedItem().toString();
+                    System.out.println(type);
+                    if(type.isEmpty()){
+                        //AVIS ENTRAR TYPE
+                    }else{
+                        SimpleBooleanProperty state = switch_state_button.switchOnProperty();
+                        String description = description_file_upload.getText();
+                        if(description.isEmpty()){
+                            //AVIS ENTRAR DESCRIPCIO
+                        }else{
+                            ArrayList<String> tags = new ArrayList<>();
+                            for (HBoxCell tag:ClientGUI.tags_list) {
+                                tags.add(tag.label.getText());
+                            }
+                            if(tags.isEmpty()){
+                                //AVIS ENTRAR TAGS
+                            }else{
+                                this.upload(filename, type, description, tags);
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -755,7 +874,7 @@ public class ClientGUI extends Application {
         Label label = new Label();
         Button button = new Button();
 
-        HBoxCell(String labelText, Button button, Client client) {
+        HBoxCell(String labelText, Button button, Client client, boolean upload) {
             super();
 
             label.setText(labelText);
@@ -765,13 +884,21 @@ public class ClientGUI extends Application {
             this.getChildren().addAll(label, button);
 
             button.setOnAction(action -> {
-                this.deleteTag(label.getText());
+                if(upload){
+                    this.deleteUploadTag(label.getText());
+                }else{
+                    this.deleteTag(label.getText());}
             });
         }
 
         public void deleteTag(String tag){
             client.desSubscribeToTag(tag);
+            ClientGUI.observableSubscriptionList.remove(this);
+        }
 
+        public void deleteUploadTag(String tag){
+            client.desSubscribeToTag(tag);
+            ClientGUI.tags_list.remove(this);
         }
 
     }
@@ -855,7 +982,14 @@ public class ClientGUI extends Application {
         }else{
             System.out.println("No tas subscrit correctament");
         }
+    }
 
+    public void upload(String filename, String type, String description, ArrayList<String> tags){
+        File uploadFile = ClientGUI.upload_file;
+        System.out.printf("Filename: "+filename+"\nType: "+type+"\n Description: "+ description + "\nTags:");
+        for (String tag: tags) {
+            System.out.printf("\n-" + tag);
+        }
+        System.out.printf("\n");
     }
 }
-

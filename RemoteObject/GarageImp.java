@@ -396,7 +396,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * or description
      */
     @Override
-    public ArrayList<FileObject> searchFile(String keyText) {
+    public ArrayList<FileObject> searchFile(String keyText, String username) {
         try {
             semaphore.acquire();
             ArrayList<FileObject> posibleFiles = new ArrayList<>();
@@ -408,14 +408,17 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 while (iter.hasNext()) {
                     FileObject currentlyFile = iter.next();
                     String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
-                    //Check if title, description or tag contain the key word
-                    if ((titleParsed.contains(keyWords[i].toString().toLowerCase()))
+                    //Check if owner name,title, description or tag contain the key word
+                    if(currentlyFile.getState()==true || currentlyFile.getUser().equals(username)){
+                    if ((currentlyFile.getUser().equals(keyWords[i]))
+                            || (titleParsed.contains(keyWords[i].toString().toLowerCase()))
                             || (currentlyFile.getDescription().toLowerCase().contains(keyWords[i].toString().toLowerCase()))
                             || (currentlyFile.getTags().toString().toLowerCase().contains(keyWords[i].toLowerCase()))) {
                         //If we don't add the file previously we add it to the resultant possible files
                         if (!posibleFiles.contains(currentlyFile)) {
                             posibleFiles.add(currentlyFile);
                         }
+                    }
                     }
                 }
             }

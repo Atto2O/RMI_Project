@@ -57,7 +57,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByText(String text){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = this.h.searchFile(text);
+            array = this.h.searchFile(text, this.userName);
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
