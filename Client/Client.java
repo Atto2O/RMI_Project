@@ -3,6 +3,7 @@
  */
 package Client;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
@@ -216,74 +217,46 @@ public class Client {
 	//region<Files>
 
 	//region<Upload>
-	public void upload(){
-		Scanner scanner = new Scanner(System.in);
+	public boolean upload(File newFile, String filename, String type, String description, ArrayList<String> tags, boolean state){
+
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
-		//FILE
-		while(true) {
-			System.out.print("Enter the file path (E.g.: /home/s/sbp5/Escritorio/image.png): \n");
-			String filePath = scanner.next();
-			Path fileLocation = Paths.get(filePath);
-			byte[] data = new byte[0];
 
-			try {
-				data = Files.readAllBytes(fileLocation);
-				break;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			fileObject.setFile(data);
-		}
-
-		//FILE NAME
-		System.out.print("Enter the file name (E.g.: Pug): \n");
-		String fileName = scanner.next();
-		fileObject.setFileName(fileName);
-
-		//TYPE
-		System.out.print("Enter a Type MOVIE, IMAGE, TEXT, PDF or AUDIO (E.g.: image): \n");
-		String t = scanner.next();
-		Type type  = Type.fromString(t);
-		fileObject.setType(type);
-
-		//DESCRIPTION
-		System.out.print("Enter topic tags (E.g.: animal,cute,dog,love,pug) (Without spaces): \n");
-		String desc = scanner.next();
-		String[] keyWords = desc.split(",");
-		ArrayList<String> description = new ArrayList<>();
-		for(int i =0; i<keyWords.length; i++){
-			description.add(keyWords[i]);
-		}
-		fileObject.setTags(description);
-
-        //DESCRIPTION TEXT
-        System.out.print("Enter description: \n");
-        char[] descript = scanner.next().toCharArray();
-
-
-        fileObject.setDescription(descript);
-
-		//IS PUBLIC
-		System.out.print("You will make it public? (YES/NO): \n");
-		String resp = scanner.next().toLowerCase();
-		if(resp.equals("yes")){
-			fileObject.setState(true);
-		}else{fileObject.setState(false);}
-
-		String response = "Error";
+		byte[] data = new byte[0];
 
 		try {
-			if(h.uploadFile(fileObject)){
-				System.out.printf("Fitxer pujat i guardat correctament\n");
-			}else{
-				System.out.printf("Error al pujar o guarda el fitxer\n");
-			}
-		System.out.println(response);
-        } catch (IOException e) {
-            System.out.printf("Aquest no es un fitxer valid\n");
-            //e.printStackTrace();
-        }
+			Path fileLocation = Paths.get(newFile.getAbsolutePath());
+			data = Files.readAllBytes(fileLocation);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		fileObject.setFile(data);
+
+		//FILE NAME
+		fileObject.setFileName(filename);
+
+		//TYPE
+		Type type1  = Type.fromString(type);
+		fileObject.setType(type1);
+
+		//TAGS
+		fileObject.setTags(tags);
+
+        //DESCRIPTION TEXT
+        fileObject.setDescription(description);
+
+		//IS PUBLIC
+		fileObject.setState(state);
+
+		try {
+			return h.uploadFile(fileObject);
+		} catch (IOException e) {
+			return false;
+		}
+
 	}
 	//endregion
 

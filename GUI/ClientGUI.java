@@ -712,7 +712,7 @@ public class ClientGUI extends Application {
                             if(tags.isEmpty()){
                                 //AVIS ENTRAR TAGS
                             }else{
-                                this.upload(filename, type, description, tags);
+                                this.upload(filename, type, description, tags, state.getValue());
                             }
                         }
                     }
@@ -986,12 +986,20 @@ public class ClientGUI extends Application {
         }
     }
 
-    public void upload(String filename, String type, String description, ArrayList<String> tags){
+    public void upload(String filename, String type, String description, ArrayList<String> tags, boolean state){
         File uploadFile = ClientGUI.upload_file;
-        System.out.printf("Filename: "+filename+"\nType: "+type+"\n Description: "+ description + "\nTags:");
+
+        System.out.printf("Filename: "+filename+"\nType: "+type+"\nState: "+ state +"\n Description: "+  description + "\nTags:");
         for (String tag: tags) {
             System.out.printf("\n-" + tag);
         }
         System.out.printf("\n");
+
+        if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
+            System.out.printf("Tot correcte\n");
+        }else{
+            System.out.printf("Hi ha agut algun problema\n");
+        }
+
     }
 }

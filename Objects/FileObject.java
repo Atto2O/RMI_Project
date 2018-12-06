@@ -86,7 +86,7 @@ public class FileObject implements java.io.Serializable{
 
     public void setUser(String user) {this.user = user;}
 
-    public void setDescription(char[] description){
+    public void setDescription(String description){
         this.description=description.toString();
     }
 }
