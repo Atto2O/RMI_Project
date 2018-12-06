@@ -64,6 +64,7 @@ public class FileObject implements java.io.Serializable{
             this.tags.add(str);
         }
     }
+    /*
     public void addDescription(String descr)
     {
         this.tags.add(descr);
@@ -72,7 +73,7 @@ public class FileObject implements java.io.Serializable{
     {
         this.tags.remove(descr);
     }
-
+*/
     public void setFileName(String fileName){
         this.fileName=fileName;
     }

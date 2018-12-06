@@ -16,11 +16,11 @@ public class Server {
     public static void main(String args[])
     {
         int portNum = 8001;
-        int RMIPort = 8001;
+        //int RMIPort = 8001;
         try
         {
             GarageImp exportedObj = new GarageImp();//asar les ip's?
-            startRegistry(RMIPort);
+            startRegistry(portNum);
             String registryURL = "rmi://localhost:" + portNum + "/some";
             Naming.rebind(registryURL, exportedObj);
             System.out.println("Server ready.\n");
