@@ -22,7 +22,7 @@ public interface Garage extends Remote{
     public boolean user_signup(String NewNomUsuari, String contrasenya)  throws RemoteException;
     public int user_login (String NomUsuari, String contrasenya, ClientCallbackInterface callbackObj)  throws RemoteException;
     public boolean uploadFile(FileObject file)  throws java.rmi.RemoteException;
-    public  ArrayList<FileObject> searchFile (String keyText) throws java.rmi.RemoteException;
+    public  ArrayList<FileObject> searchFile (String keyText,String username) throws java.rmi.RemoteException;
     public  ArrayList<FileObject> searchFileByName (String userName) throws java.rmi.RemoteException;
 
     public FileObject downloadFile (int id) throws java.rmi.RemoteException;

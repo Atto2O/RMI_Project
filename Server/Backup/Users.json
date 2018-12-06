@@ -1,1 +1,1 @@
-{"users":[{"id":0,"name":"admin","password":"1234","subscriptions":[]}],"empty":false}
+{"users":[{"id":0,"name":"admin","password":"1234","subscriptions":["pug","animal"]},{"id":1,"name":"silivia30","password":"1234","subscriptions":[]},{"id":2,"name":"Ricard","password":"1234","subscriptions":[]}],"empty":false}

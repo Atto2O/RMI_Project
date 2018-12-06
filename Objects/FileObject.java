@@ -9,7 +9,7 @@ import java.util.List;
 public class FileObject implements java.io.Serializable{
 
     private ArrayList<String> tags;
-    private String description ;//= new char[200];
+    private String description ;
     private String fileName;
     private int id;
     private Type type;
