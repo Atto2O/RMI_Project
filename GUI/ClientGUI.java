@@ -41,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 public class ClientGUI extends Application {
 
@@ -75,7 +76,6 @@ public class ClientGUI extends Application {
     private final Color background_search_color = Color.LIGHTSTEELBLUE;
     private final Color background_changePWD_color = Color.LIGHTSTEELBLUE;
     private final Color background_disconnect_color = Color.LIGHTSTEELBLUE;
-
     private final Color notification_box_color = Color.DARKSLATEBLUE;
     //endregion
 
@@ -293,6 +293,8 @@ public class ClientGUI extends Application {
     public static ObservableList<String> observableSubscriptions;
     public static ObservableList<HBoxCell> observableSubscriptionList;
     public static ObservableList<HBoxCell> tags_list;
+
+    public static ObservableList<String> observableNotificationList;
 
     public static File upload_file;
 
