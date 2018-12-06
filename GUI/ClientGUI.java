@@ -296,6 +296,8 @@ public class ClientGUI extends Application {
 
     public static ObservableList<String> observableNotificationList;
 
+    public static ObservableList<FileObject> observableUserFiles;
+
     public static File upload_file;
 
     //region<MAIN>
@@ -318,62 +320,55 @@ public class ClientGUI extends Application {
 
         Group mainFiles_group;
 
-        if ( this.getUserFiles() == null || this.getUserFiles().isEmpty()) {
-            Text no_mainFiles = new Text("You don't upload files yet.");
-            no_mainFiles.setFont(Font.font(null, FontPosture.ITALIC, 10));
-            no_mainFiles.setFill(Color.BLACK);
-            no_mainFiles.setLayoutX((width - 140) / 2);
-            no_mainFiles.setLayoutY(110);
+        ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
 
-            mainFiles_group = new Group(no_mainFiles);
-        } else {
-            TableView userFiles_table = new TableView();
-            userFiles_table.setEditable(false);
+        TableView userFiles_table = new TableView();
+        userFiles_table.setEditable(false);
 
-            TableColumn id_column = new TableColumn("ID");
-            id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
-            TableColumn name_column = new TableColumn("Name");
-            name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
-            TableColumn type_column = new TableColumn("Type");
-            type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
-            TableColumn state_column = new TableColumn("Public");
-            state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
-            TableColumn tags_column = new TableColumn("Tags");
-            tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
-            TableColumn description_column = new TableColumn("Description");
-            description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
-            TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
-            edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-                @Override
-                public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                    return new EditFile_fromTable(stage, userFiles_table);
-                }
-            });
-            TableColumn download_column = new TableColumn("Download");//edit, download, delete
-            download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-                @Override
-                public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                    return new DownloadFile_fromTable(stage, userFiles_table);
-                }
-            });
-            TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
-            delete_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-                @Override
-                public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                    return new DeleteFile_fromTable(stage, userFiles_table);
-                }
-            });
+        TableColumn id_column = new TableColumn("ID");
+        id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
+        TableColumn name_column = new TableColumn("Name");
+        name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
+        TableColumn type_column = new TableColumn("Type");
+        type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
+        TableColumn state_column = new TableColumn("Public");
+        state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
+        TableColumn tags_column = new TableColumn("Tags");
+        tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
+        TableColumn description_column = new TableColumn("Description");
+        description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
+        TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
+        edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new EditFile_fromTable(stage, userFiles_table);
+            }
+        });
+        TableColumn download_column = new TableColumn("Download");//edit, download, delete
+        download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new DownloadFile_fromTable(stage, userFiles_table);
+            }
+        });
+        TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
+        delete_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new DeleteFile_fromTable(stage, userFiles_table);
+            }
+        });
 
-            ObservableList<FileObject> observableFilesList = FXCollections.observableList(this.getUserFiles());
-            userFiles_table.setItems(observableFilesList);
-            userFiles_table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
-            userFiles_table.setMaxHeight(230);
-            userFiles_table.setMaxWidth(width - 100);
-            userFiles_table.setLayoutX(50);
-            userFiles_table.setLayoutY(40);
+        ObservableList<FileObject> observableFilesList = FXCollections.observableList(ClientGUI.observableUserFiles);
+        userFiles_table.setItems(observableFilesList);
+        userFiles_table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
+        userFiles_table.setMaxHeight(230);
+        userFiles_table.setMaxWidth(width - 100);
+        userFiles_table.setLayoutX(50);
+        userFiles_table.setLayoutY(40);
 
-            mainFiles_group = new Group(userFiles_table);
-        }
+        mainFiles_group = new Group(userFiles_table);
+
 
         Group users = new Group(background, title_mainFiles, mainFiles_group);
         Tab user_files_tab = new Tab();
@@ -383,8 +378,6 @@ public class ClientGUI extends Application {
         //region<Upload_Files>
         background = new Rectangle(width, height, background_upload_color);
         final FileChooser fileChooser = new FileChooser();
-
-
 
         Label text_browse = new Label("Enter a file path:");
         TextField upload_path_file = new TextField("Enter a file path");
