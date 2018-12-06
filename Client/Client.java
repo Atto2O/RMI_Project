@@ -4,6 +4,7 @@
 package Client;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.util.ArrayList;
@@ -50,121 +51,6 @@ public class Client {
 		Scanner scanner = new Scanner(System.in);
 		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
-
-        try
-		{
-
-
-
-			client.setUpConnections();
-
-
-
-
-
-
-
-			while(true){
-				if(client.state.equals("disconnected")){
-					System.out.print("Si voleu fer registrar-vos escriviu: registrar. \n" +
-							"Si voleu fer registrar-vos escriviu: logear.\n "+
-							"Si voleu fer tancar l'app escriviu: close.\n ");
-					String resposta = scanner.next();
-
-					if(resposta.toLowerCase().equals("registrar")){
-						//client.registrar(h);
-
-					}else if(resposta.toLowerCase().equals("logear")){
-						//if(client.logear(h)){
-						//	client.state = "connected";
-						//}
-					}
-					if(resposta.toLowerCase().equals("close"))
-					{
-
-						break;
-					}
-				}else{
-
-					System.out.print("Function over server? (close, deslogear,delete ,upload, search,download,subscribe) \n");
-					String order = scanner.next();
-
-					if(order.toLowerCase().equals("deslogear")){
-						client.state = "disconnected";
-					}
-
-					//UPLOAD
-					if(order.toLowerCase().equals("upload")){
-						client.upload(h);
-					}
-					//SEARCH
-					if(order.toLowerCase().equals("search")){
-						System.out.print("Enter some key text: \n");
-						String keyText = scanner.next();
-						ArrayList<FileObject> files = h.searchFile(keyText);
-						System.out.println("We found these files: ");
-						for (FileObject f: files) {
-							System.out.println(f.getId() + " - " + f.getFileName());
-							System.out.printf("\tTags: ");
-							for (String tag:f.getTags()) {
-								System.out.printf(tag + " ");
-							}
-							System.out.printf("\n");
-						}
-					}
-
-					//DOWLOAD
-					if(order.toLowerCase().equals("download"))
-					{
-						System.out.println("Enter the file title:\n");
-						int id = Integer.parseInt(scanner.next());
-						FileObject file = h.downloadFile(id);
-
-						String home = System.getProperty("user.home");
-						try {
-							//per defcte aquet------------------------------------------------------------
-							//--------------------------------------
-							//-------------------------------------------------------------------
-							FileOutputStream fos = new FileOutputStream(home+"/" + file.getFileName());
-							fos.write(file.getFile());
-							System.out.println("Downloaded!");
-						}catch(Exception e){
-							System.out.println("Error downloading: " + e.toString() + "\n");
-						}
-					}
-					//DELETE
-					if(order.toLowerCase().equals("delete"))
-					{
-						System.out.println(client.deleteFile(h));
-					}
-					//SUBSCRIBE
-					if(order.toLowerCase().equals("subscribe"))
-					{
-						//client.subscribeToTag(h);
-
-					}
-					if(order.toLowerCase().equals("deslogear"))
-					{
-						client.deslogear(h);
-
-					}
-					if(order.toLowerCase().equals("close"))
-					{
-						client.deleteCallbackFromClienth(h);
-						break;
-					}
-
-				}
-			}
-			System.out.println("Gracies per fer servir la nostra aplicacio esperem que tornis aviat\n");
-
-			System.exit(0);
-		}
-
-		catch (Exception e)
-		{
-		    System.out.println("Exception in SomeClient: " + e.toString());
-		}
 	}
 	//endregion
 
@@ -173,26 +59,28 @@ public class Client {
             return h.searchFile(text);
         }catch (Exception e)
         {
-            System.out.println("Exception in SomeClient: " + e.toString());
+            System.out.println("Exception in Client-getFilesByText(): " + e.toString());
         }
         return new ArrayList<FileObject>();
     }
 
     public ArrayList<FileObject> getFilesByUser(){
-        try {
-            return h.searchFileByName(this.userName);
+		System.out.println(h.toString());
+        ArrayList<FileObject> array = new ArrayList<>();
+		try {
+            array = h.searchFileByName(this.userName);
         }catch (Exception e)
         {
-            System.out.println("Exception in SomeClient: " + e.toString());
+            System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
         }
-        return new ArrayList<FileObject>();
+        return array;
     }
 	public boolean changePassword(Garage h,String oldPassword,String newPassword1){
 		try{
-		return h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
+			return h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
 		}catch (Exception e)
 		{
-			System.out.println("Exception in SomeClient: " + e.toString());
+			System.out.println("Exception in Client-changePassword(): " + e.toString());
 		}
 
 		return false;
@@ -203,7 +91,7 @@ public class Client {
 		this.state = "disconnected";
 		}catch (Exception e)
 		{
-			System.out.println("Exception in SomeClient: " + e.toString());
+			System.out.println("Exception in Client-deslogear(): " + e.toString());
 		}
 	}
 	public void deleteCallbackFromClienth(Garage h){
@@ -211,7 +99,7 @@ public class Client {
 			h.deleteCallback(this.callbackid);
 		}catch (Exception e)
 		{
-			System.out.println("Exception in SomeClient: " + e.toString());
+			System.out.println("Exception in Client-deleteCallbackFromClient: " + e.toString());
 		}
 
 	}
@@ -308,8 +196,6 @@ public class Client {
 	//endregion
 
 	//region<SignIn>
-
-
 	public void signin(Garage h){
 
 	}
@@ -508,13 +394,14 @@ public class Client {
 		return state;
 	}
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
+		System.out.println(h.toString());
+		ArrayList<String> array = new ArrayList<>();
         try{
-            return h.getSubscriptionsList(this.userName);
+            array = h.getSubscriptionsList(this.userName);
         }catch(Exception e){
             System.out.println("Error getSubscriptionsClient: " + e.toString() + "\n");
-            return new ArrayList<String>();
         }
-
+        return array;
 	}
 
 	public String addTag(FileObject file){
