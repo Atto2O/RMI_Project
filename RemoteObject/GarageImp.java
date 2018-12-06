@@ -625,6 +625,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public ArrayList<String> getSubscriptionsList(String userName)throws RemoteException {
+        ArrayList<String> array = new ArrayList<>();
         try {
             semaphore.acquire();
             Iterator<User> iter = this.users.getUsers().iterator();
@@ -633,17 +634,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 User curentlyUser = iter.next();
                 if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
                     semaphore.release();
-                    return curentlyUser.getSubscriptions();
+                    array = curentlyUser.getSubscriptions();
                 }
             }
-
         }catch(Exception e){
-
-        System.out.println("Error at notifyNewFile method \n" + e.toString());
+            System.out.println("Error at notifyNewFile method \n" + e.toString());
         }
 
         semaphore.release();
-        return new ArrayList<String>();
+        return array;
     }
 
 
