@@ -71,11 +71,11 @@ public class ClientGUI extends Application {
 
     public static ObservableList<String> observableNotificationList;
 
-    public static ArrayList<FileObject> observableUserFiles = new ArrayList<>();
+    public static ObservableList<FileObject> observableUserFiles = FXCollections.observableList(new ArrayList<>());
 
     public static File upload_file;
 
-    public static ArrayList<FileObject> observableSearchList = new ArrayList<>();
+    public static ObservableList<FileObject> observableSearchList = FXCollections.observableList(new ArrayList<>());
     private boolean searched = false;
 
     //region<COLORS>
@@ -308,7 +308,7 @@ public class ClientGUI extends Application {
         title_mainFiles.setLayoutX(20);
         title_mainFiles.setLayoutY(25);
 
-        ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
+        ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
         this.userFiles_Table = this.createUsersTable(ClientGUI.observableUserFiles, stage);
         Group mainFiles_group= new Group(this.userFiles_Table);
 
@@ -725,7 +725,7 @@ public class ClientGUI extends Application {
         return imageView;
     }
 
-    private TableView createUsersTable(ArrayList<FileObject> list, Stage stage){
+    private TableView createUsersTable(ObservableList<FileObject> list, Stage stage){
         TableView table = new TableView();
         table.setEditable(false);
         TableColumn id_column = new TableColumn("ID");
@@ -771,7 +771,7 @@ public class ClientGUI extends Application {
         return table;
     }
 
-    private TableView createSearchTable(ArrayList<FileObject> list, Stage stage){
+    private TableView createSearchTable(ObservableList<FileObject> list, Stage stage){
         TableView table = new TableView();
         table.setEditable(false);
         TableColumn id_column = new TableColumn("ID");
@@ -832,7 +832,7 @@ public class ClientGUI extends Application {
                     table.getSelectionModel().select(getTableRow().getIndex());
                     FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
                     if(ClientGUI.delete(file, stage)){
-                        ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
+                        ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
                         ClientGUI.setStage(setMain_scene(stage), stage);
                     }
                 }
@@ -1076,7 +1076,7 @@ public class ClientGUI extends Application {
         if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
            Toast.makeText(stage,  "Upload successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
+            ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
         }else{
             Toast.makeText(stage,  "Error Uploading!",false);
             System.out.printf("Hi ha agut algun problema\n");
@@ -1100,7 +1100,7 @@ public class ClientGUI extends Application {
         if(client.deleteFile(file)){
             Toast.makeText(stage,  "Deleted successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
+            ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
             return true;
         }else{
             Toast.makeText(stage,  "Error Deleting!",false);
@@ -1112,13 +1112,12 @@ public class ClientGUI extends Application {
         ClientGUI.observableNotificationList.add(message);
     }
 
-    public boolean search(String string, Stage stage){
-
-        if(client.getFilesByText(string).isEmpty()){
+    public boolean search(String text, Stage stage){
+        if(client.getFilesByText(text).isEmpty()){
             Toast.makeText(stage,  "No matches found!",false);
             return false;
         }else{
-            ClientGUI.observableSearchList = client.getFilesByText(string);
+            ClientGUI.observableSearchList = FXCollections.observableList(client.getFilesByText(text));
         }
         return true;
     }

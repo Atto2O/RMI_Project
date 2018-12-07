@@ -55,7 +55,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByText(String text){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = this.h.searchFile(text, this.userName);
+            array = this.h.searchFile(text.toLowerCase(), this.userName);
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
@@ -66,7 +66,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByUser(){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = this.h.searchFileByName(this.userName);
+            array = this.h.searchFileByName(this.userName.toLowerCase());
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
@@ -152,7 +152,7 @@ public class Client {
 	}
 
 	public boolean logear(String username, String password){
-		this.userName=username;
+		this.userName=username.toLowerCase();
 		String contrasenya=password;
 		int callbackid = -1;
 		try {
@@ -188,11 +188,11 @@ public class Client {
 		try {
 			if (password_1.equals(password_2)) {
 				//les contrasenyes son iguals
-				boolean server_response = this.h.user_signup(newUserName, password_1);
+				boolean server_response = this.h.user_signup(newUserName.toLowerCase(), password_1);
                 System.out.println(server_response);
 				if (server_response == true) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
-					this.userName = newUserName;
+					this.userName = newUserName.toLowerCase();
 					return true;
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
@@ -249,17 +249,17 @@ public class Client {
 		fileObject.setFile(data);
 
 		//FILE NAME
-		fileObject.setFileName(filename);
+		fileObject.setFileName(filename.toLowerCase());
 
 		//TYPE
-		Type type1  = Type.fromString(type);
+		Type type1  = Type.fromString(type.toLowerCase());
 		fileObject.setType(type1);
 
 		//TAGS
 		fileObject.setTags(tags);
 
         //DESCRIPTION TEXT
-        fileObject.setDescription(description);
+        fileObject.setDescription(description.toLowerCase());
 
 		//IS PUBLIC
 		fileObject.setState(state);
@@ -276,7 +276,7 @@ public class Client {
 	//region<Delete>
 	public static boolean deleteFile(FileObject file){
 		try{
-			if(Client.h.deleteFile(file.getId(), Client.userName)){
+			if(Client.h.deleteFile(file.getId(), Client.userName.toLowerCase())){
 				return true;
 			}
 		}catch (Exception e)
@@ -289,7 +289,7 @@ public class Client {
 
 	public void changeName(FileObject file, String newName){
 		try {
-			file.setFileName(newName);
+			file.setFileName(newName.toLowerCase());
 			this.h.modifiedFile(file);
 		}catch (Exception e){
 			System.out.println("Exception in Client-changeName(): " + e.toString());
@@ -298,7 +298,7 @@ public class Client {
 
 	public void changeType(FileObject file, String t){
 		try {
-			Type type  = Type.fromString(t);
+			Type type  = Type.fromString(t.toLowerCase());
 			file.setType(type);
 			this.h.modifiedFile(file);
 		}catch (Exception e){
@@ -332,7 +332,7 @@ public class Client {
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
 		ArrayList<String> array = new ArrayList<>();
         try{
-            array = h.getSubscriptionsList(this.userName);
+            array = h.getSubscriptionsList(this.userName.toLowerCase());
         }catch(Exception e){
             System.out.println("Error in Client-getSubscriptionsClient(): " + e.toString());
         }
@@ -378,7 +378,7 @@ public class Client {
 
 	public boolean checkUsername(String userName) throws RemoteException{
 		try {
-			return this.h.checkAvailableUser(userName);
+			return this.h.checkAvailableUser(userName.toLowerCase());
 		}catch (Exception e){
 			System.out.println("Error in Client-checkUsername(): " + e.toString());
 		}
@@ -388,7 +388,7 @@ public class Client {
 	public boolean logIn(String userName, String password) throws RemoteException{
 		int callbackid = -1;
 		if (!password.equals("") && !userName.equals("")){
-			callbackid = Client.h.user_login(userName, password, callbackObj);
+			callbackid = Client.h.user_login(userName.toLowerCase(), password, callbackObj);
 			if (callbackid != -1) {
 				this.callbackid = callbackid;
 				return true;
