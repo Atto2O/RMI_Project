@@ -35,9 +35,6 @@ public class Client {
 	public int callbackid;
 	public ClientCallbackInterface callbackObj;
 
-
-	public String clientIP;
-	public String clientPORT;
 	public String serverIP;
 	public String serverPORT;
 
@@ -108,7 +105,7 @@ public class Client {
 	}
 
 	public boolean setUpConnections(){
-		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";
+		String registryURL = "rmi://"+ this.serverIP +":" + this.serverPORT + "/some";
 		try {
 
 			this.h = (Garage)Naming.lookup(registryURL);
@@ -333,7 +330,6 @@ public class Client {
 
 	//region<Tags>
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
-		System.out.println(h.toString());
 		ArrayList<String> array = new ArrayList<>();
         try{
             array = h.getSubscriptionsList(this.userName);
