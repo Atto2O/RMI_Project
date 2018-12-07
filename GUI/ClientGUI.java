@@ -1034,4 +1034,32 @@ public class ClientGUI extends Application {
         }
 
     }
+    //download
+    public void download(FileObject file , String path, Stage stage){
+
+        if(this.client.download( path, file)){
+            Toast.makeText(stage,  "Download successfully!",true);
+            System.out.printf("Tot correcte\n");
+
+        }else{
+            Toast.makeText(stage,  "Error Downloading!",false);
+            System.out.printf("Hi ha agut algun problema\n");
+        }
+
+    }
+    //delete
+    public boolean delete(FileObject file, Stage stage){
+
+        if(this.client.deleteFile(file)){
+            Toast.makeText(stage,  "Deleted successfully!",true);
+            System.out.printf("Tot correcte\n");
+            ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
+            return true;
+        }else{
+            Toast.makeText(stage,  "Error Deleting!",false);
+            System.out.printf("Hi ha agut algun problema\n");
+            return false;
+        }
+
+    }
 }

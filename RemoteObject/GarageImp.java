@@ -494,7 +494,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @throws RemoteException
      */
     @Override
-    public String deleteFile(int fileId, String user) throws RemoteException {
+    public boolean deleteFile(int fileId, String user) throws RemoteException {
         try {
             semaphore.acquire();
             Iterator<FileObject> iter = this.files.getFiles().iterator();
@@ -510,16 +510,16 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         //And we update the information to the backup
                         ServerUtils.saveFiles(this.files.getFiles());
                         semaphore.release();
-                        return "Fitxer amb id: " + fileId + ", eliminat correctament";
+                        return true;//"Fitxer amb id: " + fileId + ", eliminat correctament";
                     }
                 }
             }
             semaphore.release();
-            return "No ets el propietari de aquest fitxer o no existeix :(";
+            return false;//"No ets el propietari de aquest fitxer o no existeix :(";
         } catch (Exception e) {
             System.out.println("delete file Error: " + e.toString());
             semaphore.release();
-            return "Error al intentar borra el fitxer";
+            return false;//"Error al intentar borra el fitxer";
         }
     }
 
