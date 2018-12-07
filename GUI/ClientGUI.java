@@ -78,6 +78,8 @@ public class ClientGUI extends Application {
     public static ObservableList<FileObject> observableSearchList = FXCollections.observableList(new ArrayList<>());
     private boolean searched = false;
 
+    private boolean editing = false;
+
     //region<COLORS>
     private final Color background_start_color = Color.LIGHTSTEELBLUE;
     private final Color background_signin_color = Color.LIGHTSTEELBLUE;
@@ -92,7 +94,6 @@ public class ClientGUI extends Application {
     //endregion
 
     private TableView userFiles_Table;
-
 
     //region<IP/Port>
     private Scene setConnectionScene(Stage stage){
@@ -289,7 +290,6 @@ public class ClientGUI extends Application {
     }
     //endregion
 
-
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {
         Rectangle background;
@@ -443,7 +443,7 @@ public class ClientGUI extends Application {
             Button delete_tag = new Button();
             delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
             //RED BUTTON WITH IMAGE
-            subscribed_items.add(new HBoxCell(tag, delete_tag, this.client, false, stage));
+            subscribed_items.add(new HBoxCell(tag, delete_tag, ClientGUI.client, false, stage));
         }
 
         ListView<HBoxCell> listView = new ListView<>();
@@ -624,7 +624,7 @@ public class ClientGUI extends Application {
                 Button delete_tag = new Button();
                 delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
                 this.addTag(addTag_field.getText(),stage);
-                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, this.client, false, stage));
+                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, ClientGUI.client, false, stage));
                 addTag_field.clear();
             }
         });
@@ -633,7 +633,7 @@ public class ClientGUI extends Application {
             if (addTag_field_upload.getText().length() > 0) {
                 Button delete_tag_upload = new Button();
                 delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, this.client, true, stage));
+                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, ClientGUI.client, true, stage));
                 addTag_field_upload.clear();
             }
         });
@@ -984,7 +984,7 @@ public class ClientGUI extends Application {
     }
 
     public boolean login(String username, String password,Stage stage){
-        if(this.client.logear(username,password)){
+        if(ClientGUI.client.logear(username,password)){
             return true;
         }else{
             Toast.makeText(stage,  "Username and password didn't match!",false);
@@ -995,7 +995,7 @@ public class ClientGUI extends Application {
     public boolean register(String username, String password1, String password2, Stage stage){
         if(min_username_chars<username.length() && username.length() <max_username_chars){
             if(min_password_chars < password1.length() && password1.length()< max_password_chars){
-                if(this.client.registrar(username, password1, password2)){
+                if(ClientGUI.client.registrar(username, password1, password2)){
                     Toast.makeText(stage,  "Account registered!",true);
                     return true;
                 }else{
@@ -1011,17 +1011,16 @@ public class ClientGUI extends Application {
             Toast.makeText(stage,  "Username must be more than "+min_username_chars+" and less"+max_username_chars+" than characters!",false);
             return false;
         }
-
     }
 
     public void exit(){
-        this.client.deleteCallbackFromClienth();
+        ClientGUI.client.deleteCallbackFromClienth();
         System.exit(0);
     }
 
     public void changeUser(){
         try{
-            this.client.deslogear();
+            ClientGUI.client.deslogear();
         }catch(Exception e){
             System.out.println("Error on GUI-changeUser(): "+e.toString());
         }
@@ -1029,7 +1028,7 @@ public class ClientGUI extends Application {
 
     public boolean changePWD(String oldPassword, String newPassword1, String newPassword2, Stage stage){
         if(newPassword1.equals(newPassword2)){
-            if(this.client.changePassword(oldPassword,newPassword1)){
+            if(ClientGUI.client.changePassword(oldPassword,newPassword1)){
                 Toast.makeText(stage,  "Password change successful!",true);
                 return true;
             }else{
@@ -1058,7 +1057,7 @@ public class ClientGUI extends Application {
     }
 
     public void addTag(String newtag, Stage stage){
-        if(this.client.subscribeToTag(newtag)){
+        if(ClientGUI.client.subscribeToTag(newtag)){
             Toast.makeText(stage,  "Tag added successfully!",true);
         }else{
             Toast.makeText(stage,  "Error Adding tag!",false);
@@ -1073,7 +1072,7 @@ public class ClientGUI extends Application {
         }
         System.out.printf("\n");
 
-        if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
+        if(ClientGUI.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
            Toast.makeText(stage,  "Upload successfully!",true);
             System.out.printf("Tot correcte\n");
             ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
@@ -1097,13 +1096,13 @@ public class ClientGUI extends Application {
 
     //delete
     public static boolean delete(FileObject file, Stage stage){
-        if(client.deleteFile(file)){
+        if(ClientGUI.client.deleteFile(file)){
             Toast.makeText(stage,  "Deleted successfully!",true);
             System.out.printf("Tot correcte\n");
             ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
             return true;
         }else{
-            Toast.makeText(stage,  "Error Deleting!",false);
+            Toast.makeText(stage,"Error Deleting!",false);
             System.out.printf("Hi ha hagut algun problema\n");
             return false;
         }
