@@ -53,7 +53,9 @@ public class ClientGUI extends Application {
     private final int max_ip_chars = 15;
     private final int max_port_chars = 8;
     private final int max_username_chars = 12;
+    private final int min_username_chars = 4;
     private final int max_password_chars = 12;
+    private final int min_password_chars = 4;
     private final int max_tag_chars = 15;
     private final int max_description_chars = 100;
     //endregion
@@ -212,7 +214,7 @@ public class ClientGUI extends Application {
         });
         new_username.setLayoutX((width-170)/2);
         new_username.setLayoutY(height-310);
-        Text text_new_u = new Text("Username");
+        Text text_new_u = new Text("Username(min: "+min_username_chars+" max: "+max_username_chars+")");
         text_new_u.setFont(Font.font(12));
         text_new_u.setFill(Color.BLACK);
         text_new_u.setLayoutX((width-170)/2);
@@ -225,7 +227,7 @@ public class ClientGUI extends Application {
         });
         password1.setLayoutX((width-170)/2);
         password1.setLayoutY(height-240);
-        Text text_pwd1 = new Text("Password");
+        Text text_pwd1 = new Text("Password(min: "+min_password_chars+" max: "+max_password_chars+")");
         text_pwd1.setFont(Font.font(12));
         text_pwd1.setFill(Color.BLACK);
         text_pwd1.setLayoutX((width-170)/2);
@@ -972,14 +974,25 @@ public class ClientGUI extends Application {
     }
 
     public boolean register(String username, String password1, String password2, Stage stage){
+        if(min_username_chars<username.length() && username.length() <max_username_chars){
+            if(min_password_chars < password1.length() && password1.length()< max_password_chars){
+                if(this.client.registrar(username, password1, password2)){
+                    Toast.makeText(stage,  "Account registered!",true);
+                    return true;
+                }else{
+                    Toast.makeText(stage,  "Error Registering!",false);
+                    return false;
+                }
+            }else{
+                Toast.makeText(stage,  "Password must be more than "+min_password_chars+" and less"+max_password_chars+" than characters!",false);
+                return false;
+            }
 
-        if(this.client.registrar(username, password1, password2)){
-            Toast.makeText(stage,  "Account registered!",true);
-            return true;
         }else{
-            Toast.makeText(stage,  "Error Registering!",false);
+            Toast.makeText(stage,  "Username must be more than "+min_username_chars+" and less"+max_username_chars+" than characters!",false);
             return false;
         }
+
     }
 
     public void exit(){
