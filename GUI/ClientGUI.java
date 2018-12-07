@@ -321,54 +321,7 @@ public class ClientGUI extends Application {
         Group mainFiles_group;
 
         ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
-
-        TableView userFiles_table = new TableView();
-        userFiles_table.setEditable(false);
-
-        TableColumn id_column = new TableColumn("ID");
-        id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
-        TableColumn name_column = new TableColumn("Name");
-        name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
-        TableColumn type_column = new TableColumn("Type");
-        type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
-        TableColumn state_column = new TableColumn("Public");
-        state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
-        TableColumn tags_column = new TableColumn("Tags");
-        tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
-        TableColumn description_column = new TableColumn("Description");
-        description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
-        TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
-        edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-            @Override
-            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                return new EditFile_fromTable(stage, userFiles_table);
-            }
-        });
-        TableColumn download_column = new TableColumn("Download");//edit, download, delete
-        download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-            @Override
-            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                return new DownloadFile_fromTable(stage, userFiles_table);
-            }
-        });
-        TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
-        delete_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
-            @Override
-            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
-                return new DeleteFile_fromTable(stage, userFiles_table);
-            }
-        });
-
-        ObservableList<FileObject> observableFilesList = FXCollections.observableList(ClientGUI.observableUserFiles);
-        userFiles_table.setItems(observableFilesList);
-        userFiles_table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
-        userFiles_table.setMaxHeight(230);
-        userFiles_table.setMaxWidth(width - 100);
-        userFiles_table.setLayoutX(50);
-        userFiles_table.setLayoutY(40);
-
-        mainFiles_group = new Group(userFiles_table);
-
+        mainFiles_group = new Group(this.createTable(ClientGUI.observableUserFiles, false, stage));
 
         Group users = new Group(background, title_mainFiles, mainFiles_group);
         Tab user_files_tab = new Tab();
@@ -747,6 +700,65 @@ public class ClientGUI extends Application {
         return imageView;
     }
 
+    private TableView createTable(ObservableList<FileObject> list, boolean search, Stage stage){
+        TableView table = new TableView();
+        table.setEditable(false);
+
+        TableColumn id_column = new TableColumn("ID");
+        id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
+        TableColumn name_column = new TableColumn("File name");
+        name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("fileName"));
+        TableColumn type_column = new TableColumn("Type");
+        type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
+        TableColumn username_column = new TableColumn("Owner");
+        username_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
+        TableColumn state_column = new TableColumn("Public");
+        state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
+        TableColumn tags_column = new TableColumn("Tags");
+        tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
+        TableColumn description_column = new TableColumn("Description");
+        description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
+        TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
+        edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new EditFile_fromTable(stage, table);
+            }
+        });
+        TableColumn download_column = new TableColumn("Download");//edit, download, delete
+        download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new DownloadFile_fromTable(stage, table);
+            }
+        });
+        TableColumn delete_column = new TableColumn("Delete");//edit, download, delete
+        delete_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new DeleteFile_fromTable(stage, table);
+            }
+        });
+
+        ObservableList<FileObject> observableFilesList = FXCollections.observableList(list);
+        table.setItems(observableFilesList);
+
+        if(search){
+            table.getColumns().addAll(id_column, username_column, name_column, type_column, tags_column, description_column, download_column);
+        }
+        else{
+            table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
+        }
+
+        table.setMaxHeight(230);
+        table.setMaxWidth(width - 100);
+        table.setLayoutX(50);
+        table.setLayoutY(40);
+
+        return table;
+    }
+
+
     //region<Table-buttons>
     private class DeleteFile_fromTable extends TableCell<FileObject, Boolean> {
 
@@ -848,7 +860,7 @@ public class ClientGUI extends Application {
             edit.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
-
+                    FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
                     //open edit window from this file;
                 }
             });
@@ -990,6 +1002,7 @@ public class ClientGUI extends Application {
 
         if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
             System.out.printf("Tot correcte\n");
+            ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
         }else{
             System.out.printf("Hi ha agut algun problema\n");
         }
