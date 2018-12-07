@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.Graphics.Toast;
 import Objects.FileObject;
 import RemoteObject.Garage;
 import javafx.application.Application;
@@ -138,7 +139,7 @@ public class ClientGUI extends Application {
 
         connect.setOnAction(action -> {
             if(/*!serverIP.getText().isEmpty() &&*/ !serverPORT.getText().isEmpty()){
-                if(this.connect(serverIP.getText(), serverPORT.getText())){
+                if(this.connect(serverIP.getText(), serverPORT.getText(),stage)){
                     stage.setScene(setLogin_scene(stage));
                 }else{
                     //ERROR
@@ -262,7 +263,7 @@ public class ClientGUI extends Application {
         Scene scene2 = new Scene(root2, width, height);
 
         login.setOnAction(action -> {
-            if(this.login(username.getText(), password.getText())){
+            if(this.login(username.getText(), password.getText(),stage)){
                 stage.setTitle("MyTube - "+username.getText().toUpperCase());
                 stage.setScene(setMain_scene(stage));
             }
@@ -274,7 +275,7 @@ public class ClientGUI extends Application {
         });
 
         register.setOnAction(action -> {
-            if(this.register(new_username.getText(), password1.getText(), password2.getText())){
+            if(this.register(new_username.getText(), password1.getText(), password2.getText(),stage)){
                 stage.setTitle("MyTube - "+new_username.getText().toUpperCase());
                 stage.setScene(setMain_scene(stage));
             }
@@ -392,7 +393,7 @@ public class ClientGUI extends Application {
         for (String tag : tags_upload) {
             Button delete_tag_upload = new Button();
             delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-            tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, this.client, true));
+            tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, this.client, true, stage));
         }
 
         Label text_tags = new Label("Enter file tags:");
@@ -454,7 +455,7 @@ public class ClientGUI extends Application {
             Button delete_tag = new Button();
             delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
             //RED BUTTON WITH IMAGE
-            subscribed_items.add(new HBoxCell(tag, delete_tag, this.client, false));
+            subscribed_items.add(new HBoxCell(tag, delete_tag, this.client, false, stage));
         }
 
         ListView<HBoxCell> listView = new ListView<>();
@@ -579,7 +580,7 @@ public class ClientGUI extends Application {
 
 
         change_pwd_button.setOnAction(action -> {
-            if (this.changePWD(current_password.getText(), new_password1.getText(), new_password2.getText())) {
+            if (this.changePWD(current_password.getText(), new_password1.getText(), new_password2.getText(),stage)) {
                 //SUCCES
             } else {
                 //ERROR
@@ -603,8 +604,8 @@ public class ClientGUI extends Application {
             if (addTag_field.getText().length() > 0) {
                 Button delete_tag = new Button();
                 delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-                this.addTag(addTag_field.getText());
-                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, this.client, false));
+                this.addTag(addTag_field.getText(),stage);
+                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, this.client, false, stage));
                 addTag_field.clear();
             }
         });
@@ -613,7 +614,7 @@ public class ClientGUI extends Application {
             if (addTag_field_upload.getText().length() > 0) {
                 Button delete_tag_upload = new Button();
                 delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, this.client, true));
+                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, this.client, true, stage));
                 addTag_field_upload.clear();
             }
         });
@@ -636,29 +637,34 @@ public class ClientGUI extends Application {
             String path = ClientGUI.upload_file.getAbsolutePath();
             if (path.isEmpty()){
                 //AVIS ENTRAR PATH
+                Toast.makeText(stage,  "Path is empty",false);
             }else{
                 String filename = upload_file_name.getText();
                 if(filename.isEmpty()){
                     //AVIS ENTRAR NAME
+                    Toast.makeText(stage,  "File name is empty",false);
                 }else{
                     String type = upload_types.getSelectionModel().getSelectedItem().toString();
                     System.out.println(type);
                     if(type.isEmpty()){
                         //AVIS ENTRAR TYPE
+                        Toast.makeText(stage,  "Type is empty",false);
                     }else{
                         SimpleBooleanProperty state = switch_state_button.switchOnProperty();
                         String description = description_file_upload.getText();
                         if(description.isEmpty()){
                             //AVIS ENTRAR DESCRIPCIO
+                            Toast.makeText(stage,  "Description is empty",false);
                         }else{
                             ArrayList<String> tags = new ArrayList<>();
                             for (HBoxCell tag:ClientGUI.tags_list) {
                                 tags.add(tag.label.getText());
                             }
                             if(tags.isEmpty()){
-                                //AVIS ENTRAR TAGS
+                                Toast.makeText(stage,  "Tag list is empty",false);
                             }else{
-                                this.upload(filename, type, description, tags, state.getValue());
+                                this.upload(filename, type, description, tags, state.getValue(),stage);
+
                             }
                         }
                     }
@@ -881,7 +887,7 @@ public class ClientGUI extends Application {
         Label label = new Label();
         Button button = new Button();
 
-        HBoxCell(String labelText, Button button, Client client, boolean upload) {
+        HBoxCell(String labelText, Button button, Client client, boolean upload, Stage stage) {
             super();
 
             label.setText(labelText);
@@ -892,58 +898,66 @@ public class ClientGUI extends Application {
 
             button.setOnAction(action -> {
                 if(upload){
-                    this.deleteUploadTag(label.getText());
+                    this.deleteUploadTag(label.getText(), stage);
                 }else{
-                    this.deleteTag(label.getText());}
+                    this.deleteTag(label.getText(), stage);}
             });
         }
 
-        public void deleteTag(String tag){
-            client.desSubscribeToTag(tag);
+        public void deleteTag(String tag, Stage stage){
+
+            if(client.desSubscribeToTag(tag)){
+                Toast.makeText(stage,  "Tag deleted successful!",true);
+            }else{
+                Toast.makeText(stage,  "Error deleting tag!",false);
+
+            }
+
             ClientGUI.observableSubscriptionList.remove(this);
         }
 
-        public void deleteUploadTag(String tag){
+        public void deleteUploadTag(String tag, Stage stage){
             client.desSubscribeToTag(tag);
             ClientGUI.tags_list.remove(this);
         }
 
     }
 
-    public boolean connect(String ip, String port){
+    public boolean connect(String ip, String port, Stage stage){
         client.serverIP = (ip);
         client.serverPORT = (port);
         try{
             client.setUpConnections();
             return true;
         }catch (Exception e){
+            Toast.makeText(stage,  "Error connecting to server!",false);
             System.out.println("Error on GUI-connect(): "+e.toString());
         }
         return false;
     }
 
-    public boolean login(String username, String password){
-        return this.client.logear(username,password);
-
-    }
-
-    public boolean register(String username, String password1, String password2){
-        return this.client.registrar(username, password1, password2);
-    }
-
-    public boolean checkUsername(String new_username){
-        try {
-            if(new_username.length()>0){
-                if(this.client.checkUsername(new_username)){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+    public boolean login(String username, String password,Stage stage){
+        if(this.client.logear(username,password)){
+            return true;
+        }else{
+            Toast.makeText(stage,  "Username and password didn't match!",false);
+            return false;
         }
-        return false;
+
+    }
+
+    public boolean register(String username, String password1, String password2, Stage stage){
+
+        if(this.client.registrar(username, password1, password2)){
+            Toast.makeText(stage,  "Account registered!",true);
+            return true;
+        }else{
+            Toast.makeText(stage,  "Error Registering!",false);
+            return false;
+
+        }
+
+
     }
 
     public void exit(){
@@ -953,6 +967,7 @@ public class ClientGUI extends Application {
     }
 
     public void changeUser(){
+
         try{
             this.client.deslogear();
         }catch(Exception e){
@@ -960,10 +975,21 @@ public class ClientGUI extends Application {
         }
     }
 
-    public boolean changePWD(String oldPassword, String newPassword1, String newPassword2){
+    public boolean changePWD(String oldPassword, String newPassword1, String newPassword2, Stage stage){
+
+
         if(newPassword1.equals(newPassword2)){
-            return (this.client.changePassword(oldPassword,newPassword1));
+
+            if(this.client.changePassword(oldPassword,newPassword1)){
+                Toast.makeText(stage,  "Password change successful!",true);
+                return true;
+            }else{
+                Toast.makeText(stage,  "Error Registering!",false);
+                return false;
+
+            }
         }
+        Toast.makeText(stage,  "Passwords didn't match!",false);
         return false;
     }
 
@@ -983,15 +1009,19 @@ public class ClientGUI extends Application {
         return array;
     }
 
-    public void addTag(String newtag){
+    public void addTag(String newtag, Stage stage){
         if(this.client.subscribeToTag(newtag)){
-            System.out.println("Tas subscrit correctament");
+            Toast.makeText(stage,  "Tag added successfully!",true);
+
         }else{
-            System.out.println("No tas subscrit correctament");
+            Toast.makeText(stage,  "Error Adding tag!",false);
+
         }
+
+
     }
 
-    public void upload(String filename, String type, String description, ArrayList<String> tags, boolean state){
+    public void upload(String filename, String type, String description, ArrayList<String> tags, boolean state, Stage stage){
         File uploadFile = ClientGUI.upload_file;
 
         System.out.printf("Filename: "+filename+"\nType: "+type+"\nState: "+ state +"\n Description: "+  description + "\nTags:");
@@ -1001,9 +1031,11 @@ public class ClientGUI extends Application {
         System.out.printf("\n");
 
         if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
+           Toast.makeText(stage,  "Upload successfully!",true);
             System.out.printf("Tot correcte\n");
             ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
         }else{
+            Toast.makeText(stage,  "Error Uploading!",false);
             System.out.printf("Hi ha agut algun problema\n");
         }
 
