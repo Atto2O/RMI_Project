@@ -638,12 +638,12 @@ public class ClientGUI extends Application {
                     //AVIS ENTRAR NAME
                     Toast.makeText(stage,"File name is empty",false);
                 }else{
-                    String type = upload_types.getSelectionModel().getSelectedItem().toString();
-                    System.out.println(type);
-                    if(type.isEmpty()){
+                    if(upload_types.getSelectionModel().isEmpty()){
                         //AVIS ENTRAR TYPE
                         Toast.makeText(stage,  "Type is empty",false);
                     }else{
+                        String type = upload_types.getSelectionModel().getSelectedItem().toString();
+                        System.out.println(type);
                         SimpleBooleanProperty state = switch_state_button.switchOnProperty();
                         String description = description_file_upload.getText();
                         if(description.isEmpty()){
