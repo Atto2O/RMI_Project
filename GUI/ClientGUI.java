@@ -921,8 +921,9 @@ public class ClientGUI extends Application {
         client.serverIP = (ip);
         client.serverPORT = (port);
         try{
-            client.setUpConnections();
-            return true;
+            if(client.setUpConnections()){
+                return true;
+            }
         }catch (Exception e){
             Toast.makeText(stage,  "Error connecting to server!",false);
             System.out.println("Error on GUI-connect(): "+e.toString());

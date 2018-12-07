@@ -107,23 +107,27 @@ public class Client {
 
 	}
 
-	public void setUpConnections(){
+	public boolean setUpConnections(){
 		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";
 		try {
+
 			this.h = (Garage)Naming.lookup(registryURL);
 
+
 		System.out.println("Garage created!");
-		} catch (ConnectException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+        }catch (Exception e) {
+
+            return false;
+        }
 
 		try {
 			this.callbackObj = new CallbackImpl();
 		} catch (Exception e) {
 			e.printStackTrace();
+            return false;
 		}
+		return true;
 	}
 
 	//region<LogIn>
