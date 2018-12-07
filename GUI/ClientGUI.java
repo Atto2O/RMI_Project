@@ -69,11 +69,11 @@ public class ClientGUI extends Application {
 
     public static ObservableList<String> observableNotificationList;
 
-    public static ObservableList<FileObject> observableUserFiles = FXCollections.observableList(new ArrayList<>());
+    public static ArrayList<FileObject> observableUserFiles = new ArrayList<>();
 
     public static File upload_file;
 
-    public static ObservableList<FileObject> observableSearchList;
+    public static ArrayList<FileObject> observableSearchList = new ArrayList<>();
     private boolean searched = false;
 
     //region<COLORS>
@@ -315,8 +315,8 @@ public class ClientGUI extends Application {
         title_mainFiles.setLayoutY(25);
 
 
-        ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
-        this.userFiles_Table = this.createTable(ClientGUI.observableUserFiles, false, stage);
+        ClientGUI.observableUserFiles = this.getUserFiles();
+        this.userFiles_Table = this.createUsersTable(ClientGUI.observableUserFiles, stage);
         Group mainFiles_group= new Group(this.userFiles_Table);
 
         Group users = new Group(background, title_mainFiles, mainFiles_group);
@@ -493,16 +493,13 @@ public class ClientGUI extends Application {
         search_button.setLayoutY(10);
 
         Group search_group = new Group();
-
-        if(this.searched && !ClientGUI.observableSearchList.isEmpty()){
-            search_group = new Group(this.createTable(this.observableSearchList, true, stage));
-            this.searched = false;
-        }else if(this.searched && ClientGUI.observableSearchList.isEmpty()){
+        if(this.searched && (ClientGUI.observableSearchList != null||!ClientGUI.observableSearchList.isEmpty())){
+            search_group = new Group(this.createSearchTable(ClientGUI.observableSearchList, stage));
+        }else if(this.searched && (ClientGUI.observableSearchList == null||ClientGUI.observableSearchList.isEmpty())){
             Label not_found_files = new Label("Files not found");
             not_found_files.setLayoutX(300);
             not_found_files.setLayoutY(200);
             search_group = new Group(not_found_files);
-            this.searched = false;
         }
 
         Group search = new Group(background, search_field, search_button, search_group);
@@ -582,6 +579,11 @@ public class ClientGUI extends Application {
         mainMenu.setTabMinWidth(92);
         mainMenu.getTabs().addAll(user_files_tab, upload_files_tab, subcriptions_tab, search_tab, changePWD_tab, disconnect_tab);
 
+        if(this.searched){
+            mainMenu.getSelectionModel().select(3);
+            this.searched = false;
+        }
+
         //region<NOTIFICATIONS>
         Rectangle notificationBox = new Rectangle(width, height, notification_box_color);
         notificationBox.setWidth(width);
@@ -597,9 +599,7 @@ public class ClientGUI extends Application {
             if(search_field.getText().length()>0){
                 if(this.search(search_field.getText())){
                     this.searched = true;
-                    SingleSelectionModel<Tab> selected = mainMenu.getSelectionModel();
                     stage.setScene(setMain_scene(stage));
-                    mainMenu.setSelectionModel(selected);
                 }
             }
             search_field.clear();
@@ -732,18 +732,15 @@ public class ClientGUI extends Application {
         return imageView;
     }
 
-    private TableView createTable(ObservableList<FileObject> list, boolean search, Stage stage){
+    private TableView createUsersTable(ArrayList<FileObject> list, Stage stage){
         TableView table = new TableView();
         table.setEditable(false);
-
         TableColumn id_column = new TableColumn("ID");
         id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
         TableColumn name_column = new TableColumn("File name");
         name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("fileName"));
         TableColumn type_column = new TableColumn("Type");
         type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
-        TableColumn username_column = new TableColumn("Owner");
-        username_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
         TableColumn state_column = new TableColumn("Public");
         state_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("state"));
         TableColumn tags_column = new TableColumn("Tags");
@@ -771,22 +768,46 @@ public class ClientGUI extends Application {
                 return new DeleteFile_fromTable(stage, table);
             }
         });
-
         ObservableList<FileObject> observableFilesList = FXCollections.observableList(list);
         table.setItems(observableFilesList);
-
-        if(search){
-            table.getColumns().addAll(id_column, username_column, name_column, type_column, tags_column, description_column, download_column);
-        }
-        else{
-            table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
-        }
-
+        table.getColumns().addAll(id_column, name_column, type_column, state_column, tags_column, description_column, edit_column, download_column, delete_column);
         table.setMaxHeight(230);
         table.setMaxWidth(width - 100);
         table.setLayoutX(50);
         table.setLayoutY(40);
+        return table;
+    }
 
+    private TableView createSearchTable(ArrayList<FileObject> list, Stage stage){
+        System.out.println("Hola soc search");
+        TableView table = new TableView();
+        table.setEditable(false);
+        TableColumn id_column = new TableColumn("ID");
+        id_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("id"));
+        TableColumn name_column = new TableColumn("File name");
+        name_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("fileName"));
+        TableColumn type_column = new TableColumn("Type");
+        type_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("type"));
+        TableColumn username_column = new TableColumn("Owner");
+        username_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("user"));
+        TableColumn tags_column = new TableColumn("Tags");
+        tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
+        TableColumn description_column = new TableColumn("Description");
+        description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
+        TableColumn download_column = new TableColumn("Download");//edit, download, delete
+        download_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
+            @Override
+            public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
+                return new DownloadFile_fromTable(stage, table);
+            }
+        });
+        ObservableList<FileObject> observableFilesList = FXCollections.observableList(list);
+        table.setItems(observableFilesList);
+        table.getColumns().addAll(id_column, username_column, name_column, type_column, tags_column, description_column, download_column);
+        table.setMaxHeight(230);
+        table.setMaxWidth(width - 100);
+        table.setLayoutX(50);
+        table.setLayoutY(40);
         return table;
     }
 
@@ -819,7 +840,7 @@ public class ClientGUI extends Application {
                     table.getSelectionModel().select(getTableRow().getIndex());
                     FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
                     if(ClientGUI.delete(file, stage)){
-                        ClientGUI.observableUserFiles =FXCollections.observableList(ClientGUI.getUserFiles());
+                        ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
                         ClientGUI.setStage(setMain_scene(stage), stage);
                     }
                 }
@@ -1052,7 +1073,7 @@ public class ClientGUI extends Application {
         if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
            Toast.makeText(stage,  "Upload successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
+            ClientGUI.observableUserFiles = this.getUserFiles();
         }else{
             Toast.makeText(stage,  "Error Uploading!",false);
             System.out.printf("Hi ha agut algun problema\n");
@@ -1076,7 +1097,7 @@ public class ClientGUI extends Application {
         if(client.deleteFile(file)){
             Toast.makeText(stage,  "Deleted successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
+            ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
             return true;
         }else{
             Toast.makeText(stage,  "Error Deleting!",false);
