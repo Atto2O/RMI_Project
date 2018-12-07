@@ -50,10 +50,12 @@ public class ClientGUI extends Application {
     private Scene main_scene;
 
     //region<INPUT_Limits>
-    private final int max_ip_chars = 8;
+    private final int max_ip_chars = 15;
     private final int max_port_chars = 8;
     private final int max_username_chars = 12;
+    private final int min_username_chars = 4;
     private final int max_password_chars = 12;
+    private final int min_password_chars = 4;
     private final int max_tag_chars = 15;
     private final int max_description_chars = 100;
     //endregion
@@ -77,7 +79,7 @@ public class ClientGUI extends Application {
     private boolean searched = false;
 
     //region<COLORS>
-    private final Color background_start_color = Color.DARKSLATEBLUE;
+    private final Color background_start_color = Color.LIGHTSTEELBLUE;
     private final Color background_signin_color = Color.LIGHTSTEELBLUE;
     private final Color background_signup_color = Color.LIGHTSTEELBLUE;
     private final Color background_upload_color = Color.LIGHTSTEELBLUE;
@@ -91,39 +93,30 @@ public class ClientGUI extends Application {
 
     private TableView userFiles_Table;
 
+
     //region<IP/Port>
     private Scene setConnectionScene(Stage stage){
         Rectangle background = new Rectangle(width,height, background_start_color);
 
-        TextField clientIP = new TextField();
-        clientIP.setOnKeyTyped(event ->{
-            int maxCharacters = max_ip_chars;
-            if(clientIP.getText().length() > maxCharacters) event.consume();
-        });
-        clientIP.setLayoutX((width-170)/2);
 
-        TextField clientPORT = new TextField();
-        clientPORT.setOnKeyTyped(event ->{
-            int maxCharacters = max_port_chars;
-            if(clientPORT.getText().length() > maxCharacters) event.consume();
-        });
-        clientPORT.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
-                                String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    clientPORT.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            }
-        });
-        clientPORT.setLayoutX((width-170)/2);
+
+        Label text_ServerIp = new Label("Ip:");
+        text_ServerIp.setLayoutX((width-170)/2);
+        text_ServerIp.setLayoutY((height-170)-180);
+
 
         TextField serverIP = new TextField();
         serverIP.setOnKeyTyped(event ->{
             int maxCharacters = max_ip_chars;
             if(serverIP.getText().length() > maxCharacters) event.consume();
         });
+
         serverIP.setLayoutX((width-170)/2);
+        serverIP.setLayoutY((height-170)-150);
+
+        Label text_ServerPort = new Label("Port:");
+        text_ServerPort.setLayoutX((width-170)/2);
+        text_ServerPort.setLayoutY((height-170)-80);
 
         TextField serverPORT = new TextField();
         serverPORT.setOnKeyTyped(event ->{
@@ -140,12 +133,12 @@ public class ClientGUI extends Application {
             }
         });
         serverPORT.setLayoutX((width-170)/2);
-
+        serverPORT.setLayoutY((height-170)-50);
         Button connect = new Button("Connect");
         connect.setLayoutX((width-70)/2);
         connect.setLayoutY(height-70);
 
-        Group root1 = new Group(background, clientIP, clientPORT, serverIP, serverPORT, connect);
+        Group root1 = new Group(background, serverIP, serverPORT, connect, text_ServerIp,text_ServerPort);
         Scene scene1 = new Scene(root1, width, height);
 
         connect.setOnAction(action -> {
@@ -221,7 +214,7 @@ public class ClientGUI extends Application {
         });
         new_username.setLayoutX((width-170)/2);
         new_username.setLayoutY(height-310);
-        Text text_new_u = new Text("Username");
+        Text text_new_u = new Text("Username(min: "+min_username_chars+" max: "+max_username_chars+")");
         text_new_u.setFont(Font.font(12));
         text_new_u.setFill(Color.BLACK);
         text_new_u.setLayoutX((width-170)/2);
@@ -234,7 +227,7 @@ public class ClientGUI extends Application {
         });
         password1.setLayoutX((width-170)/2);
         password1.setLayoutY(height-240);
-        Text text_pwd1 = new Text("Password");
+        Text text_pwd1 = new Text("Password(min: "+min_password_chars+" max: "+max_password_chars+")");
         text_pwd1.setFont(Font.font(12));
         text_pwd1.setFill(Color.BLACK);
         text_pwd1.setLayoutX((width-170)/2);
@@ -295,6 +288,7 @@ public class ClientGUI extends Application {
         return scene2;
     }
     //endregion
+
 
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {
@@ -1001,14 +995,25 @@ public class ClientGUI extends Application {
     }
 
     public boolean register(String username, String password1, String password2, Stage stage){
+        if(min_username_chars<username.length() && username.length() <max_username_chars){
+            if(min_password_chars < password1.length() && password1.length()< max_password_chars){
+                if(this.client.registrar(username, password1, password2)){
+                    Toast.makeText(stage,  "Account registered!",true);
+                    return true;
+                }else{
+                    Toast.makeText(stage,  "Error Registering!",false);
+                    return false;
+                }
+            }else{
+                Toast.makeText(stage,  "Password must be more than "+min_password_chars+" and less"+max_password_chars+" than characters!",false);
+                return false;
+            }
 
-        if(this.client.registrar(username, password1, password2)){
-            Toast.makeText(stage,  "Account registered!",true);
-            return true;
         }else{
-            Toast.makeText(stage,  "Error Registering!",false);
+            Toast.makeText(stage,  "Username must be more than "+min_username_chars+" and less"+max_username_chars+" than characters!",false);
             return false;
         }
+
     }
 
     public void exit(){
@@ -1104,6 +1109,9 @@ public class ClientGUI extends Application {
             System.out.printf("Hi ha hagut algun problema\n");
             return false;
         }
+    }
+    public static void  addNotification(String message){
+        ClientGUI.observableNotificationList.add(message);
     }
 
     public boolean search(String string){

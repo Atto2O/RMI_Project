@@ -22,7 +22,8 @@ public class CallbackImpl extends UnicastRemoteObject implements ClientCallbackI
     {
         String returnMessage = "Call back received: " + message;
         System.out.println(returnMessage);
-        ClientGUI.observableNotificationList.add(message);
+        ClientGUI.addNotification(message);
+
 
         return returnMessage;
     }

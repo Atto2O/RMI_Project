@@ -21,12 +21,15 @@ public final class Toast
         int fadeOutDelay= 200; //0.2 seconds
 
         Stage toastStage=new Stage();
+        toastStage.setHeight(30);
+
+
         toastStage.initOwner(ownerStage);
         toastStage.setResizable(false);
         toastStage.initStyle(StageStyle.TRANSPARENT);
 
         Text text = new Text(toastMsg);
-        text.setFont(Font.font("Verdana", 20));
+        text.setFont(Font.font("Verdana", 15));
         text.setFill(Color.BLACK);
 
         StackPane root = new StackPane(text);
@@ -37,9 +40,12 @@ public final class Toast
             root.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(255, 77, 77, 0.4); -fx-padding: 50px;");
         }
         root.setOpacity(0);
-
+        //root.setLayoutX(350);
+        //root.setLayoutY(-20);
         Scene scene = new Scene(root);
+
         scene.setFill(Color.TRANSPARENT);
+
         toastStage.setScene(scene);
         toastStage.show();
 
