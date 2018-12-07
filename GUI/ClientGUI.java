@@ -308,8 +308,7 @@ public class ClientGUI extends Application {
         title_mainFiles.setLayoutX(20);
         title_mainFiles.setLayoutY(25);
 
-
-        ClientGUI.observableUserFiles = this.getUserFiles();
+        ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
         this.userFiles_Table = this.createUsersTable(ClientGUI.observableUserFiles, stage);
         Group mainFiles_group= new Group(this.userFiles_Table);
 
@@ -1077,7 +1076,7 @@ public class ClientGUI extends Application {
         if(this.client.upload(uploadFile, filename,  type,  description,  tags,  state)){
            Toast.makeText(stage,  "Upload successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = this.getUserFiles();
+            ClientGUI.observableUserFiles = ClientGUI.getUserFiles();
         }else{
             Toast.makeText(stage,  "Error Uploading!",false);
             System.out.printf("Hi ha agut algun problema\n");
