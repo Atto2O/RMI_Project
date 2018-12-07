@@ -591,7 +591,7 @@ public class ClientGUI extends Application {
 
         search_button.setOnAction(action -> {
             if(search_field.getText().length()>0){
-                if(this.search(search_field.getText())){
+                if(this.search(search_field.getText(),stage)){
                     this.searched = true;
                     stage.setScene(setMain_scene(stage));
                 }
@@ -1113,8 +1113,14 @@ public class ClientGUI extends Application {
         ClientGUI.observableNotificationList.add(message);
     }
 
-    public boolean search(String string){
-        //ClientGUI.observableSearchList.add();
+    public boolean search(String string, Stage stage){
+
+        if(client.getFilesByText(string).isEmpty()){
+            Toast.makeText(stage,  "No matches found!",false);
+            return false;
+        }else{
+            ClientGUI.observableSearchList = client.getFilesByText(string);
+        }
         return true;
     }
 
