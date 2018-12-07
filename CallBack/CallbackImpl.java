@@ -3,6 +3,7 @@ package CallBack;
 import java.rmi.*;
 import java.rmi.server.*;
 import CallBack.*;
+import GUI.ClientGUI;
 import Objects.*;
 import RemoteObject.*;
 import Server.*;
@@ -21,6 +22,7 @@ public class CallbackImpl extends UnicastRemoteObject implements ClientCallbackI
     {
         String returnMessage = "Call back received: " + message;
         System.out.println(returnMessage);
+        ClientGUI.observableNotificationList.add(message);
 
         return returnMessage;
     }
