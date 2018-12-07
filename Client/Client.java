@@ -111,18 +111,17 @@ public class Client {
 		String registryURL = "rmi://"+ hostName +":" + this.serverPORT + "/some";
 		try {
 			this.h = (Garage)Naming.lookup(registryURL);
-		} catch (NotBoundException e) {
+
+		System.out.println("Garage created!");
+		} catch (ConnectException e) {
 			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Garage created!");
 
 		try {
 			this.callbackObj = new CallbackImpl();
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -216,6 +215,18 @@ public class Client {
 	//region<MODIFY Params>
 	//region<Files>
 
+	//region<Download>
+	public boolean download(String path,FileObject file){
+
+		try {
+			FileOutputStream fos = new FileOutputStream(path);
+			fos.write(file.getFile());
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+	}
+
 	//region<Upload>
 	public boolean upload(File newFile, String filename, String type, String description, ArrayList<String> tags, boolean state){
 
@@ -261,12 +272,13 @@ public class Client {
 	//endregion
 
 	//region<Delete>
-	public void deleteFile(){
+	public boolean deleteFile(FileObject file){
 		try{
-			//return this.h.deleteFile(fileId, this.userName);
+			return this.h.deleteFile(file.getId(), this.userName);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deleteFile(): " + e.toString());
+			return false;
 		}
 	}
 	//endregion
