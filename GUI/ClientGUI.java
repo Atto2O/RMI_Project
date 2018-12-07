@@ -78,6 +78,8 @@ public class ClientGUI extends Application {
     public static ArrayList<FileObject> observableSearchList = new ArrayList<>();
     private boolean searched = false;
 
+    private boolean editing = false;
+
     //region<COLORS>
     private final Color background_start_color = Color.LIGHTSTEELBLUE;
     private final Color background_signin_color = Color.LIGHTSTEELBLUE;
@@ -92,7 +94,6 @@ public class ClientGUI extends Application {
     //endregion
 
     private TableView userFiles_Table;
-
 
     //region<IP/Port>
     private Scene setConnectionScene(Stage stage){
@@ -288,7 +289,6 @@ public class ClientGUI extends Application {
         return scene2;
     }
     //endregion
-
 
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {
