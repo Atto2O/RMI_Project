@@ -86,6 +86,9 @@ public class ClientGUI extends Application {
     private final Color notification_box_color = Color.DARKSLATEBLUE;
     //endregion
 
+    private TableView userFiles_Table;
+
+
     //region<IP/Port>
     private Scene setConnectionScene(Stage stage){
         Rectangle background = new Rectangle(width,height, background_start_color);
@@ -310,10 +313,10 @@ public class ClientGUI extends Application {
         title_mainFiles.setLayoutX(20);
         title_mainFiles.setLayoutY(25);
 
-        Group mainFiles_group;
 
         ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
-        mainFiles_group = new Group(this.createTable(ClientGUI.observableUserFiles, false, stage));
+        this.userFiles_Table = this.createTable(ClientGUI.observableUserFiles, false, stage);
+        Group mainFiles_group= new Group(this.userFiles_Table);
 
         Group users = new Group(background, title_mainFiles, mainFiles_group);
         Tab user_files_tab = new Tab();
@@ -655,7 +658,7 @@ public class ClientGUI extends Application {
                                 Toast.makeText(stage,  "Tag list is empty",false);
                             }else{
                                 this.upload(filename, type, description, tags, state.getValue(),stage);
-
+                                stage.setScene(setMain_scene(stage));
                             }
                         }
                     }
