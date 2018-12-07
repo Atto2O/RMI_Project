@@ -31,7 +31,7 @@ public class Client {
 	static String hostName = "localhost";//AQUEST A DE SER EL DEL SERVIDOR!!"172.16.0.26";//
 	static Garage h;
 	public String state ="disconnected";
-	private String userName = "";
+	private static String userName = "";
 	public int callbackid;
 	public ClientCallbackInterface callbackObj;
 
@@ -216,15 +216,16 @@ public class Client {
 	//region<Files>
 
 	//region<Download>
-	public boolean download(String path,FileObject file){
-
+	public boolean download(String path, FileObject file){
+		System.out.println(path);
 		try {
-			FileOutputStream fos = new FileOutputStream(path);
+			FileOutputStream fos = new FileOutputStream(path+"/"+file.getFileName());
 			fos.write(file.getFile());
 			return true;
 		}catch(Exception e){
-			return false;
+			System.out.println("Error in Client-download(): "+e.toString());
 		}
+		return false;
 	}
 
 	//region<Upload>
@@ -272,14 +273,16 @@ public class Client {
 	//endregion
 
 	//region<Delete>
-	public boolean deleteFile(FileObject file){
+	public static boolean deleteFile(FileObject file){
 		try{
-			return this.h.deleteFile(file.getId(), this.userName);
+			if(Client.h.deleteFile(file.getId(), Client.userName)){
+				return true;
+			}
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deleteFile(): " + e.toString());
-			return false;
 		}
+		return false;
 	}
 	//endregion
 
@@ -385,7 +388,7 @@ public class Client {
 	public boolean logIn(String userName, String password) throws RemoteException{
 		int callbackid = -1;
 		if (!password.equals("") && !userName.equals("")){
-			callbackid = this.h.user_login(userName, password, callbackObj);
+			callbackid = Client.h.user_login(userName, password, callbackObj);
 			if (callbackid != -1) {
 				this.callbackid = callbackid;
 				return true;

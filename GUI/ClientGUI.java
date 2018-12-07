@@ -636,7 +636,7 @@ public class ClientGUI extends Application {
                 String filename = upload_file_name.getText();
                 if(filename.isEmpty()){
                     //AVIS ENTRAR NAME
-                    Toast.makeText(stage,  "File name is empty",false);
+                    Toast.makeText(stage,"File name is empty",false);
                 }else{
                     String type = upload_types.getSelectionModel().getSelectedItem().toString();
                     System.out.println(type);
@@ -718,7 +718,7 @@ public class ClientGUI extends Application {
         tags_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("tags"));
         TableColumn description_column = new TableColumn("Description");
         description_column.setCellValueFactory(new PropertyValueFactory<FileObject, String>("description"));
-        TableColumn edit_column = new TableColumn("Edit");//edit, download, delete
+        TableColumn edit_column = new TableColumn("Edit");
         edit_column.setCellFactory(new Callback<TableColumn<FileObject, Boolean>, TableCell<FileObject, Boolean>>() {
             @Override
             public TableCell<FileObject, Boolean> call(TableColumn<FileObject, Boolean> personBooleanTableColumn) {
@@ -758,6 +758,9 @@ public class ClientGUI extends Application {
         return table;
     }
 
+    public static void setStage(Scene scene, Stage stage){
+        stage.setScene(scene);
+    }
 
     //region<Table-buttons>
     private class DeleteFile_fromTable extends TableCell<FileObject, Boolean> {
@@ -782,7 +785,11 @@ public class ClientGUI extends Application {
             deleteFile.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
-                    //remove this file from server
+                    FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
+                    if(ClientGUI.delete(file, stage)){
+                        ClientGUI.observableUserFiles =FXCollections.observableList(ClientGUI.getUserFiles());
+                        ClientGUI.setStage(setMain_scene(stage), stage);
+                    }
                 }
             });
         }
@@ -819,6 +826,7 @@ public class ClientGUI extends Application {
             download.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
+                    FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
                     String path;
                     File dir = directoryChooser.showDialog(stage);
                     if (dir != null) {
@@ -826,10 +834,11 @@ public class ClientGUI extends Application {
                     } else {
                         path = "";
                     }
-                    //download this file from server && select download path
+                    ClientGUI.download(file, path, stage);
                 }
             });
         }
+
         @Override protected void updateItem(Boolean item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
@@ -904,7 +913,6 @@ public class ClientGUI extends Application {
                 Toast.makeText(stage,  "Tag deleted successful!",true);
             }else{
                 Toast.makeText(stage,  "Error deleting tag!",false);
-
             }
 
             ClientGUI.observableSubscriptionList.remove(this);
@@ -914,7 +922,6 @@ public class ClientGUI extends Application {
             client.desSubscribeToTag(tag);
             ClientGUI.tags_list.remove(this);
         }
-
     }
 
     public boolean connect(String ip, String port, Stage stage){
@@ -937,7 +944,6 @@ public class ClientGUI extends Application {
             Toast.makeText(stage,  "Username and password didn't match!",false);
             return false;
         }
-
     }
 
     public boolean register(String username, String password1, String password2, Stage stage){
@@ -948,20 +954,15 @@ public class ClientGUI extends Application {
         }else{
             Toast.makeText(stage,  "Error Registering!",false);
             return false;
-
         }
-
-
     }
 
     public void exit(){
-
         this.client.deleteCallbackFromClienth();
         System.exit(0);
     }
 
     public void changeUser(){
-
         try{
             this.client.deslogear();
         }catch(Exception e){
@@ -970,24 +971,20 @@ public class ClientGUI extends Application {
     }
 
     public boolean changePWD(String oldPassword, String newPassword1, String newPassword2, Stage stage){
-
-
         if(newPassword1.equals(newPassword2)){
-
             if(this.client.changePassword(oldPassword,newPassword1)){
                 Toast.makeText(stage,  "Password change successful!",true);
                 return true;
             }else{
                 Toast.makeText(stage,  "Error Registering!",false);
                 return false;
-
             }
         }
         Toast.makeText(stage,  "Passwords didn't match!",false);
         return false;
     }
 
-    public ArrayList<FileObject> getUserFiles (){
+    public static ArrayList<FileObject> getUserFiles (){
         ArrayList<FileObject> array = new ArrayList<>();
         try{array=client.getFilesByUser();}catch (Exception e){
             System.out.println("Error on GUI-getUserFiles(): "+e.toString());
@@ -1006,18 +1003,13 @@ public class ClientGUI extends Application {
     public void addTag(String newtag, Stage stage){
         if(this.client.subscribeToTag(newtag)){
             Toast.makeText(stage,  "Tag added successfully!",true);
-
         }else{
             Toast.makeText(stage,  "Error Adding tag!",false);
-
         }
-
-
     }
 
     public void upload(String filename, String type, String description, ArrayList<String> tags, boolean state, Stage stage){
         File uploadFile = ClientGUI.upload_file;
-
         System.out.printf("Filename: "+filename+"\nType: "+type+"\nState: "+ state +"\n Description: "+  description + "\nTags:");
         for (String tag: tags) {
             System.out.printf("\n-" + tag);
@@ -1032,34 +1024,31 @@ public class ClientGUI extends Application {
             Toast.makeText(stage,  "Error Uploading!",false);
             System.out.printf("Hi ha agut algun problema\n");
         }
-
     }
-    //download
-    public void download(FileObject file , String path, Stage stage){
 
-        if(this.client.download( path, file)){
+    //download
+    public static void download(FileObject file, String path, Stage stage){
+        if(client.download( path, file)){
             Toast.makeText(stage,  "Download successfully!",true);
             System.out.printf("Tot correcte\n");
 
         }else{
             Toast.makeText(stage,  "Error Downloading!",false);
-            System.out.printf("Hi ha agut algun problema\n");
+            System.out.printf("Hi ha hagut algun problema\n");
         }
-
     }
-    //delete
-    public boolean delete(FileObject file, Stage stage){
 
-        if(this.client.deleteFile(file)){
+    //delete
+    public static boolean delete(FileObject file, Stage stage){
+        if(client.deleteFile(file)){
             Toast.makeText(stage,  "Deleted successfully!",true);
             System.out.printf("Tot correcte\n");
-            ClientGUI.observableUserFiles = FXCollections.observableList(this.getUserFiles());
+            ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
             return true;
         }else{
             Toast.makeText(stage,  "Error Deleting!",false);
-            System.out.printf("Hi ha agut algun problema\n");
+            System.out.printf("Hi ha hagut algun problema\n");
             return false;
         }
-
     }
 }
