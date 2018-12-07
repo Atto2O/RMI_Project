@@ -993,8 +993,8 @@ public class ClientGUI extends Application {
     }
 
     public boolean register(String username, String password1, String password2, Stage stage){
-        if(min_username_chars<username.length() && username.length() <max_username_chars){
-            if(min_password_chars < password1.length() && password1.length()< max_password_chars){
+        if(min_username_chars<=username.length() && username.length() <=max_username_chars){
+            if(min_password_chars <= password1.length() && password1.length()<= max_password_chars){
                 if(ClientGUI.client.registrar(username, password1, password2)){
                     Toast.makeText(stage,  "Account registered!",true);
                     return true;
