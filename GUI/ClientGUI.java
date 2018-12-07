@@ -69,9 +69,12 @@ public class ClientGUI extends Application {
 
     public static ObservableList<String> observableNotificationList;
 
-    public static ObservableList<FileObject> observableUserFiles;
+    public static ObservableList<FileObject> observableUserFiles = FXCollections.observableList(new ArrayList<>());
 
     public static File upload_file;
+
+    public static ObservableList<FileObject> observableSearchList;
+    private boolean searched = false;
 
     //region<COLORS>
     private final Color background_start_color = Color.LIGHTSTEELBLUE;
@@ -127,7 +130,6 @@ public class ClientGUI extends Application {
                 }
             }
         });
-
         serverPORT.setLayoutX((width-170)/2);
         serverPORT.setLayoutY((height-170)-50);
         Button connect = new Button("Connect");
@@ -474,8 +476,28 @@ public class ClientGUI extends Application {
         //region<Search>
         background = new Rectangle(width, height, background_search_color);
 
+        TextField search_field = new TextField();
+        search_field.setLayoutX(30);
+        search_field.setLayoutY(10);
+        Button search_button = new Button();
+        search_button.setGraphic(this.buildImage("./GUI/Graphics/search.png"));
+        search_button.setLayoutX(200);
+        search_button.setLayoutY(10);
 
-        Group search = new Group(background);
+        Group search_group = new Group();
+
+        if(this.searched && !ClientGUI.observableSearchList.isEmpty()){
+            search_group = new Group(this.createTable(this.observableSearchList, true, stage));
+            this.searched = false;
+        }else if(this.searched && ClientGUI.observableSearchList.isEmpty()){
+            Label not_found_files = new Label("Files not found");
+            not_found_files.setLayoutX(300);
+            not_found_files.setLayoutY(200);
+            search_group = new Group(not_found_files);
+            this.searched = false;
+        }
+
+        Group search = new Group(background, search_field, search_button, search_group);
         Tab search_tab = new Tab();
         search_tab.setText("SEARCH");
         search_tab.setContent(search);
@@ -563,6 +585,17 @@ public class ClientGUI extends Application {
         Group main_root = new Group(mainMenu, notifications_group);
         Scene main = new Scene(main_root, width, height);
 
+        search_button.setOnAction(action -> {
+            if(search_field.getText().length()>0){
+                if(this.search(search_field.getText())){
+                    this.searched = true;
+                    SingleSelectionModel<Tab> selected = mainMenu.getSelectionModel();
+                    stage.setScene(setMain_scene(stage));
+                    mainMenu.setSelectionModel(selected);
+                }
+            }
+            search_field.clear();
+        });
 
         change_pwd_button.setOnAction(action -> {
             if (this.changePWD(current_password.getText(), new_password1.getText(), new_password2.getText(),stage)) {
@@ -1046,4 +1079,10 @@ public class ClientGUI extends Application {
     public static void  addNotification(String message){
         ClientGUI.observableNotificationList.add(message);
     }
+
+    public boolean search(String string){
+        //ClientGUI.observableSearchList.add();
+        return true;
+    }
+
 }
