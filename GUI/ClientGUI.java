@@ -1,8 +1,6 @@
 package GUI;
 
-import GUI.Graphics.Toast;
 import Objects.FileObject;
-import RemoteObject.Garage;
 import javafx.application.Application;
 
 import javafx.beans.property.DoubleProperty;
@@ -28,7 +26,6 @@ import javafx.scene.paint.Color;
 
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -42,7 +39,6 @@ import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 public class ClientGUI extends Application {
 
@@ -66,6 +62,16 @@ public class ClientGUI extends Application {
     private final int height = 400;
 
     private int panels_height = height-90;
+
+    public static ObservableList<String> observableSubscriptions;
+    public static ObservableList<HBoxCell> observableSubscriptionList;
+    public static ObservableList<HBoxCell> tags_list;
+
+    public static ObservableList<String> observableNotificationList;
+
+    public static ObservableList<FileObject> observableUserFiles;
+
+    public static File upload_file;
 
     //region<COLORS>
     private final Color background_start_color = Color.DARKSLATEBLUE;
@@ -142,7 +148,7 @@ public class ClientGUI extends Application {
                 if(this.connect(serverIP.getText(), serverPORT.getText(),stage)){
                     stage.setScene(setLogin_scene(stage));
                 }else{
-                    //ERROR
+                    Toast.makeText(stage,  "Unable to connect to the server",false);
                 }
                 serverIP.setText("");
                 serverPORT.setText("");
@@ -207,12 +213,6 @@ public class ClientGUI extends Application {
         new_username.setOnKeyTyped(event ->{
             int maxCharacters = max_username_chars;
             if(new_username.getText().length() > maxCharacters) event.consume();
-                /*if(this.checkUsername(new_username.getText())){
-                    new_username.setStyle("-fx-text-fill: green;");
-                }
-                else if(new_username.getText().length()>0){
-                    new_username.setStyle("-fx-text-fill: red;");
-                }*/
         });
         new_username.setLayoutX((width-170)/2);
         new_username.setLayoutY(height-310);
@@ -291,15 +291,6 @@ public class ClientGUI extends Application {
     }
     //endregion
 
-    public static ObservableList<String> observableSubscriptions;
-    public static ObservableList<HBoxCell> observableSubscriptionList;
-    public static ObservableList<HBoxCell> tags_list;
-
-    public static ObservableList<String> observableNotificationList;
-
-    public static ObservableList<FileObject> observableUserFiles;
-
-    public static File upload_file;
 
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {

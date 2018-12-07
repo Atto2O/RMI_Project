@@ -1,4 +1,4 @@
-package GUI.Graphics;
+package GUI;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
