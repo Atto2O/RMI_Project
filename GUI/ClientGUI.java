@@ -214,7 +214,7 @@ public class ClientGUI extends Application {
         });
         new_username.setLayoutX((width-170)/2);
         new_username.setLayoutY(height-310);
-        Text text_new_u = new Text("Username(min: "+min_username_chars+" max: "+max_username_chars+")");
+        Text text_new_u = new Text("Username (min: "+min_username_chars+" max: "+max_username_chars+")");
         text_new_u.setFont(Font.font(12));
         text_new_u.setFill(Color.BLACK);
         text_new_u.setLayoutX((width-170)/2);
@@ -227,7 +227,7 @@ public class ClientGUI extends Application {
         });
         password1.setLayoutX((width-170)/2);
         password1.setLayoutY(height-240);
-        Text text_pwd1 = new Text("Password(min: "+min_password_chars+" max: "+max_password_chars+")");
+        Text text_pwd1 = new Text("Password (min: "+min_password_chars+" max: "+max_password_chars+")");
         text_pwd1.setFont(Font.font(12));
         text_pwd1.setFill(Color.BLACK);
         text_pwd1.setLayoutX((width-170)/2);
@@ -773,7 +773,6 @@ public class ClientGUI extends Application {
     }
 
     private TableView createSearchTable(ArrayList<FileObject> list, Stage stage){
-        System.out.println("Hola soc search");
         TableView table = new TableView();
         table.setEditable(false);
         TableColumn id_column = new TableColumn("ID");
