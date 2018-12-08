@@ -723,17 +723,16 @@ public class ClientGUI extends Application {
     public static void animation(){ launch();}
 
     private static ImageView buildImage(String imgPatch) {
-        Image i = null;
         try {
-            i = new Image(new FileInputStream(imgPatch));
-        } catch (FileNotFoundException e) {
+            Image i = new Image(new FileInputStream(imgPatch));
+            ImageView imageView = new ImageView(i);
+            imageView.setFitHeight(16);
+            imageView.setFitWidth(16);
+            return imageView;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        ImageView imageView = new ImageView(i);
-        //You can set width and height
-        imageView.setFitHeight(16);
-        imageView.setFitWidth(16);
-        return imageView;
+        return null;
     }
 
     private Group createEditView(Stage stage, FileObject fileObject){
@@ -1260,6 +1259,7 @@ public class ClientGUI extends Application {
             return false;
         }
     }
+
     public static void  addNotification(String message){
         ClientGUI.observableNotificationList.add(message);
     }
