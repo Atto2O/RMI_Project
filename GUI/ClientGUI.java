@@ -18,8 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import Client.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -34,8 +32,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +65,7 @@ public class ClientGUI extends Application {
     public static ObservableList<HBoxCell> observableSubscriptionList;
     public static ObservableList<HBoxCell> tags_list;
 
-    public static ObservableList<String> observableNotificationList;
+    public static ObservableList<HBoxCell> observableNotificationList;
 
     public static ObservableList<FileObject> observableUserFiles = FXCollections.observableList(new ArrayList<>());
 
@@ -82,6 +78,8 @@ public class ClientGUI extends Application {
     public static boolean editing = false;
     public static ObservableList<HBoxCell> edit_tags;
 
+    public static Stage stage;
+
     //region<COLORS>
     private final Color background_start_color = Color.LIGHTSTEELBLUE;
     private final Color background_signin_color = Color.LIGHTSTEELBLUE;
@@ -92,7 +90,7 @@ public class ClientGUI extends Application {
     private final Color background_search_color = Color.LIGHTSTEELBLUE;
     private final Color background_changePWD_color = Color.LIGHTSTEELBLUE;
     private final Color background_disconnect_color = Color.LIGHTSTEELBLUE;
-    private final Color notification_box_color = Color.DARKSLATEBLUE;
+    private final Color notification_box_color = Color.WHITE;
     //endregion
 
     private TableView userFiles_Table;
@@ -295,7 +293,6 @@ public class ClientGUI extends Application {
     //region<MAIN>
     private Scene setMain_scene(Stage stage) {
         Rectangle background;
-
         TabPane mainMenu = new TabPane();
         mainMenu.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         mainMenu.setMaxWidth(width);
@@ -493,12 +490,6 @@ public class ClientGUI extends Application {
         if(this.searched && (ClientGUI.observableSearchList != null||!ClientGUI.observableSearchList.isEmpty())){
             search_group = new Group(this.createSearchTable(ClientGUI.observableSearchList, stage));
         }
-        /*else if(this.searched && (ClientGUI.observableSearchList == null||ClientGUI.observableSearchList.isEmpty())){
-            Label not_found_files = new Label("Files not found");
-            not_found_files.setLayoutX(300);
-            not_found_files.setLayoutY(200);
-            search_group = new Group(not_found_files);
-        }*/
 
         Group search = new Group(background, search_field, search_button, search_group);
         Tab search_tab = new Tab();
@@ -586,7 +577,26 @@ public class ClientGUI extends Application {
         notificationBox.setWidth(width);
         notificationBox.setHeight(90);
         notificationBox.setY(height - 90);
-        Group notifications_group = new Group(notificationBox);
+
+        BorderPane notifications_layout = new BorderPane();
+        notifications_layout.setPrefWidth(width-20);
+        notifications_layout.setPrefHeight(70);
+
+        List<HBoxCell> notification_items = new ArrayList<>();
+        ListView<HBoxCell> notification_listView = new ListView<>();
+        ClientGUI.observableNotificationList = FXCollections.observableList(notification_items);
+
+        notification_listView.setItems(ClientGUI.observableNotificationList);
+        notification_listView.setPrefHeight(70);
+        notification_listView.setPrefWidth(width-20);
+        notification_listView.setStyle("-fx-background-insets: 0;");
+
+        notifications_layout.setCenter(notification_listView);
+        notifications_layout.setLayoutX(10);
+        notifications_layout.setLayoutY(height-80);
+        Group not = new Group(notifications_layout);
+
+        Group notifications_group = new Group(notificationBox, not);
         //endregion
 
         Group main_root = new Group(mainMenu, notifications_group);
@@ -694,6 +704,7 @@ public class ClientGUI extends Application {
             }
         });
 
+        ClientGUI.stage = stage;
         return main;
     }
     //endregion
@@ -839,7 +850,6 @@ public class ClientGUI extends Application {
                         if(new_tags.isEmpty()){
                             Toast.makeText(stage,  "Tag list is empty",false);
                         }else{
-
                             ClientGUI.modifiedFileObject(fileObject);
                             ClientGUI.editing = false;
                             ClientGUI.setStage(setMain_scene(stage), stage);
@@ -848,7 +858,6 @@ public class ClientGUI extends Application {
                 }
             }
         });
-
         return edit;
     }
 
@@ -1059,15 +1068,12 @@ public class ClientGUI extends Application {
 
     public static class HBoxCell extends HBox {
         Label label = new Label();
-        Button button = new Button();
 
         HBoxCell(String labelText, Button button, Client client, boolean upload, String f, Stage stage) {
             super();
-
             label.setText(labelText);
             label.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(label, Priority.ALWAYS);
-
             this.getChildren().addAll(label, button);
 
             button.setOnAction(action -> {
@@ -1079,6 +1085,15 @@ public class ClientGUI extends Application {
                     ClientGUI.edit_tags.remove(this);
                 }
             });
+        }
+
+        HBoxCell(String labelText) {
+            super();
+            System.out.println("Creating table");
+            label.setText(labelText);
+            label.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(label, Priority.ALWAYS);
+            this.getChildren().add(label);
         }
 
         public void deleteTag(String tag, Stage stage){
@@ -1236,7 +1251,7 @@ public class ClientGUI extends Application {
     }
 
     public static void  addNotification(String message){
-        ClientGUI.observableNotificationList.add(message);
+        ClientGUI.observableNotificationList.add(new HBoxCell(message));
     }
 
     public boolean search(String text, Stage stage){

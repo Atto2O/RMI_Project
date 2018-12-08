@@ -554,12 +554,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         //We notify the client with all the tag that matches and the description of the file
                         ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
                         String msg = "";
-                        msg += "Hey im the Server, User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\nWith Tags:\n";
-
+                        msg += "User " + file.getUser().toUpperCase() + " upload the file {" + file.getFileName() + "}\nType: "+file.getType().toString()+"\nTags:\n";
                         for (String tag : tagArray) {
-                            msg += "-" + tag + "\n";
+                            msg += "\t- " + tag + "\n";
                         }
-                        msg += "Descripcio: " + file.getDescription() + "\n";
+                        msg += "Description: " + file.getDescription() + "\n";
                         client.callMe(msg);
                         System.out.println("We notified User:" + this.connectUsers.get(key).getName() + " about: User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\n");
                     } catch (Exception e) {
@@ -569,7 +568,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         //notifyConnection(notifiedUsers,newConnection);
                         continue;
                     }
-
                 }
 
             }
