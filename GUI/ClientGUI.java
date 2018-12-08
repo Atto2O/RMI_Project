@@ -78,7 +78,9 @@ public class ClientGUI extends Application {
     public static ObservableList<FileObject> observableSearchList = FXCollections.observableList(new ArrayList<>());
     private boolean searched = false;
 
-    private boolean editing = false;
+    public static FileObject editing_fileobject;
+    public static boolean editing = false;
+    public static ObservableList<HBoxCell> edit_tags;
 
     //region<COLORS>
     private final Color background_start_color = Color.LIGHTSTEELBLUE;
@@ -308,9 +310,16 @@ public class ClientGUI extends Application {
         title_mainFiles.setLayoutX(20);
         title_mainFiles.setLayoutY(25);
 
-        ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
-        this.userFiles_Table = this.createUsersTable(ClientGUI.observableUserFiles, stage);
-        Group mainFiles_group= new Group(this.userFiles_Table);
+        Group mainFiles_group;
+        if(editing){
+
+            mainFiles_group = new Group(this.createEditView(stage, ClientGUI.editing_fileobject));
+
+        }else{
+            ClientGUI.observableUserFiles = FXCollections.observableList(ClientGUI.getUserFiles());
+            this.userFiles_Table = this.createUsersTable(ClientGUI.observableUserFiles, stage);
+            mainFiles_group= new Group(this.userFiles_Table);
+        }
 
         Group users = new Group(background, title_mainFiles, mainFiles_group);
         Tab user_files_tab = new Tab();
@@ -381,7 +390,7 @@ public class ClientGUI extends Application {
         for (String tag : tags_upload) {
             Button delete_tag_upload = new Button();
             delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-            tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, this.client, true, stage));
+            tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, ClientGUI.client, true, null, stage));
         }
 
         Label text_tags = new Label("Enter file tags:");
@@ -443,7 +452,7 @@ public class ClientGUI extends Application {
             Button delete_tag = new Button();
             delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
             //RED BUTTON WITH IMAGE
-            subscribed_items.add(new HBoxCell(tag, delete_tag, ClientGUI.client, false, stage));
+            subscribed_items.add(new HBoxCell(tag, delete_tag, ClientGUI.client, false, null, stage));
         }
 
         ListView<HBoxCell> listView = new ListView<>();
@@ -488,12 +497,13 @@ public class ClientGUI extends Application {
         Group search_group = new Group();
         if(this.searched && (ClientGUI.observableSearchList != null||!ClientGUI.observableSearchList.isEmpty())){
             search_group = new Group(this.createSearchTable(ClientGUI.observableSearchList, stage));
-        }else if(this.searched && (ClientGUI.observableSearchList == null||ClientGUI.observableSearchList.isEmpty())){
+        }
+        /*else if(this.searched && (ClientGUI.observableSearchList == null||ClientGUI.observableSearchList.isEmpty())){
             Label not_found_files = new Label("Files not found");
             not_found_files.setLayoutX(300);
             not_found_files.setLayoutY(200);
             search_group = new Group(not_found_files);
-        }
+        }*/
 
         Group search = new Group(background, search_field, search_button, search_group);
         Tab search_tab = new Tab();
@@ -589,8 +599,9 @@ public class ClientGUI extends Application {
         Scene main = new Scene(main_root, width, height);
 
         search_button.setOnAction(action -> {
+            ClientGUI.observableSearchList = FXCollections.observableList(new ArrayList<>());
             if(search_field.getText().length()>0){
-                if(this.search(search_field.getText(),stage)){
+                if(this.search(search_field.getText(), stage)){
                     this.searched = true;
                     stage.setScene(setMain_scene(stage));
                 }
@@ -624,7 +635,7 @@ public class ClientGUI extends Application {
                 Button delete_tag = new Button();
                 delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
                 this.addTag(addTag_field.getText(),stage);
-                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, ClientGUI.client, false, stage));
+                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, ClientGUI.client, false, null,  stage));
                 addTag_field.clear();
             }
         });
@@ -633,7 +644,7 @@ public class ClientGUI extends Application {
             if (addTag_field_upload.getText().length() > 0) {
                 Button delete_tag_upload = new Button();
                 delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
-                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, ClientGUI.client, true, stage));
+                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, ClientGUI.client, true, null, stage));
                 addTag_field_upload.clear();
             }
         });
@@ -723,6 +734,145 @@ public class ClientGUI extends Application {
         imageView.setFitHeight(16);
         imageView.setFitWidth(16);
         return imageView;
+    }
+
+    private Group createEditView(Stage stage, FileObject fileObject){
+        Label text_change_filename = new Label("File name:");
+        TextField change_file_name = new TextField(fileObject.getFileName());
+        text_change_filename.setLayoutX(40);
+        text_change_filename.setLayoutY(80);
+        change_file_name.setLayoutX(40);
+        change_file_name.setLayoutY(100);
+
+        ObservableList<String> change_type_options =
+                FXCollections.observableArrayList(
+                        "MOVIE",
+                        "IMAGE",
+                        "TEXT",
+                        "PDF",
+                        "AUDIO"
+                );
+        final ComboBox edit_types = new ComboBox(change_type_options);
+        edit_types.getSelectionModel().select(fileObject.getType().toString());
+
+        Label edit_file_types = new Label("File type:");
+        edit_file_types.setLayoutX(40);
+        edit_file_types.setLayoutY(140);
+        edit_types.setLayoutX(40);
+        edit_types.setLayoutY(160);
+
+        ToggleSwitch edit_switch_state_button = new ToggleSwitch();
+        Label edit_text_state = new Label("File state:");
+        edit_text_state.setLayoutX(40);
+        edit_text_state.setLayoutY(200);
+        edit_switch_state_button.setLayoutX(40);
+        edit_switch_state_button.setLayoutY(220);
+
+        TextArea description_file_edit = new TextArea(fileObject.getDescription());
+        description_file_edit.setOnKeyTyped(event ->{
+            int maxCharacters = max_description_chars;
+            if(description_file_edit.getText().length() > maxCharacters) event.consume();
+        });
+        description_file_edit.setPrefWidth(340);
+        description_file_edit.setPrefHeight(90);
+        Label edit_text_description = new Label("Enter a description (max " + max_description_chars + " characters):");
+        edit_text_description.setLayoutX(340);
+        edit_text_description.setLayoutY(20);
+        description_file_edit.setLayoutX(340);
+        description_file_edit.setLayoutY(40);
+
+        ArrayList<String> tags_edit = fileObject.getTags();
+
+        BorderPane tags_layout_edit = new BorderPane();
+        List<HBoxCell> tag_edit_items = new ArrayList<>();
+        for (String tag : tags_edit) {
+            Button delete_tag_upload = new Button();
+            delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            tag_edit_items.add(new HBoxCell(tag, delete_tag_upload, ClientGUI.client, true, "hola", stage));
+        }
+
+        Label edit_text_tags = new Label("File tags:");
+        edit_text_tags.setLayoutX(340);
+        edit_text_tags.setLayoutY(140);
+
+        ListView<HBoxCell> edit_tagsView = new ListView<>();
+        ClientGUI.edit_tags = FXCollections.observableList(tag_edit_items);
+
+        edit_tagsView.setItems(ClientGUI.edit_tags);
+        edit_tagsView.setMaxHeight(70);
+        edit_tagsView.setMinHeight(10);
+        edit_tagsView.setMaxWidth(250);
+
+        tags_layout_edit.setCenter(edit_tagsView);
+        tags_layout_edit.setLayoutX(340);
+        tags_layout_edit.setLayoutY(160);
+
+        TextField addTag_field_edit = new TextField();
+        addTag_field_edit.setOnKeyTyped(event -> {
+            int maxCharacters = max_tag_chars;
+            if (addTag_field_edit.getText().length() > maxCharacters) event.consume();
+        });
+        addTag_field_edit.setLayoutX(width - 240);
+        addTag_field_edit.setLayoutY(240);
+        Button add_button_edit = new Button();
+        add_button_edit.setGraphic(buildImage("./GUI/Graphics/add.png"));
+        add_button_edit.setLayoutX(width - 70);
+        add_button_edit.setLayoutY(240);
+
+
+        Button save_edit_button = new Button("Save");
+        save_edit_button.setLayoutX(320);
+        save_edit_button.setLayoutY(height-160);
+
+        Group edit = new Group(change_file_name, text_change_filename, edit_types, edit_file_types,
+                edit_text_state, edit_switch_state_button, edit_text_description, description_file_edit, save_edit_button,
+                tags_layout_edit, addTag_field_edit, add_button_edit, edit_text_tags);
+
+        add_button_edit.setOnAction(action -> {
+            if (addTag_field_edit.getText().length() > 0) {
+                Button delete_tag = new Button();
+                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                ClientGUI.edit_tags.add(new HBoxCell(addTag_field_edit.getText(), delete_tag, ClientGUI.client,false, "hola", stage));
+                addTag_field_edit.clear();
+            }
+        });
+
+        save_edit_button.setOnAction(action -> {
+
+            String filename = change_file_name.getText();
+            if(filename.isEmpty()){
+                //AVIS ENTRAR NAME
+                Toast.makeText(stage,"File name is empty",false);
+            }else{
+                if(edit_types.getSelectionModel().isEmpty()){
+                    //AVIS ENTRAR TYPE
+                    Toast.makeText(stage,"Type is empty",false);
+                }else{
+                    String type = edit_types.getSelectionModel().getSelectedItem().toString();
+                    SimpleBooleanProperty state = edit_switch_state_button.switchOnProperty();
+                    String description = description_file_edit.getText();
+                    if(description.isEmpty()){
+                        //AVIS ENTRAR DESCRIPCIO
+                        Toast.makeText(stage,"Description is empty",false);
+                    }else{
+                        ArrayList<String> new_tags = new ArrayList<>();
+                        for (HBoxCell tag:tag_edit_items) {
+                            new_tags.add(tag.label.getText());
+                        }
+                        if(new_tags.isEmpty()){
+                            Toast.makeText(stage,  "Tag list is empty",false);
+                        }else{
+
+                            ClientGUI.modifiedFileObject(fileObject);
+                            ClientGUI.editing = false;
+                            ClientGUI.setStage(setMain_scene(stage), stage);
+                        }
+                    }
+                }
+            }
+        });
+
+        return edit;
     }
 
     private TableView createUsersTable(ObservableList<FileObject> list, Stage stage){
@@ -915,7 +1065,9 @@ public class ClientGUI extends Application {
                 @Override public void handle(ActionEvent actionEvent) {
                     table.getSelectionModel().select(getTableRow().getIndex());
                     FileObject file = (FileObject) table.getSelectionModel().getSelectedItem();
-                    //open edit window from this file;
+                    ClientGUI.editing_fileobject = file;
+                    ClientGUI.editing = true;
+                    ClientGUI.setStage(setMain_scene(stage), stage);
                 }
             });
         }
@@ -935,7 +1087,7 @@ public class ClientGUI extends Application {
         Label label = new Label();
         Button button = new Button();
 
-        HBoxCell(String labelText, Button button, Client client, boolean upload, Stage stage) {
+        HBoxCell(String labelText, Button button, Client client, boolean upload, String f, Stage stage) {
             super();
 
             label.setText(labelText);
@@ -948,23 +1100,24 @@ public class ClientGUI extends Application {
                 if(upload){
                     this.deleteUploadTag(label.getText(), stage);
                 }else{
-                    this.deleteTag(label.getText(), stage);}
+                    this.deleteTag(label.getText(), stage);
+                }if(f != null){
+                    ClientGUI.edit_tags.remove(this);
+                }
             });
         }
 
         public void deleteTag(String tag, Stage stage){
-
             if(client.desSubscribeToTag(tag)){
                 Toast.makeText(stage,  "Tag deleted successful!",true);
             }else{
                 Toast.makeText(stage,  "Error deleting tag!",false);
             }
-
             ClientGUI.observableSubscriptionList.remove(this);
         }
 
         public void deleteUploadTag(String tag, Stage stage){
-            client.desSubscribeToTag(tag);
+            ClientGUI.client.desSubscribeToTag(tag);
             ClientGUI.tags_list.remove(this);
         }
     }
@@ -1112,13 +1265,18 @@ public class ClientGUI extends Application {
     }
 
     public boolean search(String text, Stage stage){
-        if(client.getFilesByText(text).isEmpty()){
-            Toast.makeText(stage,  "No matches found!",false);
+        ArrayList<FileObject> array = client.getFilesByText(text);
+
+        if(array.isEmpty()){
+            Toast.makeText(stage,"No matches found!",false);
             return false;
         }else{
-            ClientGUI.observableSearchList = FXCollections.observableList(client.getFilesByText(text));
+            ClientGUI.observableSearchList = FXCollections.observableList(array);
         }
         return true;
     }
 
+    public static void modifiedFileObject(FileObject fileObject){
+
+    }
 }
