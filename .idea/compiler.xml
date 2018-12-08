@@ -7,12 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="RMI" />
-        <module name="RMI_Project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="RMI" target="1.8" />
-      <module name="RMI_Project" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

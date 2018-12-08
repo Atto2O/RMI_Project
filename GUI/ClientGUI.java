@@ -388,8 +388,7 @@ public class ClientGUI extends Application {
         BorderPane tags_layout = new BorderPane();
         List<HBoxCell> tag_upload_items = new ArrayList<>();
         for (String tag : tags_upload) {
-            Button delete_tag_upload = new Button();
-            delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            Button delete_tag_upload = new Button("Delete");
             tag_upload_items.add(new HBoxCell(tag, delete_tag_upload, ClientGUI.client, true, null, stage));
         }
 
@@ -414,8 +413,7 @@ public class ClientGUI extends Application {
         });
         addTag_field_upload.setLayoutX(width - 240);
         addTag_field_upload.setLayoutY(240);
-        Button add_button_upload = new Button();
-        add_button_upload.setGraphic(buildImage("./GUI/Graphics/add.png"));
+        Button add_button_upload = new Button("Add");
         add_button_upload.setLayoutX(width - 70);
         add_button_upload.setLayoutY(240);
 
@@ -449,8 +447,7 @@ public class ClientGUI extends Application {
         BorderPane layout = new BorderPane();
         List<HBoxCell> subscribed_items = new ArrayList<>();
         for (String tag : ClientGUI.observableSubscriptions) {
-            Button delete_tag = new Button();
-            delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            Button delete_tag = new Button("Delete");
             //RED BUTTON WITH IMAGE
             subscribed_items.add(new HBoxCell(tag, delete_tag, ClientGUI.client, false, null, stage));
         }
@@ -473,8 +470,7 @@ public class ClientGUI extends Application {
         });
         addTag_field.setLayoutX(width - 240);
         addTag_field.setLayoutY(240);
-        Button add_button = new Button();
-        add_button.setGraphic(buildImage("./GUI/Graphics/add.png"));
+        Button add_button = new Button("Add");
         add_button.setLayoutX(width - 70);
         add_button.setLayoutY(240);
 
@@ -489,8 +485,7 @@ public class ClientGUI extends Application {
         TextField search_field = new TextField();
         search_field.setLayoutX(30);
         search_field.setLayoutY(10);
-        Button search_button = new Button();
-        search_button.setGraphic(this.buildImage("./GUI/Graphics/search.png"));
+        Button search_button = new Button("Search");
         search_button.setLayoutX(200);
         search_button.setLayoutY(10);
 
@@ -573,8 +568,7 @@ public class ClientGUI extends Application {
         disconnect_button.setLayoutY(170);
 
         Group disconnect = new Group(background, change_user_button, disconnect_button);
-        Tab disconnect_tab = new Tab();
-        disconnect_tab.setGraphic(buildImage("./GUI/Graphics/logout.png"));
+        Tab disconnect_tab = new Tab("Log Out");
         disconnect_tab.setContent(disconnect);
         //endregion
 
@@ -632,8 +626,7 @@ public class ClientGUI extends Application {
 
         add_button.setOnAction(action -> {
             if (addTag_field.getText().length() > 0) {
-                Button delete_tag = new Button();
-                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                Button delete_tag = new Button("Delete");
                 this.addTag(addTag_field.getText(),stage);
                 ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, ClientGUI.client, false, null,  stage));
                 addTag_field.clear();
@@ -642,8 +635,7 @@ public class ClientGUI extends Application {
 
         add_button_upload.setOnAction(action -> {
             if (addTag_field_upload.getText().length() > 0) {
-                Button delete_tag_upload = new Button();
-                delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                Button delete_tag_upload = new Button("Delete");
                 ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, ClientGUI.client, true, null, stage));
                 addTag_field_upload.clear();
             }
@@ -720,19 +712,8 @@ public class ClientGUI extends Application {
         this.exit();
     }
 
-    public static void animation(){ launch();}
-
-    private static ImageView buildImage(String imgPatch) {
-        try {
-            Image i = new Image(new FileInputStream(imgPatch));
-            ImageView imageView = new ImageView(i);
-            imageView.setFitHeight(16);
-            imageView.setFitWidth(16);
-            return imageView;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static void animation(){
+        launch();
     }
 
     private Group createEditView(Stage stage, FileObject fileObject){
@@ -785,8 +766,7 @@ public class ClientGUI extends Application {
         BorderPane tags_layout_edit = new BorderPane();
         List<HBoxCell> tag_edit_items = new ArrayList<>();
         for (String tag : tags_edit) {
-            Button delete_tag_upload = new Button();
-            delete_tag_upload.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+            Button delete_tag_upload = new Button("Delete");
             tag_edit_items.add(new HBoxCell(tag, delete_tag_upload, ClientGUI.client, true, "hola", stage));
         }
 
@@ -813,8 +793,7 @@ public class ClientGUI extends Application {
         });
         addTag_field_edit.setLayoutX(width - 240);
         addTag_field_edit.setLayoutY(240);
-        Button add_button_edit = new Button();
-        add_button_edit.setGraphic(buildImage("./GUI/Graphics/add.png"));
+        Button add_button_edit = new Button("Add");
         add_button_edit.setLayoutX(width - 70);
         add_button_edit.setLayoutY(240);
 
@@ -829,8 +808,7 @@ public class ClientGUI extends Application {
 
         add_button_edit.setOnAction(action -> {
             if (addTag_field_edit.getText().length() > 0) {
-                Button delete_tag = new Button();
-                delete_tag.setGraphic(this.buildImage("./GUI/Graphics/delete.png"));
+                Button delete_tag = new Button("Delete");
                 ClientGUI.edit_tags.add(new HBoxCell(addTag_field_edit.getText(), delete_tag, ClientGUI.client,false, "hola", stage));
                 addTag_field_edit.clear();
             }
@@ -961,8 +939,7 @@ public class ClientGUI extends Application {
 
         final Button deleteFile;
         {
-            deleteFile = new Button();
-            deleteFile.setGraphic(buildImage("./GUI/Graphics/delete.png"));
+            deleteFile = new Button("Delete");
         }
 
         final StackPane paddedButton = new StackPane();
@@ -1001,8 +978,7 @@ public class ClientGUI extends Application {
     private class DownloadFile_fromTable extends TableCell<FileObject, Boolean> {
         final Button download;
         {
-            download = new Button();
-            download.setGraphic(buildImage("./GUI/Graphics/download.png"));
+            download = new Button("Download");
         }
         final StackPane paddedButton = new StackPane();
         DoubleProperty buttonY = new SimpleDoubleProperty();
@@ -1047,8 +1023,7 @@ public class ClientGUI extends Application {
     private class EditFile_fromTable extends TableCell<FileObject, Boolean> {
         final Button edit;
         {
-           edit = new Button();
-           edit.setGraphic(buildImage("./GUI/Graphics/edit.png"));
+           edit = new Button("Edit");
         }
         final StackPane paddedButton = new StackPane();
         DoubleProperty buttonY = new SimpleDoubleProperty();
