@@ -1,6 +1,7 @@
 package GUI;
 
 import Objects.FileObject;
+import Objects.Type;
 import javafx.application.Application;
 
 import javafx.beans.property.DoubleProperty;
@@ -861,8 +862,12 @@ public class ClientGUI extends Application {
                         if(new_tags.isEmpty()){
                             Toast.makeText(stage,  "Tag list is empty",false);
                         }else{
-
-                            ClientGUI.modifiedFileObject(fileObject);
+                            fileObject.setFileName(filename);
+                            fileObject.setType(Type.fromString(type));
+                            fileObject.setState(state.getValue());
+                            fileObject.setDescription(description);
+                            fileObject.setTags(new_tags);
+                            ClientGUI.modifiedFileObject(fileObject,stage);
                             ClientGUI.editing = false;
                             ClientGUI.setStage(setMain_scene(stage), stage);
                         }
@@ -1276,7 +1281,12 @@ public class ClientGUI extends Application {
         return true;
     }
 
-    public static void modifiedFileObject(FileObject fileObject){
+    public static void modifiedFileObject(FileObject fileObject,Stage stage){
+        if(client.fileModified(fileObject)){
+            Toast.makeText(stage,"Edited successfully!",true);
 
+        }else{
+            Toast.makeText(stage,"Error editing!",false);
+        }
     }
 }

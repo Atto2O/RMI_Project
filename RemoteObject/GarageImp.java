@@ -613,6 +613,34 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return "Backup upload!(files)";
     }
 
+    @Override
+    public boolean addModification(FileObject file) {
+        try {
+            semaphore.acquire();
+            Iterator<FileObject> iter = this.files.getFiles().iterator();
+            //For each file in the server
+            while (iter.hasNext()) {
+                FileObject currentlyFile = iter.next();
+                //If we find the id
+                if (currentlyFile.getId() == file.getId()) {
+                    this.files.removeFile(currentlyFile);
+                    System.out.printf("borrada crack");
+                    this.files.addFile(file);
+                    System.out.printf("afegida crack");
+                    ServerUtils.saveFiles(this.files.getFiles());
+                    semaphore.release();
+                    return true;
+
+                }
+            }
+            semaphore.release();
+            return false;
+        } catch (Exception e) {
+            System.out.println("delete file Error: " + e.toString());
+            semaphore.release();
+            return false;
+        }
+    }
     /**
      * We save the currently server file information into the json backup
      *

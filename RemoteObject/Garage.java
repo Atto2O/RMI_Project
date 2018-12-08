@@ -31,6 +31,8 @@ public interface Garage extends Remote{
     public boolean deleteFile(int fileId, String user) throws java.rmi.RemoteException;
     public boolean checkAvailableUser(String newUserName) throws java.rmi.RemoteException;
     public String modifiedFile(FileObject file) throws java.rmi.RemoteException;
+    public boolean addModification(FileObject file) throws java.rmi.RemoteException;
+
     public String modifiedUser(User user) throws java.rmi.RemoteException;
     public boolean addSubscriptionTag(String userName, String newTag)throws java.rmi.RemoteException;
     public boolean deleteSubscriptionTag(String userName, String newTag)throws java.rmi.RemoteException;

@@ -305,6 +305,16 @@ public class Client {
 			System.out.println("Exception in Client-changeType(): " + e.toString());
 		}
 	}
+	public boolean fileModified(FileObject file){
+		try {
+
+			return this.h.addModification(file);
+
+		}catch (Exception e){
+			System.out.println("Exception in Client-changeType(): " + e.toString());
+			return false;
+		}
+	}
 
 	public String changeState(FileObject file){
 		Scanner scanner = new Scanner(System.in);
