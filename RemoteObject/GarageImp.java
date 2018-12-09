@@ -508,7 +508,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         for (String tag : tagArray) {
                             msg += "\t- " + tag + "\n";
                         }
-                        msg += "Description: " + file.getDescription() + "\n";
+                        msg += "Description: " + file.getDescription() + "\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n";
                         client.callMe(msg);
                         System.out.println("We notified User:" + this.connectUsers.get(key).getName() + " about: User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\n");
                     } catch (Exception e) {

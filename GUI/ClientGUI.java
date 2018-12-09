@@ -636,8 +636,8 @@ public class ClientGUI extends Application {
         add_button.setOnAction(action -> {
             if (addTag_field.getText().length() > 0) {
                 Button delete_tag = new Button("Delete");
-                this.addTag(addTag_field.getText(),stage);
-                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText(), delete_tag, ClientGUI.client, false, null,  stage));
+                this.addTag(addTag_field.getText().toLowerCase(),stage);
+                ClientGUI.observableSubscriptionList.add(new HBoxCell(addTag_field.getText().toLowerCase(), delete_tag, ClientGUI.client, false, null,  stage));
                 addTag_field.clear();
             }
         });
@@ -645,7 +645,7 @@ public class ClientGUI extends Application {
         add_button_upload.setOnAction(action -> {
             if (addTag_field_upload.getText().length() > 0) {
                 Button delete_tag_upload = new Button("Delete");
-                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText(), delete_tag_upload, ClientGUI.client, true, null, stage));
+                ClientGUI.tags_list.add(new HBoxCell(addTag_field_upload.getText().toLowerCase(), delete_tag_upload, ClientGUI.client, true, null, stage));
                 addTag_field_upload.clear();
             }
         });
@@ -659,7 +659,6 @@ public class ClientGUI extends Application {
                 if (ClientGUI.upload_file != null) {
                     path = ClientGUI.upload_file.getAbsolutePath();
                     upload_path_file.setText(path);
-
                 }
             }
         });

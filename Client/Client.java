@@ -19,7 +19,6 @@ import RemoteObject.*;
 
 public class Client {
 
-
 	public static Garage h;
 	public String state ="disconnected";
 	private static String userName = "";
@@ -170,6 +169,7 @@ public class Client {
 				if (server_response) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
                     Client.userName = newUserName.toLowerCase().trim();
+                    this.logear(Client.userName, password_1);
 					return true;
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
