@@ -20,7 +20,7 @@ import RemoteObject.*;
 public class Client {
 
 
-	static Garage h;
+	public static Garage h;
 	public String state ="disconnected";
 	private static String userName = "";
 	public int callbackid;
@@ -44,7 +44,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByText(String text){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = this.h.searchFile(text.toLowerCase(), this.userName);
+            array = Client.h.searchFile(text.toLowerCase(), Client.userName);
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
@@ -55,7 +55,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByUser(){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = this.h.searchFileByName(this.userName.toLowerCase());
+            array = Client.h.searchFileByName(Client.userName.toLowerCase());
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
@@ -65,7 +65,7 @@ public class Client {
 
     public boolean changePassword(String oldPassword,String newPassword1){
 		try{
-			return this.h.changePaswordOnServer(this.userName,oldPassword,newPassword1);
+			return Client.h.changePaswordOnServer(Client.userName,oldPassword,newPassword1);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-changePassword(): " + e.toString());
@@ -75,9 +75,9 @@ public class Client {
 
 	public void deslogear(){
 		try{
-			this.h.deleteCallback(this.callbackid);
+			Client.h.deleteCallback(this.callbackid);
 			this.state = "disconnected";
-			this.userName = "";
+            Client.userName = "";
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deslogear(): " + e.toString());
@@ -85,28 +85,21 @@ public class Client {
 	}
 	public void deleteCallbackFromClienth(){
 		try{
-			this.h.deleteCallback(this.callbackid);
+            Client.h.deleteCallback(this.callbackid);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-deleteCallbackFromClient: " + e.toString());
 		}
-
 	}
 
 	public boolean setUpConnections(){
 		String registryURL = "rmi://"+ this.serverIP +":" + this.serverPORT + "/some";
 		try {
-
-			this.h = (Garage)Naming.lookup(registryURL);
-
-
+            Client.h = (Garage)Naming.lookup(registryURL);
 		System.out.println("Garage created!");
-
         }catch (Exception e) {
-
             return false;
         }
-
 		try {
 			this.callbackObj = new CallbackImpl();
 		} catch (Exception e) {
@@ -120,7 +113,7 @@ public class Client {
 	//region<SignUp>
 	public boolean subscribeToTag(String newTag){
 		try {
-			return this.h.addSubscriptionTag(this.userName, newTag.toLowerCase());
+			return Client.h.addSubscriptionTag(Client.userName, newTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
@@ -131,7 +124,7 @@ public class Client {
 
 	public boolean desSubscribeToTag(String oldTag){
 		try {
-			return this.h.deleteSubscriptionTag(this.userName, oldTag.toLowerCase());
+			return Client.h.deleteSubscriptionTag(Client.userName, oldTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
@@ -141,13 +134,12 @@ public class Client {
 	}
 
 	public boolean logear(String username, String password){
-		this.userName=username.toLowerCase();
-		String contrasenya=password;
+        Client.userName=username.toLowerCase();
 		int callbackid = -1;
 		try {
-			if (!contrasenya.equals("") && !this.userName.equals("")){
+			if (!password.equals("") && !Client.userName.equals("")){
 				//les contrasenyes son iguals
-				callbackid = this.h.user_login(this.userName, contrasenya,callbackObj);
+				callbackid = Client.h.user_login(Client.userName, password,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
@@ -164,7 +156,6 @@ public class Client {
 			System.out.println("Exception in Client-logear(): " + e.toString());
 		}
 		return false;
-
 	}
 	//endregion
 
@@ -174,11 +165,11 @@ public class Client {
 		try {
 			if (password_1.equals(password_2)) {
 				//les contrasenyes son iguals
-				boolean server_response = this.h.user_signup(newUserName.toLowerCase(), password_1);
+				boolean server_response = Client.h.user_signup(newUserName.toLowerCase(), password_1);
                 System.out.println(server_response);
-				if (server_response == true) {
+				if (server_response) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
-					this.userName = newUserName.toLowerCase();
+                    Client.userName = newUserName.toLowerCase();
 					return true;
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
@@ -219,7 +210,7 @@ public class Client {
 	public boolean upload(File newFile, String filename, String type, String description, ArrayList<String> tags, boolean state){
 
 		FileObject fileObject = new FileObject();
-		fileObject.setUser(this.userName);
+		fileObject.setUser(Client.userName);
 
 		byte[] data;
 
@@ -276,7 +267,7 @@ public class Client {
 	public boolean fileModified(FileObject file){
 		try {
 
-			return this.h.addModification(file);
+			return Client.h.addModification(file);
 
 		}catch (Exception e){
 			System.out.println("Exception in Client-changeType(): " + e.toString());
@@ -288,7 +279,7 @@ public class Client {
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
 		ArrayList<String> array = new ArrayList<>();
         try{
-            array = h.getSubscriptionsList(this.userName.toLowerCase());
+            array = h.getSubscriptionsList(Client.userName.toLowerCase());
         }catch(Exception e){
             System.out.println("Error in Client-getSubscriptionsClient(): " + e.toString());
         }
