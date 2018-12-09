@@ -19,9 +19,7 @@ import RemoteObject.*;
 
 public class Client {
 
-	public String msg;
-	static int RMIPort = 8001;
-	static String hostName = "localhost";//AQUEST A DE SER EL DEL SERVIDOR!!"172.16.0.26";//
+
 	static Garage h;
 	public String state ="disconnected";
 	private static String userName = "";
