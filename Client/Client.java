@@ -180,9 +180,6 @@ public class Client {
 	//endregion
 
 	//region<SignIn>
-	public void signin(){
-
-	}
 
 	public boolean registrar(String newUserName, String password_1, String password_2){
 		try {
@@ -235,7 +232,7 @@ public class Client {
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(this.userName);
 
-		byte[] data = new byte[0];
+		byte[] data;
 
 		try {
 			Path fileLocation = Paths.get(newFile.getAbsolutePath());
@@ -287,24 +284,6 @@ public class Client {
 	}
 	//endregion
 
-	public void changeName(FileObject file, String newName){
-		try {
-			file.setFileName(newName.toLowerCase());
-			this.h.modifiedFile(file);
-		}catch (Exception e){
-			System.out.println("Exception in Client-changeName(): " + e.toString());
-		}
-	}
-
-	public void changeType(FileObject file, String t){
-		try {
-			Type type  = Type.fromString(t.toLowerCase());
-			file.setType(type);
-			this.h.modifiedFile(file);
-		}catch (Exception e){
-			System.out.println("Exception in Client-changeType(): " + e.toString());
-		}
-	}
 	public boolean fileModified(FileObject file){
 		try {
 
@@ -313,28 +292,6 @@ public class Client {
 		}catch (Exception e){
 			System.out.println("Exception in Client-changeType(): " + e.toString());
 			return false;
-		}
-	}
-
-	public String changeState(FileObject file){
-		Scanner scanner = new Scanner(System.in);
-		String response;
-
-		System.out.printf("Current file state is ");
-		if(file.getState()){
-			System.out.printf("PUBLIC\nWill you change it to PRIVATE? (YES/NO)");
-			response = scanner.next();
-			if(response.toLowerCase().equals("yes")){
-				file.setState(false);
-				return "State changed, now this file is PRIVATE.";
-			}else{return "State not changed.";}
-		} else {
-			System.out.printf("PRIVATE\nWill you change it to PUBLIC? (YES/NO)");
-			response = scanner.next();
-			if(response.toLowerCase().equals("yes")){
-				file.setState(true);
-				return "State changed, now this file is PUBLIC.";
-			}else{return "State not changed.";}
 		}
 	}
 
@@ -348,36 +305,6 @@ public class Client {
         }
         return array;
 	}
-
-	public String addTag(FileObject file) throws RemoteException{
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("Type a tag to add: ");
-		String tag = scanner.next();
-
-		ArrayList<String> current_description = file.getTags();
-		current_description.add(tag);
-		file.setTags(current_description);
-		this.h.modifiedFile(file);
-		return "added!";
-	}
-
-	public String removeTag(FileObject file) throws RemoteException {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Type a tag to remove: ");
-        String tag = scanner.next();
-
-        ArrayList<String> current_description = file.getTags();
-        if (current_description.contains(tag.toLowerCase())) {
-            current_description.remove(tag);
-            file.setTags(current_description);
-            this.h.modifiedFile(file);
-            return "removed!";
-        } else {
-            return "not in current tags!";
-        }
-    }
 	//endregion
 
 	//endregion
@@ -385,25 +312,4 @@ public class Client {
 	//region<Users>
 	//endregion
 	//endregion
-
-	public boolean checkUsername(String userName) throws RemoteException{
-		try {
-			return this.h.checkAvailableUser(userName.toLowerCase());
-		}catch (Exception e){
-			System.out.println("Error in Client-checkUsername(): " + e.toString());
-		}
-		return false;
-	}
-
-	public boolean logIn(String userName, String password) throws RemoteException{
-		int callbackid = -1;
-		if (!password.equals("") && !userName.equals("")){
-			callbackid = Client.h.user_login(userName.toLowerCase(), password, callbackObj);
-			if (callbackid != -1) {
-				this.callbackid = callbackid;
-				return true;
-			}
-		}
-		return false;
-	}
 }

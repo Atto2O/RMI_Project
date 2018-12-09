@@ -135,10 +135,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return -1;
         }
-
         return -1;
-
-
     }
 
     /**
@@ -149,7 +146,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @throws java.rmi.RemoteException
      */
     public boolean changePaswordOnServer(String userName, String oldPassword, String newPassword1) throws java.rmi.RemoteException {
-
         try {
             semaphore.acquire();
             Iterator<User> iter = this.users.getUsers().iterator();
@@ -163,20 +159,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         semaphore.release();
                         return true;
                     }
-
-
                 }
             }
             semaphore.release();
             return false;
-
         } catch (Exception e) {
             e.printStackTrace();
-
             semaphore.release();
             return false;
         }
-
     }
     //region<CALLBACK>
     // method for client to call to add itself to its callback
@@ -200,9 +191,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 //We store the id in the server
                 this.callbackObjects.put(key, callbackObject);
                 this.connectUsers.put(key, currentlyUser);
-
                 System.out.println("User: " + currentlyUser.getName() + " just connected with key: " + key + "\n");
-
             }
             semaphore.release();
             //We return a valid id
@@ -279,7 +268,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     }
                     semaphore.release();
                     return false;
-
                 }
             }
             semaphore.release();
@@ -289,9 +277,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             e.printStackTrace();
             return false;
-
         }
-
     }
 
     public boolean deleteSubscriptionTag(String userName, String oldTag) throws RemoteException {
@@ -303,8 +289,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 User curentlyUser = iter.next();
                 if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
                     //We add the tag
-
-
                     if (curentlyUser.deleteSubscriptions(oldTag)) {
                         ServerUtils.saveUsers(this.users.getUsers());
                         semaphore.release();
@@ -312,7 +296,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     }
                     semaphore.release();
                     return false;
-
                 }
             }
             semaphore.release();
@@ -322,10 +305,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             e.printStackTrace();
             return false;
-
         }
-
-
     }
 
     /**
@@ -335,10 +315,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      */
     @Override
     public boolean user_signup(String newUserName, String password) {
-
         try {
             semaphore.acquire();
-
             if (checkAvailableUser(newUserName)) {
                 this.lastUserID = generateId(lastUserID);
                 //We create a new user
@@ -352,7 +330,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 semaphore.release();
                 return true;
             } else {
-
                 semaphore.release();
                 return false;
             }
@@ -451,13 +428,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     if ((currentlyFile.getUser().toLowerCase().equals(name))){
 
                         Files.add(currentlyFile);
-
                     }
                 }
-
             semaphore.release();
             return Files;
-
         } catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
@@ -536,15 +510,12 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         ArrayList<String> tagArray = new ArrayList<String>();
         try {
             for (int key : this.callbackObjects.keySet()) {
-
-
                 tagArray = new ArrayList<String>();
                 //We add the tags that matches
                 for (String filetag : file.getTags()) {
                     if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
                         tagArray.add(filetag);
                     }
-
                 }
                 //If the files is not private of user is the owner of the file
                 if ((file.getState() && !tagArray.isEmpty())
@@ -569,15 +540,12 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                         continue;
                     }
                 }
-
             }
             //We disconnect all the users that failed into the server connection
             for (int idDelete : usersToDelete) {
                 this.callbackObjects.remove(idDelete);
                 this.connectUsers.remove(idDelete);
             }
-
-
         } catch (Exception e) {
             System.out.println("Error at notifyNewFile method \n" + e.toString());
         }
@@ -628,7 +596,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     ServerUtils.saveFiles(this.files.getFiles());
                     semaphore.release();
                     return true;
-
                 }
             }
             semaphore.release();
@@ -669,15 +636,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }catch(Exception e){
             System.out.println("Error at notifyNewFile method \n" + e.toString());
         }
-
         semaphore.release();
         return array;
     }
-
-
-
-
-
-
-
 }

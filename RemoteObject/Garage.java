@@ -24,16 +24,10 @@ public interface Garage extends Remote{
     public boolean uploadFile(FileObject file)  throws java.rmi.RemoteException;
     public  ArrayList<FileObject> searchFile (String keyText,String username) throws java.rmi.RemoteException;
     public  ArrayList<FileObject> searchFileByName (String userName) throws java.rmi.RemoteException;
-
-    public FileObject downloadFile (int id) throws java.rmi.RemoteException;
-    //public int addCallback (ClientCallbackInterface callbackObject,String userName) throws java.rmi.RemoteException;
     public void deleteCallback (int id) throws java.rmi.RemoteException;
     public boolean deleteFile(int fileId, String user) throws java.rmi.RemoteException;
     public boolean checkAvailableUser(String newUserName) throws java.rmi.RemoteException;
-    public String modifiedFile(FileObject file) throws java.rmi.RemoteException;
     public boolean addModification(FileObject file) throws java.rmi.RemoteException;
-
-    public String modifiedUser(User user) throws java.rmi.RemoteException;
     public boolean addSubscriptionTag(String userName, String newTag)throws java.rmi.RemoteException;
     public boolean deleteSubscriptionTag(String userName, String newTag)throws java.rmi.RemoteException;
     public ArrayList<String> getSubscriptionsList(String userName)throws java.rmi.RemoteException;
