@@ -440,27 +440,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
-
-    /**
-     * @param id this one is the id of the file u want to download
-     * @return we return the file related to the id
-     * @throws RemoteException
-     */
-    @Override
-    public FileObject downloadFile(int id) throws RemoteException {
-        try {
-            semaphore.acquire();
-            //We get the file object related to the id
-            FileObject file = getFileObject(id);
-            semaphore.release();
-            return file;
-        } catch (Exception e) {
-            System.out.println("Download Error: " + e.toString());
-            semaphore.release();
-            return null;
-        }
-    }
-
     /**
      * @param fileId id of the file we want to delete
      * @param user   the name of the user who wants to delete
@@ -566,19 +545,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return new FileObject();
     }
 
-
-    /**
-     * We save the currently server file information into the json backup
-     *
-     * @param file
-     * @return
-     */
-    @Override
-    public String modifiedFile(FileObject file) {
-        ServerUtils.saveFiles(this.files.getFiles());
-        return "Backup upload!(files)";
-    }
-
     @Override
     public boolean addModification(FileObject file) {
         try {
@@ -605,17 +571,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.release();
             return false;
         }
-    }
-    /**
-     * We save the currently server file information into the json backup
-     *
-     * @param user
-     * @return
-     */
-    @Override
-    public String modifiedUser(User user) {
-        ServerUtils.saveUsers(this.users.getUsers());
-        return "Backup upload!(users)";
     }
     //endregion
 

@@ -5,24 +5,17 @@ package Client;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
 import java.rmi.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
-import java.util.concurrent.ExecutionException;
-
 import CallBack.*;
 import GUI.ClientGUI;
 import Objects.FileObject;
 import Objects.Type;
 import RemoteObject.*;
-
-import javax.print.DocFlavor;
 
 public class Client {
 
@@ -45,10 +38,8 @@ public class Client {
 	{
 		Client client = new Client();
 		ClientGUI.client = client;
-		ClientGUI.animation();
-		Scanner scanner = new Scanner(System.in);
-		int portNum = 8001;//AQUEST A DE SER EL DEL SERVIDOR!!
 		client.state = "disconnected";
+		ClientGUI.animation();
 	}
 	//endregion
 
