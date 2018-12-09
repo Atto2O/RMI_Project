@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="3014.746555648458" y="3395.0">Server.Server</node>
+    <node x="1531.0" y="2104.0">GUI.ClientGUI.HBoxCell</node>
+    <node x="2883.7465556484585" y="1840.0">RemoteObject.GarageImp</node>
+    <node x="2894.186052383606" y="844.5">ServerUtils.Id</node>
+    <node x="1768.0" y="1129.0">Client.Client</node>
+    <node x="768.0" y="2104.0">GUI.ClientGUI.DeleteFile_fromTable</node>
+    <node x="2737.946428571428" y="398.0">CallBack.ClientCallbackInterface</node>
+    <node x="1416.0" y="1406.5">GUI.Toast</node>
+    <node x="0.0" y="2068.0">GUI.ToggleSwitch</node>
+    <node x="1719.5714285714284" y="0.0">Objects.Type</node>
+    <node x="2573.186052383606" y="795.5">Objects.FilesArray</node>
+    <node x="1136.0" y="2104.0">GUI.ClientGUI.DownloadFile_fromTable</node>
+    <node x="394.0" y="2104.0">GUI.ClientGUI.EditFile_fromTable</node>
+    <node x="790.5590556484583" y="2662.0">GUI.ClientGUI</node>
+    <node x="2789.686052383606" y="1322.5">ServerUtils.ServerUtils</node>
+    <node x="2015.7465556484583" y="4258.0">CallBack.CallbackImpl</node>
+    <node x="3307.5214285714283" y="313.0">Objects.User</node>
+    <node x="1770.5714285714284" y="277.0">Objects.FileObject</node>
+    <node x="3145.6860523836062" y="783.5">Objects.UsersArray</node>
+    <node x="2075.1860523836062" y="725.0">RemoteObject.Garage</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="GUI.ClientGUI" target="GUI.ClientGUI.HBoxCell">
+      <point x="140.3478260869565" y="-773.0" />
+      <point x="1199.9068817354148" y="2592.0" />
+      <point x="1666.0" y="2592.0" />
+      <point x="-90.0" y="77.0" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="GUI.ToggleSwitch">
+      <point x="-257.304347826087" y="-773.0" />
+      <point x="802.2547078223713" y="2642.0" />
+      <point x="93.25" y="2642.0" />
+      <point x="-93.25" y="113.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.DownloadFile_fromTable" target="GUI.ClientGUI">
+      <point x="124.66666666666652" y="77.0" />
+      <point x="1447.6666666666665" y="2562.0" />
+      <point x="1129.7329686919363" y="2562.0" />
+      <point x="70.17391304347802" y="-773.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="ServerUtils.ServerUtils">
+      <point x="-64.53333333333325" y="-341.0" />
+      <point x="3061.2132223151248" y="1770.0" />
+      <point x="2951.686052383606" y="1770.0" />
+      <point x="0.0" y="112.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="Objects.FilesArray">
+      <point x="-129.0666666666666" y="-341.0" />
+      <point x="2996.679888981792" y="1790.0" />
+      <point x="2642.686052383606" y="1790.0" />
+      <point x="2642.686052383606" y="1109.0" />
+      <point x="2610.686052383606" y="1109.0" />
+      <point x="-112.5" y="101.5" />
+    </edge>
+    <edge source="Client.Client" target="Objects.FileObject">
+      <point x="-137.25" y="-305.5" />
+      <point x="1905.25" y="1109.0" />
+      <point x="1980.0055731406278" y="1109.0" />
+      <point x="1980.0055731406278" y="705.0" />
+      <point x="2035.2142857142853" y="705.0" />
+      <point x="-20.357142857143117" y="149.0" />
+    </edge>
+    <edge source="Client.Client" target="RemoteObject.Garage">
+      <point x="228.75" y="-305.5" />
+      <point x="2271.25" y="1109.0" />
+      <point x="2302.6860523836062" y="1109.0" />
+      <point x="0.0" y="172.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.DownloadFile_fromTable" target="Objects.FileObject">
+      <point x="0.0" y="-77.0" />
+      <point x="1323.0" y="695.0" />
+      <point x="1994.5" y="695.0" />
+      <point x="-61.07142857142844" y="149.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="CallBack.ClientCallbackInterface">
+      <point x="-32.26666666666665" y="-341.0" />
+      <point x="3093.4798889817916" y="1810.0" />
+      <point x="3124.186052383606" y="1810.0" />
+      <point x="3124.186052383606" y="615.0" />
+      <point x="2861.6130952380945" y="615.0" />
+      <point x="17.66666666666663" y="28.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="Objects.UsersArray">
+      <point x="32.26666666666665" y="-341.0" />
+      <point x="3158.013222315125" y="1760.0" />
+      <point x="3331.746555648458" y="1760.0" />
+      <point x="3331.746555648458" y="1109.0" />
+      <point x="3313.1860523836062" y="1109.0" />
+      <point x="33.5" y="113.5" />
+    </edge>
+    <edge source="Objects.FileObject" target="Objects.Type">
+      <point x="142.5" y="-149.0" />
+      <point x="2198.0714285714284" y="252.0" />
+      <point x="1924.3214285714284" y="252.0" />
+      <point x="87.75" y="113.5" />
+    </edge>
+    <edge source="GUI.ClientGUI.HBoxCell" target="GUI.Toast">
+      <point x="-112.5" y="-77.0" />
+      <point x="1643.5" y="1820.0" />
+      <point x="1665.0" y="1820.0" />
+      <point x="83.0" y="28.0" />
+    </edge>
+    <edge source="Client.Client" target="GUI.ClientGUI">
+      <point x="-68.625" y="305.5" />
+      <point x="1973.875" y="1820.0" />
+      <point x="2074.0610523836062" y="1820.0" />
+      <point x="2074.0610523836062" y="2632.0" />
+      <point x="1293.4720991267193" y="2632.0" />
+      <point x="233.913043478261" y="-773.0" />
+    </edge>
+    <edge source="ServerUtils.ServerUtils" target="ServerUtils.Id">
+      <point x="-20.25" y="-112.0" />
+      <point x="2931.436052383606" y="1109.0" />
+      <point x="2923.186052383606" y="1109.0" />
+      <point x="-29.0" y="52.5" />
+    </edge>
+    <edge source="Server.Server" target="RemoteObject.GarageImp">
+      <point x="-55.5" y="-40.0" />
+      <point x="3070.246555648458" y="2642.0" />
+      <point x="3004.7465556484585" y="2642.0" />
+      <point x="-121.0" y="341.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.HBoxCell" target="Client.Client">
+      <point x="112.5" y="-77.0" />
+      <point x="1868.5" y="1820.0" />
+      <point x="1836.625" y="1820.0" />
+      <point x="-205.875" y="305.5" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="RemoteObject.Garage">
+      <point x="-225.86666666666656" y="-341.0" />
+      <point x="2899.8798889817917" y="1820.0" />
+      <point x="2429.338906473961" y="1820.0" />
+      <point x="2429.338906473961" y="1109.0" />
+      <point x="2454.3527190502728" y="1109.0" />
+      <point x="151.66666666666652" y="172.0" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="GUI.ClientGUI.DownloadFile_fromTable">
+      <point x="23.391304347826008" y="-773.0" />
+      <point x="1082.9503599962843" y="2542.0" />
+      <point x="1198.3333333333335" y="2542.0" />
+      <point x="-124.66666666666652" y="77.0" />
+    </edge>
+    <edge source="CallBack.CallbackImpl" target="CallBack.ClientCallbackInterface">
+      <point x="70.66666666666674" y="-40.5" />
+      <point x="2192.413222315125" y="4233.0" />
+      <point x="2540.6860523836062" y="4233.0" />
+      <point x="2540.6860523836062" y="705.0" />
+      <point x="2826.2797619047615" y="705.0" />
+      <point x="-17.66666666666663" y="28.0" />
+    </edge>
+    <edge source="Client.Client" target="Objects.Type">
+      <point x="-228.75" y="-305.5" />
+      <point x="1813.75" y="1109.0" />
+      <point x="1760.0714285714284" y="1109.0" />
+      <point x="1760.0714285714284" y="252.0" />
+      <point x="1807.3214285714284" y="252.0" />
+      <point x="-29.25" y="113.5" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="Objects.Type">
+      <point x="-210.52173913043453" y="-773.0" />
+      <point x="849.0373165180238" y="2622.0" />
+      <point x="383.5" y="2622.0" />
+      <point x="383.5" y="252.0" />
+      <point x="1748.8214285714284" y="252.0" />
+      <point x="-87.75" y="113.5" />
+    </edge>
+    <edge source="GUI.ClientGUI.DeleteFile_fromTable" target="Objects.FileObject">
+      <point x="0.0" y="-77.0" />
+      <point x="942.0" y="685.0" />
+      <point x="1953.7857142857142" y="685.0" />
+      <point x="-101.78571428571422" y="149.0" />
+    </edge>
+    <edge source="ServerUtils.ServerUtils" target="Objects.FileObject">
+      <point x="-60.75" y="-112.0" />
+      <point x="2890.936052383606" y="1109.0" />
+      <point x="2883.686052383606" y="1109.0" />
+      <point x="2883.686052383606" y="625.0" />
+      <point x="2320.2142857142853" y="625.0" />
+      <point x="264.6428571428569" y="149.0" />
+    </edge>
+    <edge source="RemoteObject.Garage" target="Objects.FileObject">
+      <point x="-113.75" y="-172.0" />
+      <point x="2188.9360523836062" y="675.0" />
+      <point x="2116.642857142857" y="675.0" />
+      <point x="61.07142857142844" y="149.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.EditFile_fromTable" target="GUI.ClientGUI">
+      <point x="0.0" y="77.0" />
+      <point x="559.5" y="2602.0" />
+      <point x="895.8199252136758" y="2602.0" />
+      <point x="-163.7391304347825" y="-773.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="Objects.FileObject">
+      <point x="-161.33333333333326" y="-341.0" />
+      <point x="2964.413222315125" y="1800.0" />
+      <point x="2562.6860523836062" y="1800.0" />
+      <point x="2562.6860523836062" y="655.0" />
+      <point x="2198.0714285714284" y="655.0" />
+      <point x="142.5" y="149.0" />
+    </edge>
+    <edge source="CallBack.CallbackImpl" target="GUI.ClientGUI">
+      <point x="-70.66666666666674" y="-40.5" />
+      <point x="2051.0798889817916" y="4233.0" />
+      <point x="1059.5590556484583" y="4233.0" />
+      <point x="0.0" y="773.0" />
+    </edge>
+    <edge source="Objects.UsersArray" target="Objects.User">
+      <point x="-67.0" y="-113.5" />
+      <point x="3212.6860523836062" y="695.0" />
+      <point x="3375.8785714285714" y="695.0" />
+      <point x="-91.14285714285714" y="113.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.HBoxCell" target="GUI.ClientGUI">
+      <point x="90.0" y="77.0" />
+      <point x="1846.0" y="2612.0" />
+      <point x="1246.6894904310668" y="2612.0" />
+      <point x="187.13043478260852" y="-773.0" />
+    </edge>
+    <edge source="ServerUtils.ServerUtils" target="Objects.UsersArray">
+      <point x="141.75" y="-112.0" />
+      <point x="3093.436052383606" y="1109.0" />
+      <point x="3246.1860523836062" y="1109.0" />
+      <point x="-33.5" y="113.5" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="GUI.Toast">
+      <point x="93.56521739130449" y="-773.0" />
+      <point x="1153.1242730397628" y="2572.0" />
+      <point x="1520.5" y="2572.0" />
+      <point x="1520.5" y="1820.0" />
+      <point x="1499.0" y="1820.0" />
+      <point x="-83.0" y="28.0" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="Objects.FileObject">
+      <point x="-70.17391304347802" y="-773.0" />
+      <point x="989.3851426049803" y="2562.0" />
+      <point x="757.5" y="2562.0" />
+      <point x="757.5" y="675.0" />
+      <point x="1913.0714285714284" y="675.0" />
+      <point x="-142.5" y="149.0" />
+    </edge>
+    <edge source="Client.Client" target="CallBack.CallbackImpl">
+      <point x="205.875" y="305.5" />
+      <point x="2248.375" y="1820.0" />
+      <point x="2121.7465556484585" y="1820.0" />
+      <point x="0.0" y="-40.5" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="GUI.ClientGUI.EditFile_fromTable">
+      <point x="-187.13043478260852" y="-773.0" />
+      <point x="872.4286208658498" y="2612.0" />
+      <point x="449.1666666666665" y="2612.0" />
+      <point x="-110.33333333333348" y="77.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.EditFile_fromTable" target="Objects.FileObject">
+      <point x="0.0" y="-77.0" />
+      <point x="559.5" y="645.0" />
+      <point x="1790.9285714285716" y="645.0" />
+      <point x="-264.6428571428571" y="149.0" />
+    </edge>
+    <edge source="RemoteObject.Garage" target="CallBack.ClientCallbackInterface">
+      <point x="113.75" y="-172.0" />
+      <point x="2416.4360523836062" y="695.0" />
+      <point x="2790.946428571428" y="695.0" />
+      <point x="-53.0" y="28.0" />
+    </edge>
+    <edge source="Client.Client" target="CallBack.ClientCallbackInterface">
+      <point x="45.75" y="-305.5" />
+      <point x="2088.25" y="1109.0" />
+      <point x="2064.6860523836062" y="1109.0" />
+      <point x="2064.6860523836062" y="685.0" />
+      <point x="2755.6130952380945" y="685.0" />
+      <point x="-88.33333333333337" y="28.0" />
+    </edge>
+    <edge source="GUI.ClientGUI.DeleteFile_fromTable" target="GUI.ClientGUI">
+      <point x="0.0" y="77.0" />
+      <point x="942.0" y="2542.0" />
+      <point x="1036.1677513006323" y="2542.0" />
+      <point x="-23.391304347826008" y="-773.0" />
+    </edge>
+    <edge source="Objects.FilesArray" target="Objects.FileObject">
+      <point x="75.0" y="-101.5" />
+      <point x="2798.186052383606" y="635.0" />
+      <point x="2279.5" y="635.0" />
+      <point x="223.92857142857156" y="149.0" />
+    </edge>
+    <edge source="ServerUtils.ServerUtils" target="Objects.User">
+      <point x="60.75" y="-112.0" />
+      <point x="3012.436052383606" y="1089.0" />
+      <point x="3061.6215556484585" y="1089.0" />
+      <point x="3061.6215556484585" y="685.0" />
+      <point x="3330.3071428571425" y="685.0" />
+      <point x="-136.71428571428578" y="113.0" />
+    </edge>
+    <edge source="RemoteObject.GarageImp" target="Objects.User">
+      <point x="129.06666666666683" y="-341.0" />
+      <point x="3254.813222315125" y="1790.0" />
+      <point x="3511.512411079259" y="1790.0" />
+      <point x="3511.512411079259" y="705.0" />
+      <point x="3467.0214285714283" y="705.0" />
+      <point x="0.0" y="113.0" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="GUI.ClientGUI.DeleteFile_fromTable">
+      <point x="-46.782608695652016" y="-773.0" />
+      <point x="1012.7764469528063" y="2552.0" />
+      <point x="826.0" y="2552.0" />
+      <point x="-116.0" y="77.0" />
+    </edge>
+    <edge source="GUI.ClientGUI" target="Client.Client">
+      <point x="257.304347826087" y="-773.0" />
+      <point x="1316.8634034745453" y="2642.0" />
+      <point x="2085.0610523836062" y="2642.0" />
+      <point x="2085.0610523836062" y="1820.0" />
+      <point x="2111.125" y="1820.0" />
+      <point x="68.625" y="305.5" />
+    </edge>
+    <edge source="ServerUtils.ServerUtils" target="Objects.FilesArray">
+      <point x="-141.75" y="-112.0" />
+      <point x="2809.936052383606" y="1109.0" />
+      <point x="2760.686052383606" y="1109.0" />
+      <point x="37.5" y="101.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.30000000000000016" x="1643.6666666666647" y="2514.9999999999964" />
+  <SelectedNodes>
+    <node>Server.Server</node>
+    <node>GUI.ClientGUI.HBoxCell</node>
+    <node>RemoteObject.GarageImp</node>
+    <node>ServerUtils.Id</node>
+    <node>Client.Client</node>
+    <node>CallBack.ClientCallbackInterface</node>
+    <node>GUI.Toast</node>
+    <node>GUI.ToggleSwitch</node>
+    <node>Objects.Type</node>
+    <node>Objects.FilesArray</node>
+    <node>GUI.ClientGUI</node>
+    <node>ServerUtils.ServerUtils</node>
+    <node>CallBack.CallbackImpl</node>
+    <node>Objects.User</node>
+    <node>Objects.FileObject</node>
+    <node>Objects.UsersArray</node>
+    <node>RemoteObject.Garage</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
