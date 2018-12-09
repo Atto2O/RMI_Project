@@ -175,7 +175,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     /**
      * @param callbackObject client callbackObject
-     * @param currentlyUser  currently user object information
+     * @param currentlyUser  current user object information
      * @return the id of the callback related to the user.
      * @throws RemoteException
      */

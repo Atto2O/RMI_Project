@@ -44,7 +44,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByText(String text){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = Client.h.searchFile(text.toLowerCase(), Client.userName);
+            array = Client.h.searchFile(text.toLowerCase(), Client.userName.toLowerCase().trim());
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
@@ -55,7 +55,7 @@ public class Client {
     public ArrayList<FileObject> getFilesByUser(){
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
-            array = Client.h.searchFileByName(Client.userName.toLowerCase());
+            array = Client.h.searchFileByName(Client.userName.toLowerCase().trim());
         }catch (Exception e)
         {
             System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
@@ -65,7 +65,7 @@ public class Client {
 
     public boolean changePassword(String oldPassword,String newPassword1){
 		try{
-			return Client.h.changePaswordOnServer(Client.userName,oldPassword,newPassword1);
+			return Client.h.changePaswordOnServer(Client.userName.toLowerCase().trim(),oldPassword,newPassword1);
 		}catch (Exception e)
 		{
 			System.out.println("Exception in Client-changePassword(): " + e.toString());
@@ -113,7 +113,7 @@ public class Client {
 	//region<SignUp>
 	public boolean subscribeToTag(String newTag){
 		try {
-			return Client.h.addSubscriptionTag(Client.userName, newTag.toLowerCase());
+			return Client.h.addSubscriptionTag(Client.userName.toLowerCase().trim(), newTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
@@ -124,7 +124,7 @@ public class Client {
 
 	public boolean desSubscribeToTag(String oldTag){
 		try {
-			return Client.h.deleteSubscriptionTag(Client.userName, oldTag.toLowerCase());
+			return Client.h.deleteSubscriptionTag(Client.userName.toLowerCase().trim(), oldTag.toLowerCase());
 		}
 		catch (Exception e)
 		{
@@ -134,12 +134,12 @@ public class Client {
 	}
 
 	public boolean logear(String username, String password){
-        Client.userName=username.toLowerCase();
+        Client.userName=username.toLowerCase().trim();
 		int callbackid = -1;
 		try {
 			if (!password.equals("") && !Client.userName.equals("")){
 				//les contrasenyes son iguals
-				callbackid = Client.h.user_login(Client.userName, password,callbackObj);
+				callbackid = Client.h.user_login(Client.userName.toLowerCase().trim(), password,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
 					System.out.print("T'as logeat correctamen!!!\n");
@@ -165,11 +165,11 @@ public class Client {
 		try {
 			if (password_1.equals(password_2)) {
 				//les contrasenyes son iguals
-				boolean server_response = Client.h.user_signup(newUserName.toLowerCase(), password_1);
+				boolean server_response = Client.h.user_signup(newUserName.toLowerCase().trim(), password_1);
                 System.out.println(server_response);
 				if (server_response) {
 					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
-                    Client.userName = newUserName.toLowerCase();
+                    Client.userName = newUserName.toLowerCase().trim();
 					return true;
 				} else {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
@@ -210,7 +210,7 @@ public class Client {
 	public boolean upload(File newFile, String filename, String type, String description, ArrayList<String> tags, boolean state){
 
 		FileObject fileObject = new FileObject();
-		fileObject.setUser(Client.userName);
+		fileObject.setUser(Client.userName.toLowerCase().trim());
 
 		byte[] data;
 
@@ -253,7 +253,7 @@ public class Client {
 	//region<Delete>
 	public static boolean deleteFile(FileObject file){
 		try{
-			if(Client.h.deleteFile(file.getId(), Client.userName.toLowerCase())){
+			if(Client.h.deleteFile(file.getId(), Client.userName.toLowerCase().trim())){
 				return true;
 			}
 		}catch (Exception e)
@@ -279,7 +279,7 @@ public class Client {
 	public ArrayList<String> getSubscriptionsClient()throws RemoteException{
 		ArrayList<String> array = new ArrayList<>();
         try{
-            array = h.getSubscriptionsList(Client.userName.toLowerCase());
+            array = h.getSubscriptionsList(Client.userName.toLowerCase().trim());
         }catch(Exception e){
             System.out.println("Error in Client-getSubscriptionsClient(): " + e.toString());
         }
