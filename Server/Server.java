@@ -3,26 +3,35 @@
  */
 package Server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
+import ServerUtils.ServerInfo;
 import RemoteObject.*;
 
 public class Server {
 
-    public static void main(String args[])
-    {
+    public static void main(String args[]) throws UnknownHostException {
+
         int portNum;
+        String address;
+
+        InetAddress inetAddress = InetAddress.getLocalHost();
+        address = inetAddress.getHostAddress();
+
         Scanner scanner = new Scanner(System.in);
         while (true){
             while (true){
-                System.out.println("Enter a port number:");
+                System.out.println("Address: " + address + "\nEnter a port number:");
                 String port = scanner.next();
                 try{
                     portNum = Integer.parseInt(port);
                     if(port.length()>0){
+                        Server.saveInfo(portNum, address);
                         break;
                     }
                 }catch(Exception e){
@@ -31,7 +40,7 @@ public class Server {
             }
             try
             {
-                GarageImp exportedObj = new GarageImp();//asar les ip's?
+                GarageImp exportedObj = new GarageImp();
                 startRegistry(portNum);
                 String registryURL = "rmi://localhost:" + portNum + "/some";
                 Naming.rebind(registryURL, exportedObj);
@@ -43,6 +52,11 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void saveInfo(int portNum, String address){
+        ServerInfo serverInfo = new ServerInfo(portNum, address);
+        serverInfo.saveInfo();
     }
 
     private static void startRegistry(int RMIPort) throws RemoteException

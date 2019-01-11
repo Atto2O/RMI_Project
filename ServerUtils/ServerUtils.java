@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 public class ServerUtils{
 //Get info from files
+    private static ServerInfo serverInfo;
+
+    public static ServerInfo getServerInfo(){
+        return ServerUtils.serverInfo;
+    }
 
     public static FilesArray getFiles() {
         FilesArray files = new FilesArray();
@@ -61,6 +66,10 @@ public class ServerUtils{
         }
         if(ID==null){ID=new Id();}
         return ID.getId();
+    }
+
+    public static void saveServerInfo(ServerInfo toSave){
+        ServerUtils.serverInfo = toSave;
     }
 
     //Save info to files

@@ -3,7 +3,6 @@
  */
 package RemoteObject;
 
-import java.io.File;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
@@ -14,6 +13,9 @@ import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
 import ServerUtils.*;
+import ServerUtils.WS_manager.DataManager;
+
+import javax.xml.crypto.Data;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
@@ -31,7 +33,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     //This one is the semaphore that we will use to avoid problems with concurrency
     public static final Semaphore semaphore = new Semaphore(1, true);
 
-
     /**
      * @throws RemoteException
      */
@@ -44,7 +45,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * This method is the one that load all id's data from the backups
      */
     private void getInfo() {
-        System.out.println("Getting existing files...");
+        System.out.println("\nGetting existing files...");
         //Check for next id available for files
         try {
             this.files = ServerUtils.getFiles();
@@ -71,7 +72,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
         System.out.println("\nGetting last user ID available...");
         this.lastUserID = ServerUtils.getUserID();
-        System.out.println("\tLast user ID: " + this.lastUserID + "\n");
+        System.out.println("\tLast user ID: " + this.lastUserID );
+
+        System.out.println("Saving Server info...");
+        System.out.println("\tAddress: "+ DataManager.serverInfo.getAddress() + "\n\tPort:\t " + DataManager.serverInfo.getPort()+"\n");
     }
 
     /**
@@ -349,10 +353,16 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean uploadFile(FileObject file) {
         try {
             semaphore.acquire();
-            //We generate a if related to the new file
-            this.lastFileID = generateId(this.lastFileID);
-            file.setId(this.lastFileID);
-            ServerUtils.saveFileID(this.lastFileID);
+
+            file.setId(DataManager.putFileToWS(file));
+
+
+            //We generate a if related to the new file DELETE
+            this.lastFileID = generateId(this.lastFileID); //TO DELETE
+            file.setId(this.lastFileID); //TO DELETE
+            ServerUtils.saveFileID(this.lastFileID); //TO DELETE
+
+
             this.files.addFile(file);
 
             //We save the file int the Server
@@ -440,6 +450,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         }
     }
 
+    public FileObject searchFileByID(int id) {
+        for (FileObject f: files.getFiles()) {
+            if (f.getId() == id) return f;
+        }
+        return null;
+    }
+
     /**
      * @param fileId id of the file we want to delete
      * @param user   the name of the user who wants to delete
@@ -459,6 +476,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     //And the owner is the one who wants to delete it
                     if (currentlyFile.getUser().equals(user)) {
                         //We remove it
+                        DataManager.deleteFileFromWS(fileId);
                         this.files.removeFile(currentlyFile);
                         //And we update the information to the backup
                         ServerUtils.saveFiles(this.files.getFiles());
@@ -547,6 +565,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public boolean addModification(FileObject file) {
+        DataManager.putFileToWS(file);
         try {
             semaphore.acquire();
             Iterator<FileObject> iter = this.files.getFiles().iterator();
