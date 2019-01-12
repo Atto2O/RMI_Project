@@ -15,7 +15,6 @@ import java.util.concurrent.Semaphore;
 import ServerUtils.*;
 import ServerUtils.WS_manager.DataManager;
 
-import javax.xml.crypto.Data;
 
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
@@ -76,6 +75,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
         System.out.println("Saving Server info...");
         System.out.println("\tAddress: "+ DataManager.serverInfo.getAddress() + "\n\tPort:\t " + DataManager.serverInfo.getPort()+"\n");
+        DataManager.test();
     }
 
     /**
