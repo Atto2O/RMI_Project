@@ -70,18 +70,74 @@ public class DataManager {
     ///////  TO WEB SERVICE  /////////////////////////////////
     //region<FILES>
     public static int filePOST(FileObject file){
-        FileObjectInfo file_toUpload = new FileObjectInfo(file, ServerUtils.getServerInfo());
-        //put this info to Web Service DB
         int id = 0;
+        FileObjectInfo f = new FileObjectInfo(file, ServerUtils.getServerInfo());
+        try {
+            String userPOST_URL = DataManager.url_address + DataManager.usersURL + "/new";
+            DataManager.url = new URL(userPOST_URL);
+            HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            String input = "{\"tags\":"+f.getTags()+",\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
+                    "\"state\":\""+f.getState()+"\",\"serverID\":\""+f.getServerID()+"\",\"user\":\""+f.getUser()+"\"}";
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+            if(conn.getResponseCode() != 200){
+                throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
+            }
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            BufferedReader br = new BufferedReader(in);
+            String output;
+            System.out.println("NEW FILE ID:");
+            while ((output = br.readLine()) != null){
+                System.out.println(output);
+                id = parseInt(output);
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return id;
     }
 
     public static void filePUT(FileObject file){
-
+        FileObjectInfo f = new FileObjectInfo(file, ServerUtils.getServerInfo());
+        try {
+            String filePUT_URL = DataManager.url_address + DataManager.filesURL + "/modify";
+            DataManager.url = new URL(filePUT_URL);
+            HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            String input = "{\"tags\":"+f.getTags()+",\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
+                    "\"state\":\""+f.getState()+"\",\"serverID\":\""+f.getServerID()+"\",\"user\":\""+f.getUser()+"\",\"id\":\""+f.getId()+"\"}";
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+            if(conn.getResponseCode() != 200){
+                throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void fileDELETE(int id){
-
+        try {
+            String test_URL = DataManager.url_address + DataManager.filesURL + "/delete/"+id;
+            DataManager.url = new URL(test_URL);
+            HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
+            conn.setRequestMethod("DELETE");
+            conn.setRequestProperty("Accept", "application/json");
+            if(conn.getResponseCode() != 200){
+                throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<FileObject> fileGET_Array(String description){
@@ -150,8 +206,10 @@ public class DataManager {
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
             BufferedReader br = new BufferedReader(in);
             String output;
+            String parsed;
             while ((output = br.readLine()) != null){
                 System.out.println(output);
+                //parsed = DataManager.parseString(output);
                 ObjectMapper mapper = new ObjectMapper();
                 user = mapper.readValue(output, User.class);
             }
@@ -160,6 +218,14 @@ public class DataManager {
             e.printStackTrace();
         }
         return user;
+    }
+
+    public static String parseString(String output){
+        String parsed = output;
+        if(output.substring(output.indexOf("[") -1, output.indexOf("[")).equals("")){
+            parsed = output.substring(0, output.indexOf("[")-2) + output.substring(output.indexOf("[") , -2) + "}";
+        }
+        return parsed;
     }
 
     public static int userPOST(String name, String password){

@@ -24,8 +24,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     Hashtable<Integer, User> connectUsers = new Hashtable<Integer, User>();
     //We store the callbacks associated to the connected users
     Hashtable<Integer, ClientCallbackInterface> callbackObjects = new Hashtable<Integer, ClientCallbackInterface>();
-    //We use this 2 variables to provide a control id duplications
-    private int lastFileID = -1;
     //This one is the semaphore that we will use to avoid problems with concurrency
     public static final Semaphore semaphore = new Semaphore(1, true);
 
@@ -52,9 +50,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("\nGetting last file ID available...");
-        this.lastFileID = ServerUtils.getFileID();
-        System.out.println("\tLast file ID: " + this.lastFileID);
 
         System.out.println("Saving Server info...");
         System.out.println("\tAddress: "+ ServerUtils.getServerInfo().getAddress() + "\n\tPort:\t " + ServerUtils.getServerInfo().getPort()+"\n");
@@ -271,12 +266,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         try {
             semaphore.acquire();
             file.setId(DataManager.filePOST(file));
-            //We generate a if related to the new file DELETE
-            this.lastFileID = generateId(this.lastFileID); //TO DELETE
-            file.setId(this.lastFileID); //TO DELETE
-            ServerUtils.saveFileID(this.lastFileID); //TO DELETE
             this.files.addFile(file);
-            //We save the file int the Server
             ServerUtils.saveFiles(files.getFiles());
             this.notifyNewFile(file);
             semaphore.release();
@@ -475,14 +465,22 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) {
-        return new ArrayList<FileObject>();
+        ArrayList<FileObject> files = new ArrayList<FileObject>();
+        for (Integer id:ids) {
+            for (FileObject file:this.files.getFiles()) {
+                if(file.getId() == id){
+                    files.add(file);
+                }
+            }
+        }
+        return files;
     }
 
     @Override
     public boolean addModification(FileObject file) {
-        DataManager.filePUT(file);
         try {
             semaphore.acquire();
+            DataManager.filePUT(file);
             Iterator<FileObject> iter = this.files.getFiles().iterator();
             //For each file in the server
             while (iter.hasNext()) {
@@ -490,9 +488,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 //If we find the id
                 if (currentlyFile.getId() == file.getId()) {
                     this.files.removeFile(currentlyFile);
-                    System.out.printf("borrada crack");
                     this.files.addFile(file);
-                    System.out.printf("afegida crack");
                     ServerUtils.saveFiles(this.files.getFiles());
                     semaphore.release();
                     return true;
