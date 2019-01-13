@@ -474,6 +474,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return new FileObject();
     }
 
+    public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) {
+        return new ArrayList<FileObject>();
+    }
+
     @Override
     public boolean addModification(FileObject file) {
         DataManager.filePUT(file);
