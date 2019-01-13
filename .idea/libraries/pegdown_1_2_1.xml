@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pegdown-1.2.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.m2/repository/org/pegdown/pegdown/1.2.1/pegdown-1.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

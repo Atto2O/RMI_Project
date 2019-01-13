@@ -283,6 +283,38 @@ public class DataManager {
         }
         return servers;
     }
+
+
+
+    public static ArrayList<ServerInfo> serverGET_all(){
+        ArrayList<ServerInfo> servers = new ArrayList<ServerInfo>();
+        try {
+            String serverGET_URL = DataManager.url_address + DataManager.serversURL + "/all";
+            DataManager.url = new URL(serverGET_URL);
+            HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if(conn.getResponseCode() != 200){
+                throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
+            }
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            BufferedReader br = new BufferedReader(in);
+            String output;
+            while ((output = br.readLine()) != null){
+                System.out.println(output);
+                JSONArray jsonArray = new JSONArray(output);
+                ObjectMapper mapper = new ObjectMapper();
+                for (int i=0; i<jsonArray.length(); i++) {
+                    servers.add(mapper.readValue(jsonArray.getString(i), ServerInfo.class));
+                }
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return servers;
+    }
     //endregion
     //////////////////////////////////////////////////////////
 
