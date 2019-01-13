@@ -31,4 +31,5 @@ public interface Garage extends Remote{
     public boolean deleteSubscriptionTag(String userName, String newTag)throws java.rmi.RemoteException;
     public ArrayList<String> getSubscriptionsList(String userName)throws java.rmi.RemoteException;
     public boolean changePaswordOnServer(String userName,String oldPassword,String newPassword1)throws java.rmi.RemoteException;
+    public void notifyNewFile(FileObject file,boolean thisServer) throws RemoteException ;
 }

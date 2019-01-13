@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="maven-project-2.0.9">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.m2/repository/org/apache/maven/maven-project/2.0.9/maven-project-2.0.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

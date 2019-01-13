@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="maven-toolchain-1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.m2/repository/org/apache/maven/maven-toolchain/1.0/maven-toolchain-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

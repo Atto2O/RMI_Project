@@ -27,6 +27,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     //This one is the semaphore that we will use to avoid problems with concurrency
     public static final Semaphore semaphore = new Semaphore(1, true);
 
+    public static final Semaphore Internationalsemaphore = new Semaphore(1, true);
+
     /**
      * @throws RemoteException
      */
@@ -268,7 +270,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             file.setId(DataManager.filePOST(file));
             this.files.addFile(file);
             ServerUtils.saveFiles(files.getFiles());
-            this.notifyNewFile(file);
+            this.notifyNewFile(file,true);
             semaphore.release();
             return true;
         } catch (Exception e) {
@@ -401,8 +403,19 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @param file the new file added
      * @throws RemoteException
      */
-    private void notifyNewFile(FileObject file) throws RemoteException {
+    @Override
+    public void notifyNewFile(FileObject file,boolean thisServer) throws RemoteException {
+
+
+        try{
+            Internationalsemaphore.acquire();
+
         //the Users that we detects that get a non friendly disconnection
+        if(thisServer){
+            notifyOtherServer(file);
+
+        }
+
         ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
         //In this array list for each user we will store the tags that matches with his subscriptions
         ArrayList<String> tagArray = new ArrayList<String>();
@@ -446,9 +459,45 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             }
         } catch (Exception e) {
             System.out.println("Error at notifyNewFile method \n" + e.toString());
+            Internationalsemaphore.release();
         }
+        } catch (Exception e) {
+            System.out.println("Update file Error: " + e.toString());
+            Internationalsemaphore.release();
+        }
+        Internationalsemaphore.release();
     }
 
+    public void notifyOtherServer(FileObject file){
+
+        ArrayList<ServerInfo> serverList = DataManager.serverGET_all();
+
+        Iterator<ServerInfo> iter = serverList.iterator();
+        //For each file in the server
+        while (iter.hasNext()) {
+            ServerInfo server= iter.next();
+            if(server.getId()!= ServerUtils.getServerInfo().getId()) {
+                connectAndNotify(file, server.getAddress(), server.getPort());
+            }
+        }
+        
+    }
+
+
+    public void connectAndNotify(FileObject file, String serverIP, int serverPORT){
+        String registryURL = "rmi://"+ serverIP +":" + serverPORT + "/some";
+        try {
+            Garage h = (Garage)Naming.lookup(registryURL);
+            System.out.println("Garage created!");
+
+            h.notifyNewFile(file,false);
+
+        }catch (Exception e) {
+
+        }
+
+
+    }
     /**
      * Search the id into the files array.If we find it, we return it,if not we return and empty one
      *
