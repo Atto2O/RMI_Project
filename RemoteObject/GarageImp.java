@@ -485,8 +485,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         Iterator<ServerInfo> iter = serverList.iterator();
         //For each file in the server
         while (iter.hasNext()) {
-
-            connectAndNotify(file , iter.next().getAddress() ,iter.next().getPort());
+            ServerInfo server= iter.next();
+            if(server.getId()!= ServerUtils.getServerInfo().getId()) {
+                connectAndNotify(file, server.getAddress(), server.getPort());
+            }
         }
         
     }
