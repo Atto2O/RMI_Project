@@ -23,9 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Naming;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
+
 import ServerUtils.ContentsPack;
 
 import static java.lang.Integer.parseInt;
@@ -85,9 +84,13 @@ public class DataManager {
 
     }
 
-    public void fileGET_Array(String description){
+    public ArrayList<FileObject> fileGET_Array(String description){
+        ArrayList<FileObject> files = new ArrayList<>();
+
         ArrayList<ContentsPack> packs = new ArrayList<>();
-        //Map<Integer, ArrayList<Integer>> servers = new Map<>();
+        Map<Integer, ArrayList<Integer>> servers = new HashMap<Integer, ArrayList<Integer>>();
+        ArrayList<Integer> servers_to_search = new ArrayList<>();
+        ArrayList<ServerInfo> servers_to_access = new ArrayList<ServerInfo>();
         try {
             String test_URL = DataManager.url_address + DataManager.filesURL + "/like?word="+description;
             DataManager.url = new URL(test_URL);
@@ -108,13 +111,27 @@ public class DataManager {
                     packs.add(mapper.readValue(jsonArray.getString(i), ContentsPack.class));
                 }
                 for (ContentsPack c:packs) {
-
+                    if (!servers.containsKey(c.getServerID())){
+                        servers.put(c.getServerID(), new ArrayList<>(c.getId()));
+                    }else{
+                        ArrayList<Integer> value = servers.get(c.getServerID());
+                        value.add(c.getId());
+                        servers.replace(c.getServerID(), value);
+                    }
+                }
+                servers_to_search.addAll(servers.keySet());
+                servers_to_access = DataManager.serverGET_byID(servers_to_search);
+                for (ServerInfo s:servers_to_access) {
+                    ArrayList values =new ArrayList();
+                    values.addAll(servers.get(s.getId()));
+                    files.addAll(DataManager.getFileFromServer(values, s));
                 }
             }
             conn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return files;
     }
     //endregion
 
@@ -320,11 +337,11 @@ public class DataManager {
 
 
     ///////  TO OTHER SERVERS ////////////////////////////////
-    public FileObject getFileFromServer(int id, ServerInfo serverInfo){
+    public static ArrayList<FileObject> getFileFromServer(ArrayList<Integer> ids, ServerInfo serverInfo){
         String registryURL = "rmi://"+ serverInfo.getId() +":" + serverInfo.getPort() + "/some";
         try {
             GarageImp h = (GarageImp) Naming.lookup(registryURL);
-            return h.getFileObject(id);
+            return h.getFileObjects(ids);
         }catch (Exception e) {
             System.out.println("Access to Server "+ serverInfo.getId()+" dennied. (IP: "+serverInfo.getAddress()+"\tPORT: "+serverInfo.getPort()+")\nUnable to get files from this Server.");
         }
