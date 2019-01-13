@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="RMI_Project-master" />
+        <module name="RMI_Project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="RMI_Project-master" target="1.8" />
+      <module name="RMI_Project" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
