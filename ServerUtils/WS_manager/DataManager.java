@@ -1,26 +1,18 @@
 package ServerUtils.WS_manager;
 
-import CallBack.CallbackImpl;
-import Client.Client;
 import Objects.FileObject;
 import Objects.FileObjectInfo;
 import Objects.User;
-import RemoteObject.Garage;
 import RemoteObject.GarageImp;
 import ServerUtils.ServerInfo;
 import ServerUtils.ServerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Naming;
 import java.util.*;
@@ -73,14 +65,21 @@ public class DataManager {
         int id = 0;
         FileObjectInfo f = new FileObjectInfo(file, ServerUtils.getServerInfo());
         try {
-            String userPOST_URL = DataManager.url_address + DataManager.usersURL + "/new";
+            String userPOST_URL = DataManager.url_address + DataManager.filesURL + "/new";
             DataManager.url = new URL(userPOST_URL);
             HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            String input = "{\"tags\":"+f.getTags()+",\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
-                    "\"state\":\""+f.getState()+"\",\"serverID\":\""+f.getServerID()+"\",\"user\":\""+f.getUser()+"\"}";
+            String input = "{\"tags\":[\"" + f.getTags().get(0)+"\"";
+            for (String tag: f.getTags()) {
+                if(!tag.equals(f.getTags().get(0))){
+                    input += ",\"" + tag + "\"";
+                }
+            }
+            input += "],\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
+                    "\"state\":"+f.getState()+",\"serverID\":"+f.getServerID()+",\"user\":\""+f.getUser()+"\"}";
+            System.out.println("\n"+input+"\n");
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
@@ -160,7 +159,6 @@ public class DataManager {
             BufferedReader br = new BufferedReader(in);
             String output;
             while ((output = br.readLine()) != null){
-                System.out.println(output);
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
                 for (int i=0; i<jsonArray.length(); i++) {
@@ -208,8 +206,6 @@ public class DataManager {
             String output;
             String parsed;
             while ((output = br.readLine()) != null){
-                System.out.println(output);
-                //parsed = DataManager.parseString(output);
                 ObjectMapper mapper = new ObjectMapper();
                 user = mapper.readValue(output, User.class);
             }
@@ -218,14 +214,6 @@ public class DataManager {
             e.printStackTrace();
         }
         return user;
-    }
-
-    public static String parseString(String output){
-        String parsed = output;
-        if(output.substring(output.indexOf("[") -1, output.indexOf("[")).equals("")){
-            parsed = output.substring(0, output.indexOf("[")-2) + output.substring(output.indexOf("[") , -2) + "}";
-        }
-        return parsed;
     }
 
     public static int userPOST(String name, String password){
@@ -247,7 +235,7 @@ public class DataManager {
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
             BufferedReader br = new BufferedReader(in);
             String output;
-            System.out.println("NEW SERVER ID:");
+            System.out.println("NEW USER ID:");
             while ((output = br.readLine()) != null){
                 System.out.println(output);
                 id = parseInt(output);
@@ -291,7 +279,7 @@ public class DataManager {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            String input = "{\"port\":\""+server.getPort()+"\",\"ip\":\""+server.getAddress()+"\"}";
+            String input = "{\"port\":\""+server.getPort()+"\",\"ip\":\""+server.getIp()+"\"}";
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
@@ -321,7 +309,7 @@ public class DataManager {
             conn.setRequestMethod("PUT");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            String input = "{\"id\":\""+server.getId()+"\",\"port\":\""+server.getPort()+"\",\"ip\":\""+server.getAddress()+"\"}";
+            String input = "{\"id\":\""+server.getId()+"\",\"port\":\""+server.getPort()+"\",\"ip\":\""+server.getIp()+"\"}";
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
@@ -353,7 +341,6 @@ public class DataManager {
             BufferedReader br = new BufferedReader(in);
             String output;
             while ((output = br.readLine()) != null){
-                System.out.println(output);
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
                 for (int i=0; i<jsonArray.length(); i++) {
@@ -375,7 +362,6 @@ public class DataManager {
             HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-
             if(conn.getResponseCode() != 200){
                 throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
             }
@@ -383,17 +369,17 @@ public class DataManager {
             BufferedReader br = new BufferedReader(in);
             String output;
             while ((output = br.readLine()) != null){
-                System.out.println(output);
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
                 for (int i=0; i<jsonArray.length(); i++) {
-                    servers.add(mapper.readValue(jsonArray.getString(i), ServerInfo.class));
+                    servers.add(mapper.readValue(jsonArray.getJSONObject(i).toString(), ServerInfo.class));
                 }
             }
             conn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return servers;
     }
     //endregion
@@ -407,7 +393,7 @@ public class DataManager {
             GarageImp h = (GarageImp) Naming.lookup(registryURL);
             return h.getFileObjects(ids);
         }catch (Exception e) {
-            System.out.println("Access to Server "+ serverInfo.getId()+" dennied. (IP: "+serverInfo.getAddress()+"\tPORT: "+serverInfo.getPort()+")\nUnable to get files from this Server.");
+            System.out.println("Access to Server "+ serverInfo.getId()+" dennied. (IP: "+serverInfo.getIp()+"\tPORT: "+serverInfo.getPort()+")\nUnable to get files from this Server.");
         }
         return null;
     }

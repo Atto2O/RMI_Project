@@ -44,7 +44,7 @@ public class ServerUtils{
         Id ID = new Id();
         try{
             ObjectMapper mapper = new ObjectMapper();
-            ID = mapper.readValue(new File("./Server/Backup/FileID.json"), Id.class);
+            ID = mapper.readValue(new File("Server/Backup/Files.json"), Id.class);
         }catch(Exception e){
             System.out.println("Error getFileID() from ServerUtils: " + e.toString());
         }
@@ -73,7 +73,7 @@ public class ServerUtils{
         Id ID = new Id(lastFileID);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File("./Server/Backup/FileID.json"), ID);
+            mapper.writeValue(new File("Server/Backup/Files.json"), ID);
         }catch (Exception e){
             System.out.println("Error saveFileID(id) from ServerUtils: " + e.toString());
         }

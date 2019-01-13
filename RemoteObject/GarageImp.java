@@ -49,12 +49,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             for (FileObject f : this.files.getFiles()) {
                 System.out.printf(f.getId() + " ");
             }
+            System.out.println("\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         System.out.println("Saving Server info...");
-        System.out.println("\tAddress: "+ ServerUtils.getServerInfo().getAddress() + "\n\tPort:\t " + ServerUtils.getServerInfo().getPort()+"\n");
+        System.out.println("\tAddress: "+ ServerUtils.getServerInfo().getIp() + "\n\tPort:\t " + ServerUtils.getServerInfo().getPort()+"\n");
     }
 
     /**
@@ -267,10 +268,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean uploadFile(FileObject file) {
         try {
             semaphore.acquire();
+            System.out.println("BEFORE POST\n");
             file.setId(DataManager.filePOST(file));
             this.files.addFile(file);
+            System.out.println("AFTEF POST & BEFORE NOTIFY\n");
             ServerUtils.saveFiles(files.getFiles());
             this.notifyNewFile(file,true);
+            System.out.println("AFTER NOTIFY\n");
             semaphore.release();
             return true;
         } catch (Exception e) {
@@ -471,9 +475,12 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         Iterator<ServerInfo> iter = serverList.iterator();
         //For each file in the server
         while (iter.hasNext()) {
+
             ServerInfo server= iter.next();
+            System.out.println("befor if the notify el serv amb id:"+server.getId());
             if(server.getId()!= ServerUtils.getServerInfo().getId()) {
-                connectAndNotify(file, server.getAddress(), server.getPort());
+                System.out.println("dins if the notify el serv amb id:"+server.getId());
+                connectAndNotify(file, server.getIp(), server.getPort());
             }
         }
     }
@@ -482,7 +489,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         String registryURL = "rmi://"+ serverIP +":" + serverPORT + "/some";
         try {
             Garage h = (Garage)Naming.lookup(registryURL);
-            System.out.println("Garage created!");
+
             h.notifyNewFile(file,false);
         }catch (Exception e) {
         }
