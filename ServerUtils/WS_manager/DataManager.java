@@ -79,7 +79,7 @@ public class DataManager {
             }
             input += "],\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
                     "\"state\":"+f.getState()+",\"serverID\":"+f.getServerID()+",\"user\":\""+f.getUser()+"\"}";
-            System.out.println("\n"+input+"\n");
+
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
@@ -110,8 +110,15 @@ public class DataManager {
             conn.setRequestMethod("PUT");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            String input = "{\"tags\":"+f.getTags()+",\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
-                    "\"state\":\""+f.getState()+"\",\"serverID\":\""+f.getServerID()+"\",\"user\":\""+f.getUser()+"\",\"id\":\""+f.getId()+"\"}";
+            String input = "{\"tags\":[\"" + f.getTags().get(0)+"\"";
+            for (String tag: f.getTags()) {
+                if(!tag.equals(f.getTags().get(0))){
+                    input += ",\"" + tag + "\"";
+                }
+            }
+            System.out.println("ID FILE: "+ f.getId());
+            input += "],\"description\":\""+f.getDescription()+"\",\"fileName\":\""+f.getFileName()+"\"," +
+                    "\"state\":"+f.getState()+",\"serverID\":"+f.getServerID()+",\"user\":\""+f.getUser()+"\",\"id\":\""+f.getId()+"\"}";
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();

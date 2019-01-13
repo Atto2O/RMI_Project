@@ -59,17 +59,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     /**
-     * @param id Last id created
-     * @return new user/file id
-     */
-    //WE GENERATE ID
-    private int generateId(int id) {
-        id += 1;
-        System.out.println("New ID: " + id);
-        return id;
-    }
-
-    /**
      * @param username name of the user ho want to log in
      * @param password the pasword of the user
      * @param callbackObj his callbackobject
@@ -410,7 +399,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public void notifyNewFile(FileObject file,boolean thisServer) throws RemoteException {
         try{
-            Internationalsemaphore.acquire();
+            //Internationalsemaphore.acquire();
 
         //the Users that we detects that get a non friendly disconnection
         if(thisServer){
@@ -459,13 +448,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             }
         } catch (Exception e) {
             System.out.println("Error at notifyNewFile method \n" + e.toString());
-            Internationalsemaphore.release();
+            //Internationalsemaphore.release();
         }
         } catch (Exception e) {
             System.out.println("Update file Error: " + e.toString());
-            Internationalsemaphore.release();
+            //Internationalsemaphore.release();
         }
-        Internationalsemaphore.release();
+        //Internationalsemaphore.release();
     }
 
     public void notifyOtherServer(FileObject file){
@@ -483,6 +472,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 connectAndNotify(file, server.getIp(), server.getPort());
             }
         }
+        System.out.println("\nDespres del while\n");
     }
 
     public void connectAndNotify(FileObject file, String serverIP, int serverPORT){

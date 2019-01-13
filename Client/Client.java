@@ -266,7 +266,8 @@ public class Client {
 
 	public boolean fileModified(FileObject file){
 		try {
-
+			System.out.println("al client dins de modified id: ");
+			System.out.println(file.getId());
 			return Client.h.addModification(file);
 
 		}catch (Exception e){
