@@ -13,6 +13,18 @@ public class ServerUtils{
         return ServerUtils.serverInfo;
     }
 
+    public static int getServerConfig(){
+        Id ID = new Id();
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            ID = mapper.readValue(new File("./Server/Backup/Config.json"), Id.class);
+        }catch(Exception e){
+            System.out.println("Error getServerConfig() from ServerUtils: " + e.toString());
+        }
+        if(ID==null){ID=new Id();}
+        return ID.getId();
+    }
+
     public static FilesArray getFiles() {
         FilesArray files = new FilesArray();
         try
@@ -27,21 +39,6 @@ public class ServerUtils{
         return files;
     }
 
-    public static UsersArray getUsers()
-    {
-        UsersArray users = new UsersArray();
-        try
-        {
-            ObjectMapper mapper = new ObjectMapper();
-            users = mapper.readValue(new File("./Server/Backup/Users.json"), UsersArray.class);
-        }
-        catch(Exception e)
-        {
-            System.out.println("Error getUsers() from ServerUtils: " + e.toString());
-        }
-        return users;
-    }
-
     public static int getFileID()
     {
         Id ID = new Id();
@@ -49,20 +46,7 @@ public class ServerUtils{
             ObjectMapper mapper = new ObjectMapper();
             ID = mapper.readValue(new File("./Server/Backup/FileID.json"), Id.class);
         }catch(Exception e){
-            System.out.println("Error getFileID from ServerUtils: " + e.toString());
-        }
-        if(ID==null){ID=new Id();}
-        return ID.getId();
-    }
-
-    public static int getUserID()
-    {
-        Id ID = new Id();
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            ID = mapper.readValue(new File("./Server/Backup/UserID.json"), Id.class);
-        }catch(Exception e){
-            System.out.println("Error getUserID from ServerUtils: " + e.toString());
+            System.out.println("Error getFileID() from ServerUtils: " + e.toString());
         }
         if(ID==null){ID=new Id();}
         return ID.getId();
@@ -84,17 +68,6 @@ public class ServerUtils{
             }
         }
 
-    public static void saveUsers(ArrayList<User> users)
-        {
-            UsersArray u = new UsersArray(users);
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(new File("./Server/Backup/Users.json"), u);
-            }catch (Exception e){
-                System.out.println("Error saveUsers(users) from ServerUtils: " + e.toString());
-            }
-        }
-
     public static void saveFileID(int lastFileID)
     {
         Id ID = new Id(lastFileID);
@@ -106,14 +79,13 @@ public class ServerUtils{
         }
     }
 
-    public static void saveUserID(int lastUserID)
-    {
-        Id ID = new Id(lastUserID);
+    public static void saveServerConfig(int id){
+        Id ID = new Id(id);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File("./Server/Backup/UserID.json"), ID);
+            mapper.writeValue(new File("./Server/Backup/Config.json"), ID);
         }catch (Exception e){
-            System.out.println("Error saveUserID(id) from ServerUtils: " + e.toString());
+            System.out.println("Error saveServerConfig(id) from ServerUtils: " + e.toString());
         }
     }
 }

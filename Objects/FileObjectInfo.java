@@ -14,19 +14,17 @@ public class FileObjectInfo implements java.io.Serializable{
     private String description ;
     private String fileName;
     private int id;
-    private Type type;
     private boolean isPublic;
-    private ServerInfo server;
+    private int serverID;
     private String user;
 
     public FileObjectInfo(FileObject file, ServerInfo server) {
         this.tags = file.getTags();
         this.fileName=file.getFileName();
-        this.type = file.getType();
         this.isPublic = file.getState();
         this.user = file.getUser();
         this.description = file.getDescription();
-        this.server = server;
+        this.serverID= server.getId();
     }
 
     //Getters
@@ -38,9 +36,9 @@ public class FileObjectInfo implements java.io.Serializable{
         return this.fileName;
     }
 
-    public Type getType() { return this.type; }
-
-    public ServerInfo getServer() {return this.server;}
+    public int getServerID() {
+        return this.serverID;
+    }
 
     public boolean getState() {return this.isPublic;}
 
@@ -65,10 +63,6 @@ public class FileObjectInfo implements java.io.Serializable{
     public void setFileName(String fileName){
         this.fileName=fileName;
     }
-
-    public void setType(Type type) {this.type = type;}
-
-    public void setFile(ServerInfo server) {this.server = server;}
 
     public void setState(boolean state) {this.isPublic = state;}
 

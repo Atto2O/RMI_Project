@@ -20,6 +20,7 @@ public class Server {
 
         int portNum;
         String address;
+        String ngrok;
 
         InetAddress inetAddress = InetAddress.getLocalHost();
         address = inetAddress.getHostAddress();
@@ -27,16 +28,28 @@ public class Server {
         Scanner scanner = new Scanner(System.in);
         while (true){
             while (true){
-                System.out.println("Address: " + address + "\nEnter a port number:");
+                System.out.println("Current Server address: " + address + "\nEnter a port number to host Server:");
                 String port = scanner.next();
                 try{
                     portNum = Integer.parseInt(port);
                     if(port.length()>0){
-                        Server.saveInfo(portNum, address);
                         break;
                     }
                 }catch(Exception e){
                     System.out.println("Incorrect port!");
+                }
+            }
+            while(true){
+                System.out.println("Enter ngrok address:");
+                ngrok = scanner.next();
+                try{
+                    DataManager.setURL_String(ngrok);
+                    if(DataManager.test()){
+                        Server.saveInfo(portNum, address);
+                        break;
+                    }
+                }catch(Exception e){
+                    System.out.println("Incorrect ngrok!");
                 }
             }
             try

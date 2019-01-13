@@ -19,16 +19,13 @@ import ServerUtils.WS_manager.DataManager;
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
     //We store the existing files of the server
-    private FilesArray files = new FilesArray();
-    //We store the existing users of the server
-    private UsersArray users = new UsersArray();
+    public FilesArray files = new FilesArray();
     //We store the users that are currently connected
     Hashtable<Integer, User> connectUsers = new Hashtable<Integer, User>();
     //We store the callbacks associated to the connected users
     Hashtable<Integer, ClientCallbackInterface> callbackObjects = new Hashtable<Integer, ClientCallbackInterface>();
     //We use this 2 variables to provide a control id duplications
     private int lastFileID = -1;
-    private int lastUserID = -1;
     //This one is the semaphore that we will use to avoid problems with concurrency
     public static final Semaphore semaphore = new Semaphore(1, true);
 
@@ -58,24 +55,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         System.out.println("\nGetting last file ID available...");
         this.lastFileID = ServerUtils.getFileID();
         System.out.println("\tLast file ID: " + this.lastFileID);
-        System.out.println("Getting existing users...");
-        //Check for next id available for users
-        try {
-            this.users = ServerUtils.getUsers();
-            System.out.printf("\tUsers id: ");
-            for (User f : this.users.getUsers()) {
-                System.out.printf(f.getId() + " ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("\nGetting last user ID available...");
-        this.lastUserID = ServerUtils.getUserID();
-        System.out.println("\tLast user ID: " + this.lastUserID );
 
         System.out.println("Saving Server info...");
-        System.out.println("\tAddress: "+ DataManager.serverInfo.getAddress() + "\n\tPort:\t " + DataManager.serverInfo.getPort()+"\n");
-        DataManager.test();
+        System.out.println("\tAddress: "+ ServerUtils.getServerInfo().getAddress() + "\n\tPort:\t " + ServerUtils.getServerInfo().getPort()+"\n");
     }
 
     /**
@@ -90,49 +72,24 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     /**
-     * @param newUserName the name of new user account
-     * @return true:if the name is available or false: if this name is used by another user
-     */
-    public boolean checkAvailableUser(String newUserName) throws RemoteException {
-        System.out.println("First user: " + this.users.isEmpty());
-        if (!this.users.isEmpty()) {
-            Iterator<User> iter = this.users.getUsers().iterator();
-            //For each user in the server we check if the name is currently used by another user
-            while (iter.hasNext()) {
-                if (iter.next().getName().toLowerCase().equals(newUserName.toLowerCase())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @param NomUsuari   name of the user ho want to log in
-     * @param contrasenya the pasword of the user
+     * @param username name of the user ho want to log in
+     * @param password the pasword of the user
      * @param callbackObj his callbackobject
      * @return we return to the user his callback id. If something goes wrong we return the id "-1"
      * @throws RemoteException
      */
-    public int user_login(String NomUsuari, String contrasenya, ClientCallbackInterface callbackObj) throws RemoteException {
-
+    public int user_login(String username, String password, ClientCallbackInterface callbackObj) throws RemoteException {
         try {
             semaphore.acquire();
             int idConexio = -1;
-            Iterator<User> iter = this.users.getUsers().iterator();
-
-            while (iter.hasNext()) {
-                User currentlyUser = iter.next();
-                //Check the validity of the user name
-                if (currentlyUser.getName().toLowerCase().equals(NomUsuari.toLowerCase())) {
-                    //Check if the username coincide with the password introduced
-                    if (currentlyUser.getPassword().equals(contrasenya)) {
-                        semaphore.release();
-                        return this.addCallback(callbackObj, currentlyUser);
-                    } else {
-                        semaphore.release();
-                        return idConexio;
-                    }
+            User currentUser = DataManager.userGET(username);
+            if(currentUser != null){
+                if (password.equals(currentUser.getPassword())){
+                    semaphore.release();
+                    return this.addCallback(callbackObj, currentUser);
+                }else {
+                    semaphore.release();
+                    return idConexio;
                 }
             }
         } catch (Exception e) {
@@ -152,27 +109,21 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean changePaswordOnServer(String userName, String oldPassword, String newPassword1) throws java.rmi.RemoteException {
         try {
             semaphore.acquire();
-            Iterator<User> iter = this.users.getUsers().iterator();
-            //We search for the currently user
-            while (iter.hasNext()) {
-                User curentlyUser = iter.next();
-                if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
-                    if (curentlyUser.getPassword().equals(oldPassword)) {
-                        curentlyUser.setPassword(newPassword1);
-                        ServerUtils.saveUsers(this.users.getUsers());
-                        semaphore.release();
-                        return true;
-                    }
-                }
+
+            User currentUser = DataManager.userGET(userName);
+            if (currentUser.getPassword().equals(oldPassword)) {
+                currentUser.setPassword(newPassword1);
+                DataManager.userPUT(currentUser);
+                semaphore.release();
+                return true;
             }
-            semaphore.release();
-            return false;
         } catch (Exception e) {
             e.printStackTrace();
-            semaphore.release();
-            return false;
         }
+        semaphore.release();
+        return false;
     }
+
     //region<CALLBACK>
     // method for client to call to add itself to its callback
     //@Override
@@ -218,7 +169,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         if (this.callbackObjects.size() == 0) {
             return 0;
         }
-
         for (int i = 0; i < this.callbackObjects.size(); i++) {
             if (!callbackObjects.containsKey(i)) {
                 //If some user disconnects there is an available id we re asign it
@@ -238,10 +188,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         try {
             semaphore.acquire();
             System.out.println("We delete the callback with id " + id + " from client:" + this.connectUsers.get(id).getName() + "\n");
-
             connectUsers.remove(id);
             callbackObjects.remove(id);
-
             semaphore.release();
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,57 +207,35 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean addSubscriptionTag(String userName, String newTag) throws RemoteException {
         try {
             semaphore.acquire();
-            Iterator<User> iter = this.users.getUsers().iterator();
-            //We search for the currently user
-            while (iter.hasNext()) {
-                User curentlyUser = iter.next();
-                if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
-                    //We add the tag
-                    if (curentlyUser.addSubscriptions(newTag)) {
-                        ServerUtils.saveUsers(this.users.getUsers());
-                        semaphore.release();
-                        return true;
-                    }
-                    semaphore.release();
-                    return false;
-                }
-            }
-            semaphore.release();
-            return false;
 
+            User currentUser = DataManager.userGET(userName);
+            if (currentUser.addSubscriptions(newTag)) {
+                DataManager.userPUT(currentUser);
+                semaphore.release();
+                return true;
+            }
         } catch (Exception e) {
-            semaphore.release();
             e.printStackTrace();
-            return false;
         }
+        semaphore.release();
+        return false;
     }
 
     public boolean deleteSubscriptionTag(String userName, String oldTag) throws RemoteException {
         try {
             semaphore.acquire();
-            Iterator<User> iter = this.users.getUsers().iterator();
-            //We search for the currently user
-            while (iter.hasNext()) {
-                User curentlyUser = iter.next();
-                if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
-                    //We add the tag
-                    if (curentlyUser.deleteSubscriptions(oldTag)) {
-                        ServerUtils.saveUsers(this.users.getUsers());
-                        semaphore.release();
-                        return true;
-                    }
-                    semaphore.release();
-                    return false;
-                }
-            }
-            semaphore.release();
-            return false;
 
+            User currentUser = DataManager.userGET(userName);
+            if (currentUser.deleteSubscriptions(oldTag)) {
+                DataManager.userPUT(currentUser);
+                semaphore.release();
+                return true;
+            }
         } catch (Exception e) {
-            semaphore.release();
             e.printStackTrace();
-            return false;
         }
+        semaphore.release();
+        return false;
     }
 
     /**
@@ -319,23 +245,14 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      */
     @Override
     public boolean user_signup(String newUserName, String password) {
+        int id = 0;
         try {
             semaphore.acquire();
-            if (checkAvailableUser(newUserName)) {
-                this.lastUserID = generateId(lastUserID);
-                //We create a new user
-                User newUser = new User(newUserName, password, lastUserID);
-                //We add the user to the server
-                this.users.addUser(newUser);
+            id = DataManager.userPOST(newUserName, password);
+            if(id!=0){
                 System.out.println("Usuari: " + newUserName + " registrat!!");
-                //We save it to the back up
-                ServerUtils.saveUsers(this.users.getUsers());
-                ServerUtils.saveUserID(this.lastUserID);
                 semaphore.release();
                 return true;
-            } else {
-                semaphore.release();
-                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -353,18 +270,12 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean uploadFile(FileObject file) {
         try {
             semaphore.acquire();
-
-            file.setId(DataManager.putFileToWS(file));
-
-
+            file.setId(DataManager.filePOST(file));
             //We generate a if related to the new file DELETE
             this.lastFileID = generateId(this.lastFileID); //TO DELETE
             file.setId(this.lastFileID); //TO DELETE
             ServerUtils.saveFileID(this.lastFileID); //TO DELETE
-
-
             this.files.addFile(file);
-
             //We save the file int the Server
             ServerUtils.saveFiles(files.getFiles());
             this.notifyNewFile(file);
@@ -476,7 +387,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     //And the owner is the one who wants to delete it
                     if (currentlyFile.getUser().equals(user)) {
                         //We remove it
-                        DataManager.deleteFileFromWS(fileId);
+                        DataManager.fileDELETE(fileId);
                         this.files.removeFile(currentlyFile);
                         //And we update the information to the backup
                         ServerUtils.saveFiles(this.files.getFiles());
@@ -554,7 +465,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @param id
      * @return return a
      */
-    private FileObject getFileObject(int id) {
+    public FileObject getFileObject(int id) {
         for (FileObject file : files.getFiles()) {
             if (file.getId() == id) {
                 return file;
@@ -565,7 +476,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
 
     @Override
     public boolean addModification(FileObject file) {
-        DataManager.putFileToWS(file);
+        DataManager.filePUT(file);
         try {
             semaphore.acquire();
             Iterator<FileObject> iter = this.files.getFiles().iterator();
@@ -598,15 +509,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         ArrayList<String> array = new ArrayList<>();
         try {
             semaphore.acquire();
-            Iterator<User> iter = this.users.getUsers().iterator();
-            //We search for the currently user
-            while (iter.hasNext()) {
-                User curentlyUser = iter.next();
-                if (curentlyUser.getName().toLowerCase().equals(userName.toLowerCase())) {
-                    semaphore.release();
-                    array = curentlyUser.getSubscriptions();
-                }
-            }
+            User currentUser = DataManager.userGET(userName);
+            array = currentUser.getSubscriptions();
+            semaphore.release();
         }catch(Exception e){
             System.out.println("Error at notifyNewFile method \n" + e.toString());
         }
