@@ -367,8 +367,6 @@ public class DataManager {
         return servers;
     }
 
-
-
     public static ArrayList<ServerInfo> serverGET_all(){
         ArrayList<ServerInfo> servers = new ArrayList<ServerInfo>();
         try {
