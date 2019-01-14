@@ -19,11 +19,11 @@ import RemoteObject.*;
 
 public class Client {
 
-	public static Garage h;
-	public String state ="disconnected";
+	private static Garage h;
+	private String state ="disconnected";
 	private static String userName = "";
-	public int callbackid;
-	public ClientCallbackInterface callbackObj;
+	private int callbackid;
+	private ClientCallbackInterface callbackObj;
 	public String serverIP;
 	public String serverPORT;
 
