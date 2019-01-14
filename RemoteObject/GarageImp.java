@@ -196,7 +196,15 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
 
             User currentUser = DataManager.userGET(userName);
+
             if (currentUser.addSubscriptions(newTag)) {
+
+                for (Integer i:this.connectUsers.keySet()) {
+                    if(this.connectUsers.get(i).getId() == currentUser.getId()){
+                        this.connectUsers.replace(i, currentUser);
+                    }
+                }
+
                 DataManager.userPUT(currentUser);
                 semaphore.release();
                 return true;
@@ -405,9 +413,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         //the Users that we detects that get a non friendly disconnection
         if(thisServer){
             notifyOtherServer(file);
-            System.out.println("Le penjat jo");
+            System.out.println("Le penjat jo\n");
         }else{
-            System.out.println("No le penjat jo");
+            System.out.println("No le penjat jo\n");
         }
 
         System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
@@ -419,7 +427,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             for (int key : this.callbackObjects.keySet()) {
                 tagArray = new ArrayList<String>();
                 //We add the tags that matches
+                System.out.println("callback num:"+key+"\n");
                 for (String filetag : file.getTags()) {
+                    System.out.println("filetag:"+filetag+"\n");
                     if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
                         System.out.println("Notifico a user :"+this.connectUsers.get(key).getId()+"\n");
                         tagArray.add(filetag);
