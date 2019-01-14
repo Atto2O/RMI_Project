@@ -462,9 +462,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) throws RemoteException {
         ArrayList<FileObject> files = new ArrayList<FileObject>();
-        for (Integer id:ids) {
+        for (int id:ids) {
             for (FileObject file:this.files.getFiles()) {
                 if(file.getId() == id){
+                    System.out.println("Getting id="+id);
                     files.add(file);
                 }
             }
