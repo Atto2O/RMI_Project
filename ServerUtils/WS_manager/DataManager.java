@@ -26,11 +26,11 @@ import static java.lang.Integer.parseInt;
 public class DataManager {
 
     public static URL url;
-    public static final String testURL ="/contents";
-    public static final String filesURL = "/contents";
-    public static final String usersURL = "/users";
-    public static final String serversURL = "/servers";
-    public static String url_address; //= "http://82c8190f.ngrok.io/api/resources";
+    private static final String testURL ="/contents";
+    private static final String filesURL = "/contents";
+    private static final String usersURL = "/users";
+    private static final String serversURL = "/servers";
+    private static String url_address; //= "http://82c8190f.ngrok.io/api/resources";
 
     public static void setURL_String(String ngrok){
         DataManager.url_address = "http://" + ngrok + ".ngrok.io/api/resources";
