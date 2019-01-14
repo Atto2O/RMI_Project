@@ -149,7 +149,7 @@ public class DataManager {
         }
     }
 
-    public ArrayList<FileObject> fileGET_Array(String description){
+    public static ArrayList<FileObject> fileGET_Array(String description){
         ArrayList<FileObject> files = new ArrayList<>();
 
         ArrayList<ContentsPack> packs = new ArrayList<>();

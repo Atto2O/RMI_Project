@@ -1156,7 +1156,6 @@ public class ClientGUI extends Application {
                 Toast.makeText(stage,  "Password must be more than "+min_password_chars+" and less"+max_password_chars+" than characters!",false);
                 return false;
             }
-
         }else{
             Toast.makeText(stage,  "Username must be more than "+min_username_chars+" and less"+max_username_chars+" than characters!",false);
             return false;

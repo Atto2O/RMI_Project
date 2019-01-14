@@ -24,15 +24,13 @@ public class Client {
 	private static String userName = "";
 	public int callbackid;
 	public ClientCallbackInterface callbackObj;
-
 	public String serverIP;
 	public String serverPORT;
 
 	private Client(){}
 
 	//region<MAIN>
-	public static void main (String args[])
-	{
+	public static void main (String args[]){
 		Client client = new Client();
 		ClientGUI.client = client;
 		client.state = "disconnected";
@@ -44,8 +42,7 @@ public class Client {
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
             array = Client.h.searchFile(text.toLowerCase(), Client.userName.toLowerCase().trim());
-        }catch (Exception e)
-        {
+        }catch (Exception e){
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
         }
         return array;
@@ -55,8 +52,7 @@ public class Client {
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
             array = Client.h.searchFileByName(Client.userName.toLowerCase().trim());
-        }catch (Exception e)
-        {
+        }catch (Exception e){
             System.out.println("Exception in Client-getFilesByUser(): " + e.toString());
         }
         return array;
@@ -65,8 +61,7 @@ public class Client {
     public boolean changePassword(String oldPassword,String newPassword1){
 		try{
 			return Client.h.changePaswordOnServer(Client.userName.toLowerCase().trim(),oldPassword,newPassword1);
-		}catch (Exception e)
-		{
+		}catch (Exception e){
 			System.out.println("Exception in Client-changePassword(): " + e.toString());
 		}
 		return false;
@@ -77,16 +72,15 @@ public class Client {
 			Client.h.deleteCallback(this.callbackid);
 			this.state = "disconnected";
             Client.userName = "";
-		}catch (Exception e)
-		{
+		}catch (Exception e){
 			System.out.println("Exception in Client-deslogear(): " + e.toString());
 		}
 	}
+
 	public void deleteCallbackFromClienth(){
 		try{
             Client.h.deleteCallback(this.callbackid);
-		}catch (Exception e)
-		{
+		}catch (Exception e){
 			System.out.println("Exception in Client-deleteCallbackFromClient: " + e.toString());
 		}
 	}
@@ -114,8 +108,7 @@ public class Client {
 		try {
 			return Client.h.addSubscriptionTag(Client.userName.toLowerCase().trim(), newTag.toLowerCase());
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			System.out.println("Exception in Client-subscribeToTag(): " + e.toString());
 		}
 		return false;
@@ -125,8 +118,7 @@ public class Client {
 		try {
 			return Client.h.deleteSubscriptionTag(Client.userName.toLowerCase().trim(), oldTag.toLowerCase());
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			System.out.println("Exception in subscription: " + e.toString());
 		}
 		return false;
@@ -150,8 +142,7 @@ public class Client {
 				System.out.print("Un o mes camps son buit!!\n");
 			}
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			System.out.println("Exception in Client-logear(): " + e.toString());
 		}
 		return false;
@@ -175,14 +166,12 @@ public class Client {
 					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
 					return false;
 				}
-
 			} else {
 				System.out.print("Les contrasenyes son diferents!!\n");
 				return false;
 			}
 		}
-		catch (Exception e)
-		{
+		catch (Exception e)	{
 			System.out.println("Exception in Client-registrar(): " + e.toString());
 			return false;
 		}
@@ -208,39 +197,28 @@ public class Client {
 
 	//region<Upload>
 	public boolean upload(File newFile, String filename, String type, String description, ArrayList<String> tags, boolean state){
-
 		FileObject fileObject = new FileObject();
 		fileObject.setUser(Client.userName.toLowerCase().trim());
-
 		byte[] data;
-
 		try {
 			Path fileLocation = Paths.get(newFile.getAbsolutePath());
 			data = Files.readAllBytes(fileLocation);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
-
 		fileObject.setFile(data);
-
 		//FILE NAME
 		fileObject.setFileName(filename.toLowerCase());
-
 		//TYPE
 		Type type1  = Type.fromString(type.toLowerCase());
 		fileObject.setType(type1);
-
 		//TAGS
 		fileObject.setTags(tags);
-
         //DESCRIPTION TEXT
         fileObject.setDescription(description.toLowerCase());
-
 		//IS PUBLIC
 		fileObject.setState(state);
-
 		try {
 			System.out.println("al client dins avans de fer upload al server id: "+fileObject.getId());
 			return h.uploadFile(fileObject);
@@ -270,7 +248,6 @@ public class Client {
 			System.out.println("al client dins de modified id: ");
 			System.out.println(file.getId());
 			return Client.h.addModification(file);
-
 		}catch (Exception e){
 			System.out.println("Exception in Client-changeType(): " + e.toString());
 			return false;
@@ -287,11 +264,6 @@ public class Client {
         }
         return array;
 	}
-	//endregion
-
-	//endregion
-
-	//region<Users>
 	//endregion
 	//endregion
 }

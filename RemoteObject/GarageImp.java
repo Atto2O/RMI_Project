@@ -15,7 +15,6 @@ import java.util.concurrent.Semaphore;
 import ServerUtils.*;
 import ServerUtils.WS_manager.DataManager;
 
-
 public class GarageImp extends UnicastRemoteObject implements Garage {
 
     //We store the existing files of the server
@@ -26,8 +25,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     Hashtable<Integer, ClientCallbackInterface> callbackObjects = new Hashtable<Integer, ClientCallbackInterface>();
     //This one is the semaphore that we will use to avoid problems with concurrency
     public static final Semaphore semaphore = new Semaphore(1, true);
-
-    public static final Semaphore Internationalsemaphore = new Semaphore(1, true);
 
     /**
      * @throws RemoteException
@@ -53,7 +50,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         System.out.println("Saving Server info...");
         System.out.println("\tAddress: "+ ServerUtils.getServerInfo().getIp() + "\n\tPort:\t " + ServerUtils.getServerInfo().getPort()+"\n");
     }
@@ -96,7 +92,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean changePaswordOnServer(String userName, String oldPassword, String newPassword1) throws java.rmi.RemoteException {
         try {
             semaphore.acquire();
-
             User currentUser = DataManager.userGET(userName);
             if (currentUser.getPassword().equals(oldPassword)) {
                 currentUser.setPassword(newPassword1);
@@ -110,10 +105,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         semaphore.release();
         return false;
     }
-
-    //region<CALLBACK>
-    // method for client to call to add itself to its callback
-    //@Override
 
     /**
      * @param callbackObject client callbackObject
@@ -129,7 +120,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             if (!(callbackObjects.contains(callbackObject))) {
                 //We generate him an id
                 key = this.getKeyForCallBack();
-
                 //We store the id in the server
                 this.callbackObjects.put(key, callbackObject);
                 this.connectUsers.put(key, currentlyUser);
@@ -240,10 +230,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      */
     @Override
     public boolean user_signup(String newUserName, String password) {
-        int id = 0;
         try {
             semaphore.acquire();
-            id = DataManager.userPOST(newUserName, password);
+            int id = DataManager.userPOST(newUserName, password);
             if(id!=0){
                 System.out.println("Usuari: " + newUserName + " registrat!!");
                 semaphore.release();
@@ -291,32 +280,9 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public ArrayList<FileObject> searchFile(String keyText, String username) {
         try {
             semaphore.acquire();
-            ArrayList<FileObject> posibleFiles = new ArrayList<>();
-            //We parse the key text and get all the words
-            String[] keyWords = keyText.split("'., '");
-            Iterator<FileObject> iter = this.files.getFiles().iterator();
-            //For each key word we check all the files
-            for (int i = 0; i < keyWords.length; i++) {
-                while (iter.hasNext()) {
-                    FileObject currentlyFile = iter.next();
-                    String titleParsed = currentlyFile.getFileName().toLowerCase();//.split("'., '").toLowerCase();
-                    //Check if owner name,title, description or tag contain the key word
-                    if(currentlyFile.getState()==true || currentlyFile.getUser().equals(username)){
-                    if ((currentlyFile.getUser().equals(keyWords[i]))
-                            || (titleParsed.contains(keyWords[i].toString().toLowerCase()))
-                            || (currentlyFile.getDescription().toLowerCase().contains(keyWords[i].toString().toLowerCase()))
-                            || (currentlyFile.getTags().toString().toLowerCase().contains(keyWords[i].toLowerCase()))) {
-                        //If we don't add the file previously we add it to the resultant possible files
-                        if (!posibleFiles.contains(currentlyFile)) {
-                            posibleFiles.add(currentlyFile);
-                        }
-                    }
-                    }
-                }
-            }
+            ArrayList<FileObject> posibleFiles = DataManager.fileGET_Array(keyText);
             semaphore.release();
             return posibleFiles;
-
         } catch (Exception e) {
             e.printStackTrace();
             semaphore.release();
@@ -335,13 +301,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         try {
             semaphore.acquire();
             ArrayList<FileObject> Files = new ArrayList<>();
-
             Iterator<FileObject> iter = this.files.getFiles().iterator();
-
                 while (iter.hasNext()) {
                     FileObject currentlyFile = iter.next();
                     if ((currentlyFile.getUser().toLowerCase().equals(name))){
-
                         Files.add(currentlyFile);
                     }
                 }
@@ -390,13 +353,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     }
                 }
             }
-            semaphore.release();
-            return false;//"No ets el propietari de aquest fitxer o no existeix :(";
         } catch (Exception e) {
             System.out.println("delete file Error: " + e.toString());
-            semaphore.release();
-            return false;//"Error al intentar borra el fitxer";
         }
+        semaphore.release();
+        return false;
     }
 
     /**
@@ -408,81 +369,70 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public void notifyNewFile(FileObject file,boolean thisServer) throws RemoteException {
         try{
-            //Internationalsemaphore.acquire();
-
-        //the Users that we detects that get a non friendly disconnection
-        if(thisServer){
-            notifyOtherServer(file);
-            System.out.println("Le penjat jo\n");
-        }else{
-            System.out.println("No le penjat jo\n");
-        }
-
-        System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
-
-        ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
-        //In this array list for each user we will store the tags that matches with his subscriptions
-        ArrayList<String> tagArray = new ArrayList<String>();
-        try {
-            for (int key : this.callbackObjects.keySet()) {
-                tagArray = new ArrayList<String>();
-                //We add the tags that matches
-                System.out.println("callback num:"+key+"\n");
-                for (String filetag : file.getTags()) {
-                    System.out.println("filetag:"+filetag+"\n");
-                    if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
-                        System.out.println("Notifico a user :"+this.connectUsers.get(key).getId()+"\n");
-                        tagArray.add(filetag);
-                    }
-                }
-                //If the files is not private of user is the owner of the file
-                if ((file.getState() && !tagArray.isEmpty())
-                        || (!file.getState() && this.connectUsers.get(key).getName().equals(file.getUser()))) {
-
-                    try {
-                        //We notify the client with all the tag that matches and the description of the file
-                        ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
-                        String msg = "";
-                        msg += "User " + file.getUser().toUpperCase() + " upload the file {" + file.getFileName() + "}\nType: "+file.getType().toString()+"\nTags:\n";
-                        for (String tag : tagArray) {
-                            msg += "\t- " + tag + "\n";
+            //the Users that we detects that get a non friendly disconnection
+            if(thisServer){
+                notifyOtherServer(file);
+                System.out.println("Le penjat jo\n");
+            }else{
+                System.out.println("No le penjat jo\n");
+            }
+            System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
+            ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
+            //In this array list for each user we will store the tags that matches with his subscriptions
+            ArrayList<String> tagArray = new ArrayList<String>();
+            try {
+                for (int key : this.callbackObjects.keySet()) {
+                    tagArray = new ArrayList<String>();
+                    //We add the tags that matches
+                    System.out.println("callback num:"+key+"\n");
+                    for (String filetag : file.getTags()) {
+                        System.out.println("filetag:"+filetag+"\n");
+                        if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
+                            System.out.println("Notifico a user :"+this.connectUsers.get(key).getId()+"\n");
+                            tagArray.add(filetag);
                         }
-                        msg += "Description: " + file.getDescription() + "\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n";
-                        client.callMe(msg);
-                        System.out.println("We notified User:" + this.connectUsers.get(key).getName() + " about: User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\n");
-                    } catch (Exception e) {
-                        //If we fial connecting to the client add it to the remove list
-                        System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
-                        usersToDelete.add(key);
-                        //notifyConnection(notifiedUsers,newConnection);
-                        continue;
+                    }
+                    //If the files is not private of user is the owner of the file
+                    if ((file.getState() && !tagArray.isEmpty())
+                            || (!file.getState() && this.connectUsers.get(key).getName().equals(file.getUser()))) {
+                        try {
+                            //We notify the client with all the tag that matches and the description of the file
+                            ClientCallbackInterface client = (ClientCallbackInterface) callbackObjects.get(key);
+                            String msg = "";
+                            msg += "User " + file.getUser().toUpperCase() + " upload the file {" + file.getFileName() + "}\nType: "+file.getType().toString()+"\nTags:\n";
+                            for (String tag : tagArray) {
+                                msg += "\t- " + tag + "\n";
+                            }
+                            msg += "Description: " + file.getDescription() + "\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n";
+                            client.callMe(msg);
+                            System.out.println("We notified User:" + this.connectUsers.get(key).getName() + " about: User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\n");
+                        } catch (Exception e) {
+                            //If we fial connecting to the client add it to the remove list
+                            System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
+                            usersToDelete.add(key);
+                            //notifyConnection(notifiedUsers,newConnection);
+                            continue;
+                        }
                     }
                 }
+                //We disconnect all the users that failed into the server connection
+                for (int idDelete : usersToDelete) {
+                    this.callbackObjects.remove(idDelete);
+                    this.connectUsers.remove(idDelete);
+                }
+            } catch (Exception e) {
+                System.out.println("Error at notifyNewFile method \n" + e.toString());
             }
-            //We disconnect all the users that failed into the server connection
-            for (int idDelete : usersToDelete) {
-                this.callbackObjects.remove(idDelete);
-                this.connectUsers.remove(idDelete);
-            }
-        } catch (Exception e) {
-            System.out.println("Error at notifyNewFile method \n" + e.toString());
-            //Internationalsemaphore.release();
-        }
         } catch (Exception e) {
             System.out.println("Update file Error: " + e.toString());
-            //Internationalsemaphore.release();
         }
-        //Internationalsemaphore.release();
     }
 
     public void notifyOtherServer(FileObject file){
-
         ArrayList<ServerInfo> serverList = DataManager.serverGET_all();
-
         Iterator<ServerInfo> iter = serverList.iterator();
         //For each file in the server
         while (iter.hasNext()) {
-
             ServerInfo server= iter.next();
             System.out.println("befor if the notify el serv amb id:"+server.getId());
             if(server.getId()!= ServerUtils.getServerInfo().getId()) {
@@ -497,11 +447,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         String registryURL = "rmi://"+ serverIP +":" + serverPORT + "/some";
         try {
             Garage h = (Garage)Naming.lookup(registryURL);
-
             h.notifyNewFile(file,false);
         }catch (Exception e) {
         }
     }
+
     /**
      * Search the id into the files array.If we find it, we return it,if not we return and empty one
      *
@@ -548,13 +498,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     return true;
                 }
             }
-            semaphore.release();
-            return false;
         } catch (Exception e) {
             System.out.println("delete file Error: " + e.toString());
-            semaphore.release();
-            return false;
         }
+        semaphore.release();
+        return false;
     }
     //endregion
 
@@ -565,7 +513,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
             User currentUser = DataManager.userGET(userName);
             array = currentUser.getSubscriptions();
-            semaphore.release();
         }catch(Exception e){
             System.out.println("Error at notifyNewFile method \n" + e.toString());
         }
