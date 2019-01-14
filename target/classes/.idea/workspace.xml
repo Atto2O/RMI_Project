@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="558c59a7-111f-4774-86ab-37f20c08ac3d" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_6_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_6_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_6_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_json_javax_json_api_1_1_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20160810.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI/ClientGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/ClientGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemoteObject/GarageImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteObject/GarageImp.java" afterDir="false" />
+    <list default="true" id="558c59a7-111f-4774-86ab-37f20c08ac3d" name="Default" comment="-">
+      <change beforePath="$PROJECT_DIR$/Server/Backup/Config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Backup/Files.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Files.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Client/Client.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,17 +20,65 @@
       <file leaf-file-name="GarageImp.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="198" column="24" selection-start-line="198" selection-start-column="24" selection-end-line="198" selection-end-column="24" />
+            <state relative-caret-position="136">
+              <caret line="284" column="66" selection-start-line="284" selection-start-column="66" selection-end-line="284" selection-end-column="66" />
+              <folding>
+                <element signature="e#10120#10132#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClientGUI.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Client/Client.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="426">
+              <caret line="268" column="1" selection-start-line="268" selection-start-column="1" selection-end-line="268" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClientGUI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GUI/ClientGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="692" column="66" selection-start-line="692" selection-start-column="66" selection-end-line="692" selection-end-column="66" />
+            <state relative-caret-position="1321">
+              <caret line="1157" column="13" selection-start-line="1157" selection-start-column="13" selection-end-line="1157" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServerUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ServerUtils/ServerUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Files.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="2" selection-start-column="2" selection-end-column="2" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DataManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ServerUtils/WS_manager/DataManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1980">
+              <caret line="151" column="18" selection-start-line="151" selection-start-column="18" selection-end-line="151" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Config.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -51,7 +93,9 @@
       <find>edit</find>
       <find>save_edit_button</find>
       <find>save</find>
+      <find>search</find>
       <find>save_upload_button</find>
+      <find>sear</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -60,8 +104,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/RemoteObject/GarageImp.java" />
+        <option value="$PROJECT_DIR$/ServerUtils/WS_manager/DataManager.java" />
         <option value="$PROJECT_DIR$/GUI/ClientGUI.java" />
+        <option value="$PROJECT_DIR$/Client/Client.java" />
+        <option value="$PROJECT_DIR$/RemoteObject/GarageImp.java" />
+        <option value="$PROJECT_DIR$/Server/Backup/Files.json" />
+        <option value="$PROJECT_DIR$/Server/Backup/Config.json" />
       </list>
     </option>
   </component>
@@ -86,12 +134,28 @@
             <path>
               <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
               <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
+              <item name="Client" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
               <item name="GUI" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
               <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
               <item name="RemoteObject" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
+              <item name="ServerUtils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
+              <item name="ServerUtils" type="462c0819:PsiDirectoryNode" />
+              <item name="WS_manager" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -114,7 +178,18 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Client">
+    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Client.Client" />
+      <module name="RMI_Projct" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+    </configuration>
     <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Server.Server" />
       <module name="RMI_Projct" />
@@ -167,8 +242,13 @@
       <properties />
       <listeners />
     </configuration>
+    <list>
+      <item itemvalue="Application.Server" />
+      <item itemvalue="Application.Client" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Client" />
         <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>
@@ -184,6 +264,28 @@
       <option name="presentableId" value="Default" />
       <updated>1547476148304</updated>
     </task>
+    <task id="LOCAL-00001" summary="Delete subscriptions &amp; add&amp;edit tags fix">
+      <created>1547477081648</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1547477081648</updated>
+    </task>
+    <task id="LOCAL-00002" summary="-">
+      <created>1547478325987</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1547478325987</updated>
+    </task>
+    <task id="LOCAL-00003" summary="-">
+      <created>1547478696430</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1547478696430</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -192,17 +294,18 @@
     <layout>
       <window_info anchor="right" id="Palette" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Messages" weight="0.32949308" />
       <window_info anchor="right" id="Palette&#9;" />
       <window_info id="Image Layers" />
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" />
       <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32949308" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2453125" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2453125" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" />
@@ -220,18 +323,61 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Delete subscriptions &amp; add&amp;edit tags fix" />
+    <MESSAGE value="-" />
+    <option name="LAST_COMMIT_MESSAGE" value="-" />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
+    <entry file="file://$PROJECT_DIR$/Client/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="198" column="24" selection-start-line="198" selection-start-column="24" selection-end-line="198" selection-end-column="24" />
+        <state relative-caret-position="426">
+          <caret line="268" column="1" selection-start-line="268" selection-start-column="1" selection-end-line="268" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI/ClientGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="692" column="66" selection-start-line="692" selection-start-column="66" selection-end-line="692" selection-end-column="66" />
+        <state relative-caret-position="1321">
+          <caret line="1157" column="13" selection-start-line="1157" selection-start-column="13" selection-end-line="1157" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ServerUtils/ServerUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ServerUtils/WS_manager/DataManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1980">
+          <caret line="151" column="18" selection-start-line="151" selection-start-column="18" selection-end-line="151" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="284" column="66" selection-start-line="284" selection-start-column="66" selection-end-line="284" selection-end-column="66" />
+          <folding>
+            <element signature="e#10120#10132#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="2" selection-start-column="2" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
         </state>
       </provider>
     </entry>

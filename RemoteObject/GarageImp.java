@@ -467,6 +467,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         return new FileObject();
     }
 
+    @Override
     public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) {
         ArrayList<FileObject> files = new ArrayList<FileObject>();
         for (Integer id:ids) {

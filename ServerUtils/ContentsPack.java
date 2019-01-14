@@ -4,11 +4,12 @@ public class ContentsPack {
     private int serverID;
     private int id;
 
-
     public ContentsPack(int serverID, int id) {
         this.serverID = serverID;
         this.id = id;
     }
+
+    public ContentsPack(){}
 
     public int getId() {
         return id;

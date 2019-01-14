@@ -3,6 +3,7 @@ package ServerUtils.WS_manager;
 import Objects.FileObject;
 import Objects.FileObjectInfo;
 import Objects.User;
+import RemoteObject.Garage;
 import RemoteObject.GarageImp;
 import ServerUtils.ServerInfo;
 import ServerUtils.ServerUtils;
@@ -160,6 +161,7 @@ public class DataManager {
             String test_URL = DataManager.url_address + DataManager.filesURL + "/like?word="+description;
             DataManager.url = new URL(test_URL);
             HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
+            conn.setDoOutput(true);
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
             if(conn.getResponseCode() != 200){
@@ -171,8 +173,10 @@ public class DataManager {
             while ((output = br.readLine()) != null){
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
+                System.out.println(output);
                 for (int i=0; i<jsonArray.length(); i++) {
-                    packs.add(mapper.readValue(jsonArray.getString(i), ContentsPack.class));
+                    System.out.println(jsonArray.getJSONObject(i).toString());
+                    packs.add(mapper.readValue(jsonArray.getJSONObject(i).toString(), ContentsPack.class));
                 }
                 for (ContentsPack c:packs) {
                     if (!servers.containsKey(c.getServerID())){
@@ -186,7 +190,7 @@ public class DataManager {
                 servers_to_search.addAll(servers.keySet());
                 servers_to_access = DataManager.serverGET_byID(servers_to_search);
                 for (ServerInfo s:servers_to_access) {
-                    ArrayList values =new ArrayList();
+                    ArrayList values = new ArrayList();
                     values.addAll(servers.get(s.getId()));
                     files.addAll(DataManager.getFileFromServer(values, s));
                 }
@@ -272,10 +276,6 @@ public class DataManager {
                     input += ",\"" + subscriptions + "\"";
                 }
             }
-
-
-
-
             input += "],\"id\":\""+user.getId()+"\",\"name\":\""+user.getName()+"\",\"password\":\""+user.getPassword()+"\"}";
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
@@ -350,8 +350,16 @@ public class DataManager {
             DataManager.url = new URL(serverGET_URL);
             HttpURLConnection conn = (HttpURLConnection) DataManager.url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Accept", "application/json");
-            String input = "{\"list\":"+ids+"}";
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            String input = "{\"list\":[" + ids.get(0);
+            for (int id: ids) {
+                if (id != ids.get(0)){
+                    input+=","+id;
+                }
+            }
+            input+="]}";
+            System.out.println(input);
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
@@ -365,7 +373,7 @@ public class DataManager {
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
                 for (int i=0; i<jsonArray.length(); i++) {
-                    servers.add(mapper.readValue(jsonArray.getString(i), ServerInfo.class));
+                    servers.add(mapper.readValue(jsonArray.getJSONObject(i).toString(), ServerInfo.class));
                 }
             }
             conn.disconnect();
@@ -409,9 +417,9 @@ public class DataManager {
 
     ///////  TO OTHER SERVERS ////////////////////////////////
     public static ArrayList<FileObject> getFileFromServer(ArrayList<Integer> ids, ServerInfo serverInfo){
-        String registryURL = "rmi://"+ serverInfo.getId() +":" + serverInfo.getPort() + "/some";
+        String registryURL = "rmi://"+ serverInfo.getIp() +":" + serverInfo.getPort() + "/some";
         try {
-            GarageImp h = (GarageImp) Naming.lookup(registryURL);
+            Garage h = (Garage) Naming.lookup(registryURL);
             return h.getFileObjects(ids);
         }catch (Exception e) {
             System.out.println("Access to Server "+ serverInfo.getId()+" dennied. (IP: "+serverInfo.getIp()+"\tPORT: "+serverInfo.getPort()+")\nUnable to get files from this Server.");
