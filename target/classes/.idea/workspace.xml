@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="528450cd-9d09-4963-948b-04beeeb37b72" name="Default" comment="">
+    <list default="true" id="558c59a7-111f-4774-86ab-37f20c08ac3d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_6_0.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_6_3.xml" beforeDir="false" />
@@ -9,9 +9,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_json_javax_json_api_1_1_4.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20160810.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RMI_Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RMI_Project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/Backup/Config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/Backup/Files.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Files.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI/ClientGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/ClientGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteObject/GarageImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteObject/GarageImp.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,25 +23,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Config.json" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
+      <file leaf-file-name="GarageImp.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+            <state relative-caret-position="112">
+              <caret line="198" column="24" selection-start-line="198" selection-start-column="24" selection-end-line="198" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Files.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
+      <file leaf-file-name="ClientGUI.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GUI/ClientGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+            <state relative-caret-position="442">
+              <caret line="692" column="66" selection-start-line="692" selection-start-column="66" selection-end-line="692" selection-end-column="66" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>dele</find>
+      <find>upload</find>
+      <find>ArrayList&lt;String&gt;</find>
+      <find>edit</find>
+      <find>save_edit_button</find>
+      <find>save</find>
+      <find>save_upload_button</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -49,8 +60,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Server/Backup/Config.json" />
-        <option value="$PROJECT_DIR$/Server/Backup/Files.json" />
+        <option value="$PROJECT_DIR$/RemoteObject/GarageImp.java" />
+        <option value="$PROJECT_DIR$/GUI/ClientGUI.java" />
       </list>
     </option>
   </component>
@@ -69,19 +80,18 @@
         <subPane>
           <expand>
             <path>
-              <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
-              <item name="Server" type="462c0819:PsiDirectoryNode" />
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
+              <item name="GUI" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
-              <item name="Server" type="462c0819:PsiDirectoryNode" />
-              <item name="Backup" type="462c0819:PsiDirectoryNode" />
+              <item name="RMI_Projct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMI_Projct" type="462c0819:PsiDirectoryNode" />
+              <item name="RemoteObject" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -107,7 +117,7 @@
   <component name="RunManager">
     <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Server.Server" />
-      <module name="RMI_Project" />
+      <module name="RMI_Projct" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <extension name="coverage">
         <pattern>
@@ -168,11 +178,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="528450cd-9d09-4963-948b-04beeeb37b72" name="Default" comment="" />
-      <created>1547462444701</created>
+      <changelist id="558c59a7-111f-4774-86ab-37f20c08ac3d" name="Default" comment="" />
+      <created>1547476148304</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1547462444701</updated>
+      <updated>1547476148304</updated>
     </task>
     <servers />
   </component>
@@ -187,18 +197,18 @@
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2453125" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" />
       <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -211,35 +221,19 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
+    <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+        <state relative-caret-position="112">
+          <caret line="198" column="24" selection-start-line="198" selection-start-column="24" selection-end-line="198" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
+    <entry file="file://$PROJECT_DIR$/GUI/ClientGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+        <state relative-caret-position="442">
+          <caret line="692" column="66" selection-start-line="692" selection-start-column="66" selection-end-line="692" selection-end-column="66" />
         </state>
       </provider>
     </entry>
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ProjectJDKs.UI">
-        <settings>
-          <last-edited>1.8</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
   </component>
 </project>

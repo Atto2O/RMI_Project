@@ -278,17 +278,17 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      */
     @Override
     public ArrayList<FileObject> searchFile(String keyText, String username) {
+        ArrayList<FileObject> posibleFiles = new ArrayList<FileObject>();
         try {
             semaphore.acquire();
-            ArrayList<FileObject> posibleFiles = DataManager.fileGET_Array(keyText);
-            semaphore.release();
-            return posibleFiles;
+            if(!keyText.isEmpty()){
+                posibleFiles = DataManager.fileGET_Array(keyText);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            semaphore.release();
-            //If it goes wrong we return and empty list of files
-            return new ArrayList<FileObject>();
         }
+        semaphore.release();
+        return posibleFiles;
     }
 
 /**
