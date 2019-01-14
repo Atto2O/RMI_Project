@@ -39,19 +39,6 @@ public class ServerUtils{
         return files;
     }
 
-    public static int getFileID()
-    {
-        Id ID = new Id();
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            ID = mapper.readValue(new File("Server/Backup/Files.json"), Id.class);
-        }catch(Exception e){
-            System.out.println("Error getFileID() from ServerUtils: " + e.toString());
-        }
-        if(ID==null){ID=new Id();}
-        return ID.getId();
-    }
-
     public static void saveServerInfo(ServerInfo toSave){
         ServerUtils.serverInfo = toSave;
     }
@@ -67,17 +54,6 @@ public class ServerUtils{
                 System.out.println("Error saveFiles(files) from ServerUtils: " + e.toString());
             }
         }
-
-    public static void saveFileID(int lastFileID)
-    {
-        Id ID = new Id(lastFileID);
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File("Server/Backup/Files.json"), ID);
-        }catch (Exception e){
-            System.out.println("Error saveFileID(id) from ServerUtils: " + e.toString());
-        }
-    }
 
     public static void saveServerConfig(int id){
         Id ID = new Id(id);

@@ -444,14 +444,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
      * @param id
      * @return return a
      */
-    public FileObject getFileObject(int id) {
-        for (FileObject file : files.getFiles()) {
-            if (file.getId() == id) {
-                return file;
-            }
-        }
-        return new FileObject();
-    }
 
     @Override
     public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) throws RemoteException {

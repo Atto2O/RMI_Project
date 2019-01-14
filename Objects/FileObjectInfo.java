@@ -8,7 +8,7 @@ import ServerUtils.ServerInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileObjectInfo implements java.io.Serializable{
+public class  FileObjectInfo implements java.io.Serializable{
 
     private ArrayList<String> tags;
     private String description ;
