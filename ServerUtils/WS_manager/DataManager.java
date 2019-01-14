@@ -265,7 +265,18 @@ public class DataManager {
             conn.setRequestMethod("PUT");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            String input = "{\"id\":\""+user.getId()+"\",\"name\":\""+user.getName()+"\",\"password\":\""+user.getPassword()+"\",\"subscriptions\":"+user.getSubscriptions()+"}";
+
+            String input = "{\"subscriptions\":[\"" + user.getSubscriptions().get(0)+"\"";
+            for (String subscriptions: user.getSubscriptions()) {
+                if(!subscriptions.equals(user.getSubscriptions().get(0))){
+                    input += ",\"" + subscriptions + "\"";
+                }
+            }
+
+
+
+
+            input += "],\"id\":\""+user.getId()+"\",\"name\":\""+user.getName()+"\",\"password\":\""+user.getPassword()+"\"}";
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
