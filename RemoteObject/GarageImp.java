@@ -405,7 +405,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         //the Users that we detects that get a non friendly disconnection
         if(thisServer){
             notifyOtherServer(file);
+            System.out.println("Le penjat jo");
+        }else{
+            System.out.println("No le penjat jo");
         }
+
+        System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
+
         ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
         //In this array list for each user we will store the tags that matches with his subscriptions
         ArrayList<String> tagArray = new ArrayList<String>();
@@ -415,6 +421,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 //We add the tags that matches
                 for (String filetag : file.getTags()) {
                     if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
+                        System.out.println("Notifico a user :"+this.connectUsers.get(key).getId()+"\n");
                         tagArray.add(filetag);
                     }
                 }

@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="75b1bfad-0ccc-4c7b-ab58-b1119d85e9b8" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.java" afterDir="false" />
+    <list default="true" id="528450cd-9d09-4963-948b-04beeeb37b72" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_6_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_6_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_6_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_json_javax_json_api_1_1_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20160810.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RMI_Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RMI_Project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemoteObject/GarageImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteObject/GarageImp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Backup/Config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Backup/Files.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Backup/Files.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
-    <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,34 +23,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Client/Client.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="244" column="103" selection-start-line="244" selection-start-column="103" selection-end-line="244" selection-end-column="103" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GarageImp.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="518" column="56" selection-start-line="518" selection-start-column="56" selection-end-line="518" selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Config.json" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Config.json" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="1" selection-start-column="1" selection-end-column="1" />
+              <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Files.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Files.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
           <provider selected="true" editor-type-id="text-editor">
             <state>
@@ -59,19 +43,12 @@
       </file>
     </leaf>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>modi</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Client/Client.java" />
-        <option value="$PROJECT_DIR$/RemoteObject/GarageImp.java" />
         <option value="$PROJECT_DIR$/Server/Backup/Config.json" />
         <option value="$PROJECT_DIR$/Server/Backup/Files.json" />
       </list>
@@ -88,24 +65,12 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
               <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
-              <item name="Client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RMI_Project" type="462c0819:PsiDirectoryNode" />
-              <item name="RemoteObject" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="RMI_Project" type="b2602c69:ProjectViewProjectNode" />
@@ -122,6 +87,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="AndroidView" />
     </panes>
   </component>
@@ -201,16 +168,17 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="75b1bfad-0ccc-4c7b-ab58-b1119d85e9b8" name="Default" comment="" />
-      <created>1547451875835</created>
+      <changelist id="528450cd-9d09-4963-948b-04beeeb37b72" name="Default" comment="" />
+      <created>1547462444701</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1547451875835</updated>
+      <updated>1547462444701</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1282" height="977" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -219,8 +187,8 @@
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
@@ -229,8 +197,8 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" />
       <window_info anchor="right" id="Theme Preview" />
-      <window_info id="Favorites" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -243,27 +211,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Client/Client.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="244" column="103" selection-start-line="244" selection-start-column="103" selection-end-line="244" selection-end-column="103" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RemoteObject/GarageImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="518" column="56" selection-start-line="518" selection-start-column="56" selection-end-line="518" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="1" selection-start-column="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/Backup/Files.json">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -271,5 +218,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Server/Backup/Config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>
