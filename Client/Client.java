@@ -42,10 +42,6 @@ public class Client {
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
             array = Client.h.searchFile(text.toLowerCase(), Client.userName.toLowerCase().trim());
-            System.out.println("getFilesByText() -> Client");
-            for (FileObject f: array ) {
-                System.out.println(f.getId());
-            }
         }catch (Exception e){
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
         }
@@ -137,13 +133,13 @@ public class Client {
 				callbackid = Client.h.user_login(Client.userName.toLowerCase().trim(), password,callbackObj);
 				if (callbackid != -1) {
 					this.callbackid = callbackid;
-					System.out.print("T'as logeat correctamen!!!\n");
+					System.out.print("Correct log in.\n");
                     return true;
 				} else {
-					System.out.print("El nom de usuari o la contrasenya no coincideixen!\n");
+					System.out.print("Username and password doesn't match.\n");
 				}
 			} else {
-				System.out.print("Un o mes camps son buit!!\n");
+				System.out.print("One or more fields are empty.\n");
 			}
 		}
 		catch (Exception e)	{
@@ -162,16 +158,16 @@ public class Client {
 				boolean server_response = Client.h.user_signup(newUserName.toLowerCase().trim(), password_1);
                 System.out.println(server_response);
 				if (server_response) {
-					System.out.print("T'has registrat correctament!!!\n ja pots logear\n");
+					System.out.print("Correct sign up\n");
                     Client.userName = newUserName.toLowerCase().trim();
                     this.logear(Client.userName, password_1);
 					return true;
 				} else {
-					System.out.print("El nom de usuari no es valid! prova amb unaltre!\n");
+					System.out.print("Invalid username. Try another one.\n");
 					return false;
 				}
 			} else {
-				System.out.print("Les contrasenyes son diferents!!\n");
+				System.out.print("Passwords doesn't match.\n");
 				return false;
 			}
 		}
@@ -188,7 +184,6 @@ public class Client {
 
 	//region<Download>
 	public boolean download(String path, FileObject file){
-		System.out.println(path);
 		try {
 			FileOutputStream fos = new FileOutputStream(path+"/"+file.getFileName());
 			fos.write(file.getFile());
@@ -224,7 +219,6 @@ public class Client {
 		//IS PUBLIC
 		fileObject.setState(state);
 		try {
-			System.out.println("al client dins avans de fer upload al server id: "+fileObject.getId());
 			return h.uploadFile(fileObject);
 		} catch (IOException e) {
 			return false;
@@ -249,8 +243,6 @@ public class Client {
 
 	public boolean fileModified(FileObject file){
 		try {
-			System.out.println("al client dins de modified id: ");
-			System.out.println(file.getId());
 			return Client.h.addModification(file);
 		}catch (Exception e){
 			System.out.println("Exception in Client-changeType(): " + e.toString());

@@ -234,7 +234,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
             int id = DataManager.userPOST(newUserName, password);
             if(id!=0){
-                System.out.println("Usuari: " + newUserName + " registrat!!");
+                System.out.println("Usuari: " + newUserName + " registered.");
                 semaphore.release();
                 return true;
             }
@@ -279,10 +279,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
             if(!keyText.isEmpty()){
                 posibleFiles = DataManager.fileGET_Array(keyText);
-                System.out.println("searchFile() -> GarageIMP");
-                for (FileObject f: posibleFiles) {
-                    System.out.println(f.getId());
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -373,7 +369,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             if(thisServer){
                 notifyOtherServer(file);
             }
-            System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
             ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
             //In this array list for each user we will store the tags that matches with his subscriptions
             ArrayList<String> tagArray = new ArrayList<String>();
@@ -381,9 +376,8 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                 for (int key : this.callbackObjects.keySet()) {
                     tagArray = new ArrayList<String>();
                     //We add the tags that matches
-                    System.out.println("callback num:"+key+"\n");
+                    System.out.println("Callback num:"+key+"\n");
                     for (String filetag : file.getTags()) {
-                        System.out.println("filetag:"+filetag+"\n");
                         if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
                             tagArray.add(filetag);
                         }
@@ -462,13 +456,11 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     @Override
     public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) throws RemoteException {
         ArrayList<FileObject> files = new ArrayList<FileObject>();
-        for (int id:ids) {
-            for (FileObject file:this.files.getFiles()) {
-                if(file.getId() == id){
-                    System.out.println("Getting id="+id);
-                    files.add(file);
-                }
+        for (FileObject file:this.files.getFiles()) {
+            if(ids.contains(file.getId())){
+                files.add(file);
             }
+
         }
         return files;
     }
@@ -477,7 +469,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean addModification(FileObject file) {
         try {
             semaphore.acquire();
-            System.out.println("----dins de modify id:"+file.getId());
             DataManager.filePUT(file);
             Iterator<FileObject> iter = this.files.getFiles().iterator();
             //For each file in the server

@@ -103,10 +103,8 @@ public class DataManager {
     }
 
     public static void filePUT(FileObject file){
-        System.out.println("ID FILE: "+ file.getId());
         FileObjectInfo f = new FileObjectInfo(file, ServerUtils.getServerInfo());
         f.setId(file.getId());
-        System.out.println("ID FILE: "+ f.getId());
         try {
             String filePUT_URL = DataManager.url_address + DataManager.filesURL + "/modify";
             DataManager.url = new URL(filePUT_URL);
@@ -178,7 +176,9 @@ public class DataManager {
                 }
                 for (ContentsPack c:packs) {
                     if (!servers.containsKey(c.getServerID())){
-                        servers.put(c.getServerID(), new ArrayList<>(c.getId()));
+                        ArrayList<Integer> a = new ArrayList<>();
+                        a.add(c.getId());
+                        servers.put(c.getServerID(), a);
                     }else{
                         ArrayList<Integer> value = servers.get(c.getServerID());
                         value.add(c.getId());
@@ -189,10 +189,11 @@ public class DataManager {
                 servers_to_access = DataManager.serverGET_byID(servers_to_search);
                 for (ServerInfo s:servers_to_access) {
                     ArrayList values = new ArrayList();
-                    values.addAll(servers.get(s.getId()));
+                    for (int i:servers.get(s.getId())) {
+                        values.add(i);
+                    }
                     ArrayList<FileObject> f = DataManager.getFileFromServer(values, s);
                     for (FileObject file: f ) {
-                        System.out.println("File with id="+file.getId()+" found.");
                         files.add(file);
                     }
                 }
