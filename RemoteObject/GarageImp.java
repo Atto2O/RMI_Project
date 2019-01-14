@@ -194,17 +194,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean addSubscriptionTag(String userName, String newTag) throws RemoteException {
         try {
             semaphore.acquire();
-
             User currentUser = DataManager.userGET(userName);
-
             if (currentUser.addSubscriptions(newTag)) {
-
-                for (Integer i:this.connectUsers.keySet()) {
+                for (int i:this.connectUsers.keySet()) {
                     if(this.connectUsers.get(i).getId() == currentUser.getId()){
                         this.connectUsers.replace(i, currentUser);
                     }
                 }
-
                 DataManager.userPUT(currentUser);
                 semaphore.release();
                 return true;
@@ -219,9 +215,13 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean deleteSubscriptionTag(String userName, String oldTag) throws RemoteException {
         try {
             semaphore.acquire();
-
             User currentUser = DataManager.userGET(userName);
             if (currentUser.deleteSubscriptions(oldTag)) {
+                for (int i:this.connectUsers.keySet()) {
+                    if(this.connectUsers.get(i).getId() == currentUser.getId()){
+                        this.connectUsers.replace(i, currentUser);
+                    }
+                }
                 DataManager.userPUT(currentUser);
                 semaphore.release();
                 return true;

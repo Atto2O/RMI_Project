@@ -688,7 +688,10 @@ public class ClientGUI extends Application {
                         }else{
                             ArrayList<String> tags = new ArrayList<>();
                             for (HBoxCell tag:ClientGUI.tags_list) {
-                                tags.add(tag.label.getText());
+                                String t = tag.label.getText();
+                                if(!tags.contains(t)){
+                                    tags.add(tag.label.getText());
+                                }
                             }
                             if(tags.isEmpty()){
                                 Toast.makeText(stage,  "Tag list is empty",false);
@@ -842,7 +845,10 @@ public class ClientGUI extends Application {
                     }else{
                         ArrayList<String> new_tags = new ArrayList<>();
                         for (HBoxCell tag:tag_edit_items) {
-                            new_tags.add(tag.label.getText());
+                            String t = tag.label.getText();
+                            if(!new_tags.contains(t)){
+                                new_tags.add(t);
+                            }
                         }
                         if(new_tags.isEmpty()){
                             Toast.makeText(stage,  "Tag list is empty",false);
