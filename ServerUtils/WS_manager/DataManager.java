@@ -190,10 +190,11 @@ public class DataManager {
                 for (ServerInfo s:servers_to_access) {
                     ArrayList values = new ArrayList();
                     values.addAll(servers.get(s.getId()));
-                    files.addAll(DataManager.getFileFromServer(values, s));
-                }
-                for (FileObject f:files) {
-                    System.out.println(f.getId());
+                    ArrayList<FileObject> f = DataManager.getFileFromServer(values, s);
+                    for (FileObject file: f ) {
+                        System.out.println("File with id="+file.getId()+" found.");
+                        files.add(file);
+                    }
                 }
             }
             conn.disconnect();
@@ -418,13 +419,14 @@ public class DataManager {
     ///////  TO OTHER SERVERS ////////////////////////////////
     public static ArrayList<FileObject> getFileFromServer(ArrayList<Integer> ids, ServerInfo serverInfo){
         String registryURL = "rmi://"+ serverInfo.getIp() +":" + serverInfo.getPort() + "/some";
+        ArrayList<FileObject> files = new ArrayList<FileObject>();
         try {
             Garage h = (Garage) Naming.lookup(registryURL);
-            return h.getFileObjects(ids);
+            files = h.getFileObjects(ids);
         }catch (Exception e) {
             System.out.println("Access to Server "+ serverInfo.getId()+" dennied. (IP: "+serverInfo.getIp()+"\tPORT: "+serverInfo.getPort()+")\nUnable to get files from this Server.");
         }
-        return null;
+        return files;
     }
     //////////////////////////////////////////////////////////
 }
