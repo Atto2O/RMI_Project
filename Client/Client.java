@@ -242,6 +242,7 @@ public class Client {
 		fileObject.setState(state);
 
 		try {
+			System.out.println("al client dins avans de fer upload al server id: "+fileObject.getId());
 			return h.uploadFile(fileObject);
 		} catch (IOException e) {
 			return false;

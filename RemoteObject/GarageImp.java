@@ -259,6 +259,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
             System.out.println("BEFORE POST\n");
             file.setId(DataManager.filePOST(file));
+            System.out.println("----Despres deque el servidor li doni el id: "+file.getId());
             this.files.addFile(file);
             System.out.println("AFTEF POST & BEFORE NOTIFY\n");
             ServerUtils.saveFiles(files.getFiles());
@@ -515,6 +516,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean addModification(FileObject file) {
         try {
             semaphore.acquire();
+            System.out.println("----dins de modify id:"+file.getId());
             DataManager.filePUT(file);
             Iterator<FileObject> iter = this.files.getFiles().iterator();
             //For each file in the server

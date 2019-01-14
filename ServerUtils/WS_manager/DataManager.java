@@ -102,7 +102,10 @@ public class DataManager {
     }
 
     public static void filePUT(FileObject file){
+        System.out.println("ID FILE: "+ file.getId());
         FileObjectInfo f = new FileObjectInfo(file, ServerUtils.getServerInfo());
+        f.setId(file.getId());
+        System.out.println("ID FILE: "+ f.getId());
         try {
             String filePUT_URL = DataManager.url_address + DataManager.filesURL + "/modify";
             DataManager.url = new URL(filePUT_URL);
