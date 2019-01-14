@@ -42,6 +42,10 @@ public class Client {
         ArrayList<FileObject> array = new ArrayList<>();
 		try {
             array = Client.h.searchFile(text.toLowerCase(), Client.userName.toLowerCase().trim());
+            System.out.println("getFilesByText() -> Client");
+            for (FileObject f: array ) {
+                System.out.println(f.getId());
+            }
         }catch (Exception e){
             System.out.println("Exception in Client-getFilesByText(): " + e.toString());
         }

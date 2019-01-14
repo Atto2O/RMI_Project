@@ -254,14 +254,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     public boolean uploadFile(FileObject file) {
         try {
             semaphore.acquire();
-            System.out.println("BEFORE POST\n");
             file.setId(DataManager.filePOST(file));
-            System.out.println("----Despres deque el servidor li doni el id: "+file.getId());
             this.files.addFile(file);
-            System.out.println("AFTEF POST & BEFORE NOTIFY\n");
             ServerUtils.saveFiles(files.getFiles());
             this.notifyNewFile(file,true);
-            System.out.println("AFTER NOTIFY\n");
             semaphore.release();
             return true;
         } catch (Exception e) {
@@ -283,6 +279,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             semaphore.acquire();
             if(!keyText.isEmpty()){
                 posibleFiles = DataManager.fileGET_Array(keyText);
+                System.out.println("searchFile() -> GarageIMP");
+                for (FileObject f: posibleFiles) {
+                    System.out.println(f.getId());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -372,9 +372,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
             //the Users that we detects that get a non friendly disconnection
             if(thisServer){
                 notifyOtherServer(file);
-                System.out.println("Le penjat jo\n");
-            }else{
-                System.out.println("No le penjat jo\n");
             }
             System.out.println("id:"+file.getId()+" nom:"+file.getFileName()+" tag 1:"+file.getTags().get(0)+" user: sserver:"+thisServer+"\n");
             ArrayList<Integer> usersToDelete = new ArrayList<Integer>();
@@ -388,7 +385,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                     for (String filetag : file.getTags()) {
                         System.out.println("filetag:"+filetag+"\n");
                         if (this.connectUsers.get(key).getSubscriptions().contains(filetag)) {
-                            System.out.println("Notifico a user :"+this.connectUsers.get(key).getId()+"\n");
                             tagArray.add(filetag);
                         }
                     }
@@ -408,7 +404,6 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
                             System.out.println("We notified User:" + this.connectUsers.get(key).getName() + " about: User: " + file.getUser() + " just upload the file: " + file.getFileName() + "\n");
                         } catch (Exception e) {
                             //If we fial connecting to the client add it to the remove list
-                            System.out.println("Hem borrat el usuari desconectat: " + this.connectUsers.get(key).getName() + "\n\n\nWith ERROR: " + e.toString());
                             usersToDelete.add(key);
                             //notifyConnection(notifiedUsers,newConnection);
                             continue;
@@ -434,13 +429,10 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
         //For each file in the server
         while (iter.hasNext()) {
             ServerInfo server= iter.next();
-            System.out.println("befor if the notify el serv amb id:"+server.getId());
             if(server.getId()!= ServerUtils.getServerInfo().getId()) {
-                System.out.println("dins if the notify el serv amb id:"+server.getId());
                 connectAndNotify(file, server.getIp(), server.getPort());
             }
         }
-        System.out.println("\nDespres del while\n");
     }
 
     public void connectAndNotify(FileObject file, String serverIP, int serverPORT){
@@ -468,7 +460,7 @@ public class GarageImp extends UnicastRemoteObject implements Garage {
     }
 
     @Override
-    public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) {
+    public ArrayList<FileObject> getFileObjects(ArrayList<Integer> ids) throws RemoteException {
         ArrayList<FileObject> files = new ArrayList<FileObject>();
         for (Integer id:ids) {
             for (FileObject file:this.files.getFiles()) {

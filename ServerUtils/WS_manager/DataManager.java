@@ -173,9 +173,7 @@ public class DataManager {
             while ((output = br.readLine()) != null){
                 JSONArray jsonArray = new JSONArray(output);
                 ObjectMapper mapper = new ObjectMapper();
-                System.out.println(output);
                 for (int i=0; i<jsonArray.length(); i++) {
-                    System.out.println(jsonArray.getJSONObject(i).toString());
                     packs.add(mapper.readValue(jsonArray.getJSONObject(i).toString(), ContentsPack.class));
                 }
                 for (ContentsPack c:packs) {
@@ -193,6 +191,9 @@ public class DataManager {
                     ArrayList values = new ArrayList();
                     values.addAll(servers.get(s.getId()));
                     files.addAll(DataManager.getFileFromServer(values, s));
+                }
+                for (FileObject f:files) {
+                    System.out.println(f.getId());
                 }
             }
             conn.disconnect();
@@ -359,7 +360,6 @@ public class DataManager {
                 }
             }
             input+="]}";
-            System.out.println(input);
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
